@@ -23,6 +23,17 @@ import { uniqueId } from "lodash";
 
 const SidebarContent: MenuItem[] = [
   {
+    heading: "TYPE",
+    children: [
+      {
+        name: "Food Type",
+        icon: "solar:archive-broken",
+        id: uniqueId(),
+        url: "/",
+      },
+    ],
+  },
+  {
     heading: "HOME",
     children: [
       {

@@ -9,7 +9,7 @@ import "./css/globals.css";
 const manrope = Manrope({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MatDash-Nextjs-Free",
+  title: "Food Calculator",
 };
 
 export default function RootLayout({

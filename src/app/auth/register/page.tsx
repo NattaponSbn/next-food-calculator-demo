@@ -1,5 +1,5 @@
 "use client"
-import FullLogo from "@/app/(DashboardLayout)/layout/shared/logo/FullLogo";
+import FullLogo from "@/app/(main)/layout/shared/logo/FullLogo";
 import React from "react";
 import Link from "next/link";
 import AuthRegister from "../authforms/AuthRegister";

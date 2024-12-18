@@ -1,5 +1,6 @@
 "use client";
-import React, { useContext } from "react";
+
+import React from "react";
 import { Sidebar } from "flowbite-react";
 import SidebarContent from "./Sidebaritems";
 import NavItems from "./NavItems";
@@ -7,22 +8,22 @@ import NavCollapse from "./NavCollapse";
 import SimpleBar from "simplebar-react";
 import FullLogo from "../../shared/logo/FullLogo";
 import { Icon } from "@iconify/react";
-import Upgrade from "./Upgrade";
-const MobileSidebar = () => {
 
+const SidebarLayout = () => {
   return (
     <>
-     <div className="flex">
+      <div className="xl:block hidden">
+        <div className="flex">
           <Sidebar
             className="fixed menu-sidebar pt-6 bg-white dark:bg-darkgray z-[10]"
             aria-label="Sidebar with multi-level dropdown example"
           >
-            <div className="mb-7 px-4 brand-logo">
+            <div className="mb-7 px-6 brand-logo">
               <FullLogo />
             </div>
 
-            <SimpleBar className="h-[calc(100vh_-_100px)]">
-              <Sidebar.Items className="px-4">
+            <SimpleBar className="h-[calc(100vh_-_120px)]">
+              <Sidebar.Items className="px-6">
                 <Sidebar.ItemGroup className="sidebar-nav">
                   {SidebarContent.map((item, index) => (
                     <React.Fragment key={index}>
@@ -50,12 +51,12 @@ const MobileSidebar = () => {
                   ))}
                 </Sidebar.ItemGroup>
               </Sidebar.Items>
-              <Upgrade/>
             </SimpleBar>
           </Sidebar>
         </div>
+      </div>
     </>
   );
 };
 
-export default MobileSidebar;
+export default SidebarLayout;
