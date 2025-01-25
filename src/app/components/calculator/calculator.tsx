@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Badge, Dropdown, Progress } from "flowbite-react";
+import { Badge, Dropdown, Label, Progress, TextInput } from "flowbite-react";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Icon } from "@iconify/react";
 import { Table } from "flowbite-react";
@@ -76,80 +76,165 @@ const CalculatorManageComponent = () => {
       <>
         <div className="rounded-xl dark:shadow-dark-md shadow-md bg-white dark:bg-darkgray p-6  relative w-full break-words">
           <h5 className="card-title">การคำนวนอาหาร</h5>
+          <div className="flex">
+            <div className="flex-1"></div>
+            <div className="flex-1 text-center">
+              <div className="font-semibold text-dark">การคำนวนอาหารปั่นผสม</div>
+              <div className="font-semibold text-dark">สูตร BD 1:1 300 ml * 4 feed</div>
+              <div className="font-semibold text-dark">คำสั่งเฉพาะ เบาหวาน</div>
+            </div>
+            <div className="flex-1 text-end">
+              <div className="font-semibold text-dark">ทั่วไป 55:15:30</div>
+              <div className="font-semibold text-dark">เบาหวาน 50:20:30</div>
+            </div>
+          </div>
           <div className="mt-3">
-           
               <div className="overflow-x-auto">
                 <Table hoverable>
                   <Table.Head>
-                    <Table.HeadCell>การกระจายพลังงาน</Table.HeadCell>
+                    <Table.HeadCell className="w-[25%]">การกระจายพลังงาน</Table.HeadCell>
                     <Table.HeadCell>พลังงาน (kcal)</Table.HeadCell>
+                    <Table.HeadCell>CHO (%)</Table.HeadCell>
                     <Table.HeadCell>Protein (%)</Table.HeadCell>
                     <Table.HeadCell>Fat (%)</Table.HeadCell>
-                    <Table.HeadCell></Table.HeadCell>
                   </Table.Head>
                   <Table.Body className="divide-y divide-border dark:divide-darkborder ">
-                    {ProductTableData.map((item, index) => (
-                      <Table.Row key={index}>
-                        <Table.Cell className="whitespace-nowrap ps-6">
-                          <div className="flex gap-3 items-center">
-                            <Image
-                              src={item.img}
-                              alt="icon"
-                              className="h-[60px] w-[60px] rounded-md"
+                    <Table.Row key={1}>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">ปริมาตร</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <TextInput
+                              id="name"
+                              type="text"
+                              placeholder="0"
+                              className="form-control form-rounded-xl text-end"
                             />
-                            <div className="truncat line-clamp-2 sm:text-wrap max-w-56">
-                              <h6 className="text-sm">{item.name}</h6>
-                            </div>
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <h5 className="text-base text-wrap">
-                            {item.payment}
-                            <span className="text-dark opacity-70">
-                              <span className="mx-1">/</span>499
-                            </span>
-                          </h5>
-                          <div className="text-sm font-medium text-dark opacity-70 mb-2 text-wrap">
-                            {item.paymentstatus}
-                          </div>
-                          <div className="me-5">
-                            <Progress
-                              progress={item.process}
-                              color={`${item.processcolor}`}
-                              className={`${item.processcolor}`}
-                              size={"sm"}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <TextInput
+                              id="name"
+                              type="text"
+                              placeholder="0"
+                              className="form-control form-rounded-xl text-end"
                             />
-                          </div>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Badge
-                            color={`light${item.statuscolor}`}
-                            className={`text-${item.statuscolor}`}
-                          >
-                            {item.statustext}
-                          </Badge>
-                        </Table.Cell>
-                        <Table.Cell>
-                          <Dropdown
-                            label=""
-                            dismissOnClick={false}
-                            renderTrigger={() => (
-                              <span className="h-9 w-9 flex justify-center items-center rounded-full hover:bg-lightprimary hover:text-primary cursor-pointer">
-                                <HiOutlineDotsVertical size={22} />
-                              </span>
-                            )}
-                          >
-                            {tableActionData.map((items, index) => (
-                              <Dropdown.Item key={index} className="flex gap-3">
-                                {" "}
-                                <Icon icon={`${items.icon}`} height={18} />
-                                <span>{items.listtitle}</span>
-                              </Dropdown.Item>
-                            ))}
-                          </Dropdown>
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <TextInput
+                              id="name"
+                              type="text"
+                              placeholder="0"
+                              className="form-control form-rounded-xl text-end"
+                            />
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <TextInput
+                              id="name"
+                              type="text"
+                              placeholder="0"
+                              className="form-control form-rounded-xl text-end"
+                            />
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row key={2}>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <TextInput
+                              id="name"
+                              type="text"
+                              placeholder="0"
+                              className="form-control form-rounded-xl text-center"
+                            />
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'CHO (kcal)'}</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'Protein (kcal)'}</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'Fat (kcal)'}</label>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row key={3}>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">มิลลิลิตร</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row key={4}>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'CHO (g.)'}</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'Protein (g.)'}</label>
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          <label className="font-semibold text-dark">{'Fat (g.)'}</label>
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row key={5}>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap"></Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                      <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                      <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className="whitespace-nowrap">
+                        <div className="flex gap-3 items-center">
+                          0
+                        </div>
+                      </Table.Cell>
+                    </Table.Row>
                   </Table.Body>
                 </Table>
               </div>

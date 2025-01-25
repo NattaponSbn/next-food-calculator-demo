@@ -23,6 +23,17 @@ import { uniqueId } from "lodash";
 
 const SidebarContent: MenuItem[] = [
   {
+    heading: "CALCULATOR",
+    children: [
+      {
+        name: "สูตร...",
+        icon: "solar:archive-broken",
+        id: uniqueId(),
+        url: "/ui/calculator",
+      },
+    ],
+  },
+  {
     heading: "TYPE",
     children: [
       {
