@@ -6,8 +6,16 @@ import ProductRevenue from "../components/dashboard/ProductRevenue";
 import DailyActivity from "../components/dashboard/DailyActivity";
 import BlogCards from "../components/dashboard/BlogCards";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/auth/login"); // 👈 ไปหน้า login
+  }
   return (
     <>
       <div className="grid grid-cols-12 gap-30">

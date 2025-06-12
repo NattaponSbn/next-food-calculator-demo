@@ -4,7 +4,20 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 const Profile = () => {
+  
+  const router = useRouter(); // สร้าง instance ของ router
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    // หลังจาก logout สำเร็จ คุณสามารถทำอย่างอื่นต่อได้ที่นี่
+    // เช่น แสดง modal หรืออัปเดต state ใน UI
+    router.push("/auth/login");
+    router.refresh();
+  };
+
   return (
     <div className="relative group/menu">
       <Dropdown
@@ -49,7 +62,7 @@ const Profile = () => {
           My Task
         </Dropdown.Item>
         <div className="p-3 pt-0">
-        <Button as={Link}  size={'sm'}  href="/auth/login" className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
+        <Button size={'sm'} onClick={handleLogout} className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
         </div>
       </Dropdown>
     </div>

@@ -2,9 +2,9 @@ import React from "react";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import 'simplebar-react/dist/simplebar.min.css';
-import { Flowbite, ThemeModeScript } from "flowbite-react";
-import customTheme from "@/utils/theme/custom-theme";
+import { ThemeModeScript } from "flowbite-react";
 import "./css/globals.css";
+import Providers from "./components/Providers";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -24,7 +24,7 @@ export default function RootLayout({
         <ThemeModeScript />
       </head>
       <body className={`${manrope.className}`}>
-        <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
