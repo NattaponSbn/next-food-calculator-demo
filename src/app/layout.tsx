@@ -5,6 +5,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { ThemeModeScript } from "flowbite-react";
 import "./css/globals.css";
 import Providers from "./components/Providers";
+import { niramit } from "@/utils/fonts";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={niramit.variable}>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <ThemeModeScript />
