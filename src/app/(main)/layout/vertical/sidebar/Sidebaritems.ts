@@ -23,7 +23,7 @@ import { uniqueId } from "lodash";
 
 const SidebarContent: MenuItem[] = [
   {
-    heading: "CALCULATOR",
+    heading: "Diet Calculation",
     children: [
       {
         name: "สูตร...",
@@ -34,13 +34,19 @@ const SidebarContent: MenuItem[] = [
     ],
   },
   {
-    heading: "TYPE",
+    heading: "Master",
     children: [
       {
-        name: "Food Type",
+        name: "วัตถุดิบ",
         icon: "solar:archive-broken",
         id: uniqueId(),
-        url: "/",
+        url: "/master/raw-material",
+      },
+      {
+        name: "สูตร",
+        icon: "solar:archive-broken",
+        id: uniqueId(),
+        url: "/master/formula",
       },
     ],
   },
@@ -51,7 +57,7 @@ const SidebarContent: MenuItem[] = [
         name: "Dashboard",
         icon: "solar:widget-add-line-duotone",
         id: uniqueId(),
-        url: "/",
+        url: "/dashboard",
       },
     ],
   },

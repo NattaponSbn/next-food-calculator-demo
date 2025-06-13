@@ -4,13 +4,14 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from 'react-hot-toast';
 import { delay } from "@/app/lib/utils";
+import { useCurrentUser } from "@/app/core/hooks/use-current-user";
 
 const Profile = () => {
-
+  const { user } = useCurrentUser();
   const router = useRouter(); // สร้าง instance ของ router
 
   const handleLogout = async () => {
@@ -50,19 +51,22 @@ const Profile = () => {
         className="rounded-sm w-44"
         dismissOnClick={false}
         renderTrigger={() => (
-          <span className="h-10 w-10 hover:text-primary hover:bg-lightprimary rounded-full flex justify-center items-center cursor-pointer group-hover/menu:bg-lightprimary group-hover/menu:text-primary">
-            <Image
-              src="/images/profile/user-1.jpg"
-              alt="logo"
-              height="35"
-              width="35"
-              className="rounded-full"
-            />
+          <span className="h-10 w-100 hover:text-primary flex justify-center items-center cursor-pointer group-hover/menu:text-primary">
+            <span className="hover:bg-lightprimary group-hover/menu:bg-lightprimary rounded-full">
+              <Image
+                src="/images/profile/user-1.jpg"
+                alt="logo"
+                height="35"
+                width="35"
+                className="rounded-full"
+              />
+            </span>
+            <span className="ms-1">{ user?.name }</span>
           </span>
         )}
       >
 
-        <Dropdown.Item
+        {/* <Dropdown.Item
           as={Link}
           href="#"
           className="px-3 py-3 flex items-center bg-hover group/link w-full gap-3 text-dark"
@@ -85,9 +89,11 @@ const Profile = () => {
         >
           <Icon icon="solar:checklist-linear" height={20} />
           My Task
-        </Dropdown.Item>
-        <div className="p-3 pt-0">
-          <Button size={'sm'} onClick={handleLogout} className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
+        </Dropdown.Item> */}
+        <span className="px-3 py-3">{ user?.email }</span>
+        <hr className="mt-2"/>
+        <div className="p-2 pt-0">
+          <Button size={'sm'} onClick={handleLogout} className="w-full py-0 mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
         </div>
       </Dropdown>
     </div>
