@@ -3,6 +3,8 @@ import FullLogo from "@/app/(main)/layout/shared/logo/FullLogo";
 import React from "react";
 import Link from "next/link";
 import AuthLogin from "../authforms/AuthLogin";
+import "./../../css/globals.css";
+import { niramit } from "./../../../utils/fonts";
 
 const gradientStyle = {
   background: "linear-gradient(45deg, rgb(238, 119, 82,0.2), rgb(231, 60, 126,0.2), rgb(35, 166, 213,0.2), rgb(35, 213, 171,0.2))",
@@ -13,7 +15,7 @@ const gradientStyle = {
 
 const BoxedLogin = () => {
   return (
-    <div style={gradientStyle} className="relative overflow-hidden h-screen">
+    <div style={gradientStyle} className={`relative overflow-hidden h-screen ${niramit.variable}`}>
       <div className="flex h-full justify-center items-center px-4">
         <div className="rounded-xl shadow-md bg-white dark:bg-darkgray p-6 w-full md:w-96 border-none">
           <div className="flex flex-col gap-2 p-0 w-full">

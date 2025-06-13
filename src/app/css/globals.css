@@ -15,6 +15,7 @@
 
   body {
     @apply text-sm overflow-x-hidden;
+    font-family: Niramit, sans-serif !important;
   }
 
   .dropdown {
@@ -110,6 +111,10 @@
 
   .checkbox {
     @apply h-[18px] w-[18px] border border-border bg-transparent focus:ring-0 focus:ring-offset-0
+  }
+
+  .has-error input {
+    @apply border-red-500 text-red-900 focus:border-red-500 focus:ring-red-500
   }
 }
 

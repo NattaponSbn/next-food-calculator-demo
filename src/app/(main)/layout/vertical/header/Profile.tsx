@@ -6,16 +6,41 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast from 'react-hot-toast';
+import { delay } from "@/app/lib/utils";
+
 const Profile = () => {
-  
+
   const router = useRouter(); // สร้าง instance ของ router
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    // หลังจาก logout สำเร็จ คุณสามารถทำอย่างอื่นต่อได้ที่นี่
-    // เช่น แสดง modal หรืออัปเดต state ใน UI
-    router.push("/auth/login");
-    router.refresh();
+    // 1. แสดง Toast ว่ากำลังดำเนินการ (ทางเลือก แต่ช่วยให้ UX ดีขึ้น)
+    const logoutToast = toast.loading('กำลังออกจากระบบ...');
+
+    try {
+      // 2. รอให้การ signOut ฝั่ง server เสร็จสิ้น
+      await signOut({ redirect: false });
+
+      // 3. เมื่อ signOut สำเร็จแล้ว จึงอัปเดต Toast และ redirect
+      toast.success('ออกจากระบบเรียบร้อยแล้ว', {
+        id: logoutToast, // อ้างอิงถึง Toast loading เดิมเพื่ออัปเดต
+      });
+
+      await delay(1000); // รอ 1 วินาที
+
+      // 4. พาผู้ใช้ไปหน้า login
+      router.push("/auth/login");
+
+      // 5. Refresh เพื่อให้ server component (เช่น layout) อัปเดตสถานะ
+      router.refresh();
+
+    } catch (error) {
+      // 6. กรณีเกิดข้อผิดพลาดที่ไม่คาดคิด
+      toast.error('เกิดข้อผิดพลาดในการออกจากระบบ', {
+        id: logoutToast,
+      });
+      console.error("Logout failed: ", error);
+    }
   };
 
   return (
@@ -62,7 +87,7 @@ const Profile = () => {
           My Task
         </Dropdown.Item>
         <div className="p-3 pt-0">
-        <Button size={'sm'} onClick={handleLogout} className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
+          <Button size={'sm'} onClick={handleLogout} className="mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
         </div>
       </Dropdown>
     </div>
