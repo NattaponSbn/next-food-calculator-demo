@@ -8,7 +8,7 @@ import BlogCards from "../components/dashboard/BlogCards";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../lib/auth";
 
 const page = async () => {
   const session = await getServerSession(authOptions);
