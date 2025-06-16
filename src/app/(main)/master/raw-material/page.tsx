@@ -1,5 +1,5 @@
 import React from "react";
-import MasterRawMaterialList from "@/app/components/raw-material/list";
+import MasterRawMaterialList from "@/app/components/master/raw-material/list";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

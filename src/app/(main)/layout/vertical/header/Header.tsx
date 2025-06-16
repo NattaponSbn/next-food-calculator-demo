@@ -8,6 +8,7 @@ import FullLogo from "../../shared/logo/FullLogo";
 import { Drawer } from "flowbite-react";
 import MobileSidebar from "../sidebar/MobileSidebar";
 import Link from "next/link";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header = () => {
   const [isSticky, setIsSticky] = useState(false);
@@ -57,6 +58,7 @@ const Header = () => {
             </div>
 
             <div className="flex gap-4 items-center">
+              <LanguageSwitcher />
               <Profile />
             </div>
           </div>

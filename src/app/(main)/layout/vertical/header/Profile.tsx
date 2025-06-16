@@ -9,10 +9,12 @@ import { useRouter } from "next/navigation";
 import toast from 'react-hot-toast';
 import { delay } from "@/app/lib/utils";
 import { useCurrentUser } from "@/app/core/hooks/use-current-user";
+import { useTranslation } from "react-i18next";
 
 const Profile = () => {
   const { user } = useCurrentUser();
   const router = useRouter(); // สร้าง instance ของ router
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     // 1. แสดง Toast ว่ากำลังดำเนินการ (ทางเลือก แต่ช่วยให้ UX ดีขึ้น)
@@ -26,8 +28,6 @@ const Profile = () => {
       toast.success('ออกจากระบบเรียบร้อยแล้ว', {
         id: logoutToast, // อ้างอิงถึง Toast loading เดิมเพื่ออัปเดต
       });
-
-      await delay(1000); // รอ 1 วินาที
 
       // 4. พาผู้ใช้ไปหน้า login
       router.push("/auth/login");
