@@ -26,7 +26,7 @@ export default function LanguageSelector() {
     <div className="relative w-25">
       <Listbox value={selectedLanguage.code} onChange={handleLangChange}>
         <div className="relative">
-          <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+          <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-300 sm:text-sm">
             <span className="flex items-center">
               {/* 3. แทนที่ <Image> ด้วย <Icon> */}
               <Icon
@@ -49,7 +49,7 @@ export default function LanguageSelector() {
                   key={lang.code}
                   className={({ active }) =>
                     `relative cursor-pointer select-none py-2 pl-4 pr-4 ${
-                      active ? 'bg-amber-100 text-amber-900' : 'text-gray-900'
+                      active ? 'bg-indigo-100 text-indigo-900' : 'text-gray-900'
                     }`
                   }
                   value={lang.code}

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginFormValues } from "@/app/lib/validations/auth";
-import { handleToastPromise } from "@/app/lib/toastHelper";
+import { handleToastPromise } from "@/app/lib/toast-helper";
 
 // UI & Helper imports
 import { Button, Label, TextInput, HelperText } from "flowbite-react";

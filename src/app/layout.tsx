@@ -4,8 +4,8 @@ import { Manrope } from "next/font/google";
 import 'simplebar-react/dist/simplebar.min.css';
 import { ThemeModeScript } from "flowbite-react";
 import "./css/globals.css";
-import Providers from "./components/Providers";
 import { niramit } from "@/utils/fonts";
+import Providers from "./components/providers";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -18,6 +18,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en" className={niramit.variable}>
       <head>
