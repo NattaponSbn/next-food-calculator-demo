@@ -20,6 +20,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
        </I18nextProvider>
       
+      
     </SessionProvider>
     </>
    
