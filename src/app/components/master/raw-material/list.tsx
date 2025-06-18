@@ -158,8 +158,6 @@ const MasterRawMaterialList = () => {
         ถ้าใช้ GlobalSpinner ที่คุมโดย Zustand/Redux ผ่าน Interceptor ไม่จำเป็นต้องมีบรรทัดนี้
         แต่ถ้าอยากให้ loading เฉพาะส่วนตาราง ให้ใช้บรรทัดนี้
       */}
-      {isLoading && <div className="absolute inset-0 z-10 flex items-center justify-center bg-gray-200 bg-opacity-50">Loading...</div>}
-
       <div className="relative overflow-x-auto">
         <Table className="table-fixed border w-full">
           <thead className="text-xs text-gray-700 uppercase bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">

@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import apiClient from '../services/api-client';
 import { ApiSearchRequest, FilterCriteria, PageResult, SortCriteria } from '../models/shared/page.model';
+import { useUIStore } from '../store/ui-store';
 
 // Interface ไม่มีการเปลี่ยนแปลง
 interface UseServerSideTableProps<T extends Record<string, any>> {
@@ -57,6 +58,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
       // ===== โหมดจำลองการทำงาน (Mock Mode) =====
       const simulateApi = async () => {
         setIsLoading(true);
+        useUIStore.getState().showLoading();
         console.log("RUNNING IN MOCK MODE");
 
         // สร้าง requestBody เหมือนเดิม เพื่อใช้จำลองการกรอง/เรียงลำดับ
@@ -109,12 +111,14 @@ export const useServerSideTable = <T extends Record<string, any>>({
         setData(mockResult.items);
         setPageCount(mockResult.pageCount);
         setIsLoading(false);
+        useUIStore.getState().hideLoading();
       };
 
       simulateApi();
     } else {
       const fetchData = async () => {
         setIsLoading(true);
+        useUIStore.getState().showLoading();
 
         // การสร้าง Request Body ไม่มีการเปลี่ยนแปลง
 
@@ -157,6 +161,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
           setPageCount(0);
         } finally {
           setIsLoading(false);
+          useUIStore.getState().hideLoading();
         }
       };
 

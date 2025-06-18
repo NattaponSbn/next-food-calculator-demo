@@ -13,14 +13,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const isLoading = useUIStore((state) => state.isLoading);
   return (
     <>
-     {isLoading && <GlobalSpinner />}
+    {isLoading && <GlobalSpinner />}
     <SessionProvider>
        <I18nextProvider i18n={i18n}>
         <Toaster position="top-center" />
         <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
        </I18nextProvider>
-      
-      
     </SessionProvider>
     </>
    

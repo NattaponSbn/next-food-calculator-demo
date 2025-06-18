@@ -5,8 +5,8 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { ThemeModeScript } from "flowbite-react";
 import "./css/globals.css";
 import { niramit } from "@/utils/fonts";
-import Providers from "./components/providers";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import Providers from "./components/Providers";
 
 const manrope = Manrope({ subsets: ["latin"] });
 

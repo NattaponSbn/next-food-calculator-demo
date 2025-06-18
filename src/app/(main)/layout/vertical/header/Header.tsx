@@ -58,6 +58,9 @@ const Header = () => {
             </div>
 
             <div className="flex gap-4 items-center">
+             <div className="px-4 py-2 text-xs text-gray-500">
+                Version: {process.env.NEXT_PUBLIC_APP_VERSION}
+              </div>
               <LanguageSwitcher />
               <Profile />
             </div>

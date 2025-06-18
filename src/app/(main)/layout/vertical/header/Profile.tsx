@@ -11,10 +11,23 @@ import { delay } from "@/app/lib/utils";
 import { useCurrentUser } from "@/app/core/hooks/use-current-user";
 import { useTranslation } from "react-i18next";
 
+const ProfileSkeleton = () => {
+  return (
+    <div className="flex items-center animate-pulse h-10">
+      <div className="w-9 h-9 bg-gray-300 rounded-full dark:bg-gray-700"></div>
+      <div className="w-24 h-4 bg-gray-300 rounded ms-2 dark:bg-gray-700"></div>
+    </div>
+  );
+};
+
 const Profile = () => {
-  const { user } = useCurrentUser();
+  const { user, isLoading } = useCurrentUser();
   const router = useRouter(); // สร้าง instance ของ router
   const { t } = useTranslation();
+
+  if(isLoading) {
+     return <ProfileSkeleton />;
+  }
 
   const handleLogout = async () => {
     // 1. แสดง Toast ว่ากำลังดำเนินการ (ทางเลือก แต่ช่วยให้ UX ดีขึ้น)
