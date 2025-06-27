@@ -5,12 +5,14 @@ import { Sidebar } from "flowbite-react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface NavItemsProps {
   item: ChildItem;
 }
 const NavItems: React.FC<NavItemsProps> = ({ item }) => {
   const pathname = usePathname();
+  const { t } = useTranslation();
   return (
     <>
       <Sidebar.Item
@@ -32,7 +34,7 @@ const NavItems: React.FC<NavItemsProps> = ({ item }) => {
                 } `}
             ></span>
           )}
-          <span className="max-w-36 overflow-hidden hide-menu">{item.name}</span>
+          <span className="max-w-36 overflow-hidden hide-menu">{t(item.nameKey!)}</span>
         </span>
       </Sidebar.Item>
     </>

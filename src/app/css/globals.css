@@ -4,6 +4,7 @@
 
 @import './layouts/sidebar.css';
 @import './layouts/header.css';
+@import './layouts/panel.css';
 @import './theme/default-colors.css';
 @import './override/reboot.css';
 

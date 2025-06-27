@@ -7,8 +7,9 @@ import NavCollapse from "./NavCollapse";
 import SimpleBar from "simplebar-react";
 import FullLogo from "../../shared/logo/FullLogo";
 import { Icon } from "@iconify/react";
+import { useTranslation } from "react-i18next";
 const MobileSidebar = () => {
-
+  const { t } = useTranslation();
   return (
     <>
      <div className="flex">
@@ -26,7 +27,7 @@ const MobileSidebar = () => {
                   {SidebarContent.map((item, index) => (
                     <React.Fragment key={index}>
                       <h5 className="text-link text-xs caption">
-                        <span className="hide-menu">{item.heading}</span>
+                        <span className="hide-menu">{t(item.headingKey)}</span>
                       </h5>
                       <Icon
                         icon="solar:menu-dots-bold"

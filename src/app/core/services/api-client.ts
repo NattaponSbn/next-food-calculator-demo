@@ -5,7 +5,7 @@ import { useUIStore } from '../store/ui-store';
 
 // สร้าง Axios instance
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://your-default-api.com/api', // URL หลักของ API ของคุณ
+  baseURL: process.env.NEXT_PUBLIC_API_URL, // URL หลักของ API ของคุณ
   headers: {
     'Content-Type': 'application/json',
   },

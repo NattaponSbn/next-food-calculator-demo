@@ -18,7 +18,7 @@ const page = async () => {
   }
   return (
     <>
-      <div className="grid grid-cols-12 gap-30">
+      {/* <div className="grid grid-cols-12 gap-30">
         <div className="lg:col-span-8 col-span-12">
           <SalesProfit />
         </div>
@@ -53,7 +53,7 @@ const page = async () => {
             </Link>
           </p>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

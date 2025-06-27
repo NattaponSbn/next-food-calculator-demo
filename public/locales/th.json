@@ -3,9 +3,39 @@
     "home": "หน้าหลัก",
     "about": "เกี่ยวกับเรา"
   },
+  "menu": {
+    "headings": {
+      "diet_calculation": "คำนวณสูตรอาหาร",
+      "master": "ข้อมูลหลัก"
+    },
+    "items": {
+      "calculator_formula": "เครื่องคำนวณ",
+      "food_groups": "กลุ่มอาหาร",
+      "nutrient_categories": "หมวดหมู่สารอาหาร",
+      "nutrients": "สารอาหาร",
+      "units": "หน่วย",
+      "raw_material": "วัตถุดิบ",
+      "formula": "สูตร"
+    }
+  },
   "button": {
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
     "submit": "ยืนยัน"
+  },
+  "system": {
+    "no": "ลำดับ",
+    "action": "จัดการ",
+    "loading": "กำลังโหลดข้อมูล...",
+    "noDataFound": "ไม่พบข้อมูล",
+    "language": {
+      "en": "อังกฤษ",
+      "th": "ไทย"
+    }
+  },
+  "master": {
+    "fgCode": "รหัสกลุ่มอาหาร",
+    "fgName": "ชื่อกลุ่มอาาหาร",
+    "fgList": "รายการกลุ่มอาาหาร"
   }
 }

@@ -3,9 +3,39 @@
     "home": "Home",
     "about": "About Us"
   },
+  "menu": {
+    "headings": {
+      "diet_calculation": "Diet Calculation",
+      "master": "Master Data"
+    },
+    "items": {
+      "calculator_formula": "Calculator",
+      "food_groups": "Food Groups",
+      "nutrient_categories": "Nutrient Categories",
+      "nutrients": "Nutrients",
+      "units": "Units",
+      "raw_material": "Raw Materials",
+      "formula": "Formulas"
+    }
+  },
   "button": {
     "signIn": "Sign In",
     "signOut": "Sign Out",
     "submit": "Submit"
+  },
+  "system": {
+    "no": "No",
+    "action": "Action",
+    "loading": "Loading...",
+    "noDataFound": "No data found.",
+    "language": {
+      "en": "EN",
+      "th": "TH"
+    }
+  },
+  "master": {
+    "fgCode": "Food Group Code",
+    "fgName": "Food Group Name",
+    "fgList": "Food Group List"
   }
 }

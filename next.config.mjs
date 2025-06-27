@@ -3,7 +3,7 @@ import packageInfo from './package.json' with { type: 'json' };
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-    reactStrictMode: true,
+    reactStrictMode: false,
 
      env: {
         // ตั้งชื่อตัวแปรว่าอะไรก็ได้ แต่ต้องขึ้นต้นด้วย NEXT_PUBLIC_

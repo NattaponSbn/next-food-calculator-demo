@@ -1,0 +1,25 @@
+.panel {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden;
+
+    /* ใส่ & เพื่ออ้างอิงถึงตัว parent (.panel) */
+    /* .panel-header ที่เป็นลูกของ .panel */
+    & .panel-header {
+        @apply p-4 border-b border-gray-200 dark:border-gray-700;
+
+        /* .panel-title ที่เป็นลูกของ .panel-header */
+        & .panel-title {
+            @apply text-lg font-semibold text-gray-800 dark:text-white;
+            /* ไม่ควรมี p-4 หรือ border ซ้ำซ้อนกับ header */
+        }
+    }
+
+    /* .panel-body ที่เป็นลูกของ .panel */
+    & .panel-body {
+        @apply p-6;
+    }
+    
+    /* .panel-footer ที่เป็นลูกของ .panel */
+    & .panel-footer {
+        @apply p-4 border-t border-gray-200 dark:border-gray-700;
+    }
+}
