@@ -14,6 +14,7 @@ i18n
   // ตั้งค่า i18next
   .init({
     debug: process.env.NODE_ENV === 'development', // แสดง log ตอน dev
+    lng: "th",
     fallbackLng: 'th', // ภาษาเริ่มต้นถ้าหาภาษาที่ต้องการไม่เจอ
     interpolation: {
       escapeValue: false, // React ป้องกัน XSS อยู่แล้ว
