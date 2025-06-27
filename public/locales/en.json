@@ -21,7 +21,10 @@
   "button": {
     "signIn": "Sign In",
     "signOut": "Sign Out",
-    "submit": "Submit"
+    "submit": "Submit",
+    "close": "Close",
+    "cancel": "Cancel",
+    "saveData": "Save Data"
   },
   "system": {
     "no": "No",
@@ -31,11 +34,17 @@
     "language": {
       "en": "EN",
       "th": "TH"
-    }
+    },
+    "create": "Create",
+    "hint": "Hint"
   },
   "master": {
     "fgCode": "Food Group Code",
     "fgName": "Food Group Name",
-    "fgList": "Food Group List"
+    "fgDescription": "Description",
+    "fgList": "Food Group List",
+    "fgCreate": "Create Food Group",
+    "fgEdit": "Edit Food Group",
+    "fgDetail": "Detail Food Group"
   }
 }

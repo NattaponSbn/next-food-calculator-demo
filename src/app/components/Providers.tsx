@@ -8,6 +8,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "../../../i18n";
 import { useUIStore } from "../core/store/ui-store";
 import GlobalSpinner from "./shared/global-spinner";
+import { ModalProvider } from "./shared/modals/modal-provider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const isLoading = useUIStore((state) => state.isLoading);
@@ -18,6 +19,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
        <I18nextProvider i18n={i18n}>
         <Toaster position="top-center" />
         <Flowbite theme={{ theme: customTheme }}>{children}</Flowbite>
+        <ModalProvider />
        </I18nextProvider>
     </SessionProvider>
     </>

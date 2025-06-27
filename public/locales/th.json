@@ -21,7 +21,10 @@
   "button": {
     "signIn": "เข้าสู่ระบบ",
     "signOut": "ออกจากระบบ",
-    "submit": "ยืนยัน"
+    "submit": "ยืนยัน",
+    "close": "ปิด",
+    "cancel": "ยกเลิก",
+    "saveData": "บันทึกข้อมูล"
   },
   "system": {
     "no": "ลำดับ",
@@ -31,11 +34,17 @@
     "language": {
       "en": "อังกฤษ",
       "th": "ไทย"
-    }
+    },
+    "create": "Create",
+    "hint": "Hint"
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",
-    "fgName": "ชื่อกลุ่มอาาหาร",
-    "fgList": "รายการกลุ่มอาาหาร"
+    "fgName": "ชื่อกลุ่มอาหาร",
+    "fgDescription": "Description",
+    "fgList": "รายการกลุ่มอาหาร",
+    "fgCreate": "สร้างกลุ่มอาหารใหม่",
+    "fgEdit": "แก้ไขกลุ่มอาหาร",
+    "fgDetail": "รายละเอียดกลุ่มอาหาร"
   }
 }

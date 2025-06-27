@@ -37,4 +37,12 @@ i18n
     }
   });
 
+// =======================
+// วิธีเพิ่ม/แก้ไขคำแปลภาษา (How to add/edit translations)
+// 1. ไปที่ไฟล์ public/locales/th.json (ภาษาไทย) หรือ en.json (ภาษาอังกฤษ)
+// 2. เพิ่ม key และ value ที่ต้องการ เช่น
+//    "system": { "loading": "กำลังโหลดข้อมูล..." }
+// 3. เรียกใช้ในโค้ด: t('system.loading')
+// =======================
+
 export default i18n;

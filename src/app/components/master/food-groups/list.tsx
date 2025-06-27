@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from 'react';
-import { Table, TextInput } from 'flowbite-react';
+import { Button, Table, TextInput } from 'flowbite-react';
 import { flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
@@ -11,26 +11,15 @@ import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/ap
 import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
 import { useTranslation } from 'react-i18next';
 import { TableStatusRow } from '../../shared/table-status-row';
+import { useModal } from '@/app/core/hooks/use-modal';
+import { FoodGroupModal, FoodGroupModalProps } from './modals/editor-food-group-modal';
+import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
 
 const MasterFoodGroupsList = () => {
   const { t } = useTranslation();
-  // --- [ลบ] State ทั้งหมดนี้จะถูกย้ายไปจัดการใน useServerSideTable hook ---
-  // const [data, setData] = useState<Policy[]>(() => [...mockData]);
-  // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  // const [sorting, setSorting] = useState<SortingState>([]);
+  const showFoodGroupModal = useModal<FoodGroupModalProps, any>(FoodGroupModal);
 
-  // --- [เพิ่ม] ฟังก์ชัน Handler ยังคงอยู่ที่นี่ได้ ---
-  const handleEdit = (item: MasterRawMaterialItemsModel) => {
-    alert(`แก้ไข: ${item.rawMaterialObjectId} - ${item.nameThai}`);
-  };
-
-  const handleDelete = (item: MasterRawMaterialItemsModel) => {
-    if (window.confirm(`ลบ: ${item.nameThai}?`)) {
-      alert(`ลบ ${item.rawMaterialObjectId} เรียบร้อย`);
-    }
-  };
-
-  // --- [แก้ไข] ปรับปรุง Columns Definition ---
+    // --- [แก้ไข] ปรับปรุง Columns Definition ---
   const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
     () => [
       {
@@ -76,6 +65,9 @@ const MasterFoodGroupsList = () => {
 
           return (
             <div className="flex items-center justify-center gap-2">
+              <button onClick={() => handleView(item)} className="text-blue-600 hover:text-blue-800" title="ดู">
+                <Icon icon="mdi:eye" width="20" />
+              </button>
               <button onClick={() => handleEdit(item)} className="text-blue-600 hover:text-blue-800" title="แก้ไข">
                 <Icon icon="mdi:pencil" width="20" />
               </button>
@@ -92,31 +84,94 @@ const MasterFoodGroupsList = () => {
   );
 
   const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
-  const mockData = useMemo(() => [], []);
+  const mockData = useMemo(() => MASTER_RAW_MATERIAL_MOCKS, []);
 
   // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading } = useServerSideTable<MasterRawMaterialItemsModel>({
+  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
     columns,
     apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
     initialPageSize: 10,
     initialCriteria: initialCriteria,
 
     // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: false, // <--- เปิดใช้งานโหมดจำลอง
+    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
     mockData: mockData
   });
 
-  // --- [ลบ] ไม่จำเป็นต้องสร้าง table instance เองอีกต่อไป ---
-  // const table = useReactTable({ ... });
+
+  const handleCreate = async () => {
+    try {
+      // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
+      const newGroup = await showFoodGroupModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
+      alert(`สร้างกลุ่มใหม่สำเร็จ: ${newGroup.name}`);
+      // TODO: เพิ่ม newGroup เข้าไปใน state ของตาราง
+    } catch (error) {
+      console.info('การสร้างถูกยกเลิก');
+    }
+  };
+
+  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+    try {
+      // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
+      const updatedGroup = await showFoodGroupModal({
+        mode: 'edit',
+        id: item.rawMaterialObjectId,
+        size: 'lg:max-w-3xl lg:min-w-[700px]'
+      });
+      alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
+      // TODO: อัปเดตข้อมูล group ใน state ของตาราง
+    } catch (error) {
+      console.info('การแก้ไขถูกยกเลิก');
+    }
+  };
+
+  const handleView = (item: MasterRawMaterialItemsModel) => {
+    // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
+    showFoodGroupModal({ mode: 'view', id: item.rawMaterialObjectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+  };
+
+
+  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+    try {
+      // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
+      // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
+      const result = await showDeleteConfirm(item.materialId);
+
+      // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
+      // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
+      if (result.isConfirmed) {
+        console.log(`กำลังลบ ${item.nameThai}...`);
+        // TODO: ใส่ Logic การเรียก API เพื่อลบข้อมูลจริงที่นี่
+        
+        // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
+        showSuccessAlert('ลบสำเร็จ!', `${item.nameThai} ถูกลบแล้ว`);
+        
+        // TODO: โหลดข้อมูลตารางใหม่
+        refetch();
+      } else if (result.isDismissed) {
+        // `result.isDismissed` จะเป็น true ถ้าผู้ใช้กด "ยกเลิก" หรือคลิกนอก Modal
+        console.log('การลบถูกยกเลิก');
+      }
+    } catch (error) {
+      // ดักจับข้อผิดพลาดที่ไม่คาดคิด
+      console.error('เกิดข้อผิดพลาดระหว่างการยืนยัน:', error);
+    }
+  };
 
   // Render UI
   return (
     <div className="panel">
       {/* Panel Header */}
       <div className="panel-header">
-        <h2 className="panel-title">
-          {t('master.fgList')} {/* หรือชื่อหัวตาราง */}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="panel-title">
+            {t('master.fgList')} {/* หรือชื่อหัวตาราง */}
+          </h2>
+           <Button onClick={handleCreate} size={'md'} color={'success'} className='btn'>
+            <Icon icon="mdi:plus" className="h-5 w-5" />
+            {t('system.create')} {/* หรือ "สร้างใหม่" */}
+          </Button>
+        </div>
       </div>
 
       {/* Panel Body */}
