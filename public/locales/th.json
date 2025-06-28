@@ -26,6 +26,9 @@
     "cancel": "ยกเลิก",
     "saveData": "บันทึกข้อมูล"
   },
+  "require": {
+    "pleaseInput": "กรุณากรอกข้อมูล"
+  },
   "system": {
     "no": "ลำดับ",
     "action": "จัดการ",
@@ -36,7 +39,10 @@
       "th": "ไทย"
     },
     "create": "Create",
-    "hint": "Hint"
+    "hint": "Hint",
+    "status": "สถานะ",
+    "statusActive": "Active",
+    "statusInactive": "Inactiv"
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",
@@ -45,6 +51,22 @@
     "fgList": "รายการกลุ่มอาหาร",
     "fgCreate": "สร้างกลุ่มอาหารใหม่",
     "fgEdit": "แก้ไขกลุ่มอาหาร",
-    "fgDetail": "รายละเอียดกลุ่มอาหาร"
+    "fgDetail": "รายละเอียดกลุ่มอาหาร",
+
+    "ncCode": "รหัสหมวดหมู่สารอาหาร",
+    "ncName": "ชื่อหมวดหมู่สารอาหาร",
+    "ncDescription": "Description",
+    "ncList": "รายการหมวดหมู่สารอาหาร",
+    "ncCreate": "สร้างหมวดหมู่สารอาหารใหม่",
+    "ncEdit": "แก้ไขหมวดหมู่สารอาหาร",
+    "ncDetail": "รายละเอียดหมวดหมู่สารอาหาร",
+
+    "nCode": "รหัสสารอาหาร",
+    "nName": "ชื่อสารอาหาร",
+    "nDescription": "Description",
+    "nList": "รายการสารอาหาร",
+    "nCreate": "สร้างสารอาหารใหม่",
+    "nEdit": "แก้ไขสารอาหาร",
+    "nDetail": "รายละเอียดสารอาหาร"
   }
 }

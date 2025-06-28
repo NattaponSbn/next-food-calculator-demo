@@ -5,22 +5,21 @@ import { Button, Table, TextInput } from 'flowbite-react';
 import { flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
-import { Pagination } from '../../shared/pagination';
 import { TablePagination } from '../../shared/table-pagination';
-import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
-import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
 import { useTranslation } from 'react-i18next';
 import { TableStatusRow } from '../../shared/table-status-row';
 import { useModal } from '@/app/core/hooks/use-modal';
-import { FoodGroupModal, FoodGroupModalProps } from './modals/editor-food-group-modal';
 import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
+import { NutrientCategoriesModal, NutrientCategoriesModalProps } from './modals/editor-nutrient-categories-modal';
+import { MasterNutrientCategoriesItemsModel, MasterNutrientCategoriesRequestModel } from '@/app/core/models/master/nutrient-categories/nutrient-categories.model';
+import { MASTER_NUTRIENT_CATEGORIES_MOCKS } from '@/app/core/models/_mock/nutrient-categories-data.mock';
 
-const MasterFoodGroupsList = () => {
+const MasterNutrientCategoriesList = () => {
   const { t } = useTranslation();
-  const showFoodGroupModal = useModal<FoodGroupModalProps, any>(FoodGroupModal);
+  const showFoodGroupModal = useModal<NutrientCategoriesModalProps, any>(NutrientCategoriesModal);
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
-  const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
+  const columns = useMemo<ColumnDef<MasterNutrientCategoriesItemsModel>[]>(
     () => [
       {
         id: 'no',
@@ -33,14 +32,14 @@ const MasterFoodGroupsList = () => {
       },
       {
         accessorKey: 'materialId',
-        header: t('master.fgCode'),
+        header: t('master.ncCode'),
         size: 150,
       },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
           <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.en')})
+            {t('master.ncName')} ({t('system.language.en')})
             {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
           </button>
         ),
@@ -50,7 +49,7 @@ const MasterFoodGroupsList = () => {
         accessorKey: 'nameThai',
         header: ({ column }) => (
           <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.th')})
+            {t('master.ncName')} ({t('system.language.th')})
             {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
           </button>
         ),
@@ -83,11 +82,11 @@ const MasterFoodGroupsList = () => {
     [] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
   );
 
-  const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
-  const mockData = useMemo(() => MASTER_RAW_MATERIAL_MOCKS, []);
+  const initialCriteria = useMemo(() => new MasterNutrientCategoriesRequestModel(), []);
+  const mockData = useMemo(() => MASTER_NUTRIENT_CATEGORIES_MOCKS, []);
 
   // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+  const { table, isLoading, refetch } = useServerSideTable<MasterNutrientCategoriesItemsModel>({
     columns,
     apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
     initialPageSize: 10,
@@ -110,12 +109,12 @@ const MasterFoodGroupsList = () => {
     }
   };
 
-  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+  const handleEdit = async (item: MasterNutrientCategoriesItemsModel) => {
     try {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
       const updatedGroup = await showFoodGroupModal({
         mode: 'edit',
-        id: item.rawMaterialObjectId,
+        id: item.objectId,
         size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
       alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
@@ -125,13 +124,13 @@ const MasterFoodGroupsList = () => {
     }
   };
 
-  const handleView = (item: MasterRawMaterialItemsModel) => {
+  const handleView = (item: MasterNutrientCategoriesItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showFoodGroupModal({ mode: 'view', id: item.rawMaterialObjectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showFoodGroupModal({ mode: 'view', id: item.objectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
   };
 
 
-  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+  const handleDelete = async (item: MasterNutrientCategoriesItemsModel) => {
     try {
       // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
       // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
@@ -165,7 +164,7 @@ const MasterFoodGroupsList = () => {
       <div className="panel-header">
         <div className="flex items-center gap-2">
           <h2 className="panel-title">
-            {t('master.fgList')} {/* หรือชื่อหัวตาราง */}
+            {t('master.ncList')} {/* หรือชื่อหัวตาราง */}
           </h2>
           <Button onClick={handleCreate} size={'md'} color={'success'} className='btn'>
             <Icon icon="mdi:plus" className="h-5 w-5" />
@@ -177,7 +176,7 @@ const MasterFoodGroupsList = () => {
       {/* Panel Body */}
       <div className="panel-body">
         <div className="responsive-table-container">
-          <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
+          <div className="responsive-table-scroll-wrapper">
             <Table className="responsive-table">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -238,9 +237,10 @@ const MasterFoodGroupsList = () => {
         </div>
         <TablePagination table={table} />
       </div>
+
     </div>
 
   );
 };
 
-export default MasterFoodGroupsList;
+export default MasterNutrientCategoriesList;

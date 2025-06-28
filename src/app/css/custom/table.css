@@ -1,0 +1,29 @@
+/* 1. Container หลักของตาราง (ครอบทุกอย่าง) */
+.responsive-table-container {
+  @apply overflow-hidden;
+}
+
+/* 2. Container สำหรับการ Scroll */
+.responsive-table-scroll-wrapper {
+  /* 
+    - แสดง scrollbar เมื่อจำเป็นทั้งสองแกน
+    - กำหนดความสูงสูงสุดเป็นค่า default ที่เหมาะสม
+    - สามารถ override ได้ด้วย style attribute หรือ class อื่นๆ
+  */
+  @apply overflow-auto;
+ max-height: var(--table-max-height, calc(100vh - 350px));
+}
+
+/* 3. ตัวตาราง Table Element */
+.responsive-table {
+  /* 
+    - กำหนดความกว้างขั้นต่ำเป็นค่า default
+    - ทำให้ตารางขยายเต็มความกว้างของ scroll-wrapper
+  */
+  @apply table-fixed min-w-[800px] w-full border-collapse;
+}
+
+/* 4. หัวตารางที่ลอยอยู่ด้านบน (Sticky Header) */
+.responsive-table-header {
+  @apply sticky top-0 z-10 text-center;
+}

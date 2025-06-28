@@ -8,6 +8,7 @@
 @import './theme/default-colors.css';
 @import './override/reboot.css';
 @import './custom/button.css';
+@import './custom/table.css';
 
 
 @layer components {

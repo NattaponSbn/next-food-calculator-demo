@@ -2,25 +2,90 @@
 
 import React, { useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
-import { flexRender, type ColumnDef } from '@tanstack/react-table';
+import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
-import { Pagination } from '../../shared/pagination';
 import { TablePagination } from '../../shared/table-pagination';
-import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
-import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
 import { useTranslation } from 'react-i18next';
 import { TableStatusRow } from '../../shared/table-status-row';
 import { useModal } from '@/app/core/hooks/use-modal';
-import { FoodGroupModal, FoodGroupModalProps } from './modals/editor-food-group-modal';
 import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
+import { MasterNutrientItemsModel, MasterNutrientRequestModel } from '@/app/core/models/master/nutrients/nutrient.model';
+import { NutrientModalProps, NutrientModal } from './modals/editor-nutrient-modal';
+import { MASTER_NUTRIENT_MOCKS } from '@/app/core/models/_mock/nutrients-data.mock';
+import { formatDateEngShort } from '@/app/lib/date-helpers';
+import { useFilter } from '@/app/core/hooks/use-filter';
+import { FilterListItem, StatusFilter } from '../../shared/filters/status-filter';
+import { DateFilter } from '../../shared/filters/date-filter';
 
-const MasterFoodGroupsList = () => {
+const MasterNutrientList = () => {
   const { t } = useTranslation();
-  const showFoodGroupModal = useModal<FoodGroupModalProps, any>(FoodGroupModal);
+  const showFoodGroupModal = useModal<NutrientModalProps, any>(NutrientModal);
+  const { showFilter } = useFilter();
+
+  const statusOptions: FilterListItem[] = useMemo(() => [
+    { id: 'PENDING', name: t('status.payment.pending') },
+    { id: 'PAID', name: t('status.payment.paid') },
+    { id: 'FAILED', name: t('status.payment.failed') },
+  ], [t]);
+
+  const handleOpenFilter = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    column: Column<any, any> // รับ column instance เข้ามา
+  ) => {
+    const filterType = column.columnDef.meta?.filterType;
+    const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
+    const currentValue = column.getFilterValue();
+    
+    // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
+    const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
+
+    let result;
+
+    // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
+    switch (filterType) {
+      case 'status':
+        // ตรวจสอบ ID ของคอลัมน์เพื่อส่ง 'items' ที่ถูกต้อง
+        const statusItems = columnId === 'status' 
+                              ? statusOptions 
+                              : []; // กรณี default
+
+        result = await showFilter(
+          StatusFilter,
+          {
+            initialValue: currentValue as string[],
+            items: statusItems,
+            title: filterTitle,
+          },
+          event.currentTarget
+        );
+        break;
+
+      case 'date':
+        // สำหรับ Date Filter อาจจะไม่ต้องแยกกรณีถ้า UI เหมือนกัน
+        result = await showFilter(
+          DateFilter,
+          {
+            initialValue: currentValue as { condition: string; date: string },
+            title: filterTitle,
+          },
+          event.currentTarget
+        );
+        break;
+
+      // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
+      default:
+        console.warn(`No filter implemented for type: ${filterType}`);
+        return;
+    }
+    
+    if (result?.applied) {
+      column.setFilterValue(result.value);
+    }
+  };
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
-  const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
+  const columns = useMemo<ColumnDef<MasterNutrientItemsModel>[]>(
     () => [
       {
         id: 'no',
@@ -32,15 +97,15 @@ const MasterFoodGroupsList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'materialId',
-        header: t('master.fgCode'),
+        accessorKey: 'nutrientCode',
+        header: t('master.nCode'),
         size: 150,
       },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
           <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.en')})
+            {t('master.nName')} ({t('system.language.en')})
             {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
           </button>
         ),
@@ -50,11 +115,90 @@ const MasterFoodGroupsList = () => {
         accessorKey: 'nameThai',
         header: ({ column }) => (
           <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.th')})
+            {t('master.nName')} ({t('system.language.th')})
             {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
           </button>
         ),
         size: 250,
+      },
+       {
+        accessorKey: 'defaultUnit',
+        header: () => t('master.nutrientUnit', 'หน่วย'),
+        size: 100,
+      },
+      // กลุ่มสารอาหาร
+      {
+        accessorKey: 'groupName',
+        header: () => t('master.nutrientGroup', 'กลุ่มสารอาหาร'),
+        size: 200,
+      },
+      // สถานะ
+      {
+        accessorKey: 'status',
+        header: ({ column }) => (
+          // ใช้ flexbox เพื่อจัดวางข้อความและไอคอน
+          <div className="flex items-center justify-center gap-1">
+            <span>{t('system.status')}</span>
+            {/* ปุ่มไอคอน Filter */}
+            <button onClick={(e) => handleOpenFilter(e, column)} className="p-1">
+              <Icon 
+                icon="mdi:filter-variant" 
+                // เปลี่ยนสีไอคอนถ้ามีการ filter อยู่
+                className={column.getIsFiltered() ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}
+              />
+            </button>
+          </div>
+        ),
+        meta: {
+          filterType: 'status', // กำหนดประเภท
+        },
+        cell: (info) => (
+          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+            info.getValue() === 'ACTIVE'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
+          }`}>
+            {info.getValue() === 'ACTIVE' ? t('system.statusActive') : t('system.statusInactive')}
+          </span>
+        ),
+        size: 120,
+      },
+       {
+        accessorKey: 'updatedBy',
+        header: () => t('system.updatedBy'),
+        size: 150,
+        cell: (info) => (
+          // สามารถใส่ icon หรือ avatar เล็กๆ ข้างหน้าชื่อได้ถ้าต้องการ
+          <div className="flex items-center justify-center gap-2">
+            <span className="font-medium">{info.getValue<string>()}</span>
+          </div>
+        ),
+      },
+       {
+        accessorKey: 'updatedAt',
+        header: ({ column }) => (
+          <div className="flex items-center justify-center gap-1">
+            <span>{t('system.updatedAt')}</span>
+            <button onClick={(e) => handleOpenFilter(e, column)} className="p-1">
+              <Icon 
+                icon="mdi:filter-variant"
+                className={column.getIsFiltered() ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}
+              />
+            </button>
+          </div>
+        ),
+        meta: {
+          filterType: 'date',
+        },
+        size: 180,
+        cell: (info) => {
+          const dateValue = info.getValue<string>();
+          
+          // จัดรูปแบบวันที่ (แนะนำให้ใช้ date-fns ในโปรเจกต์จริง)
+          // new Date(dateValue).toLocaleDateString('th-TH', { ... })
+          // ตัวอย่างนี้จะแสดงผลแบบสั้นๆ เพื่อความกระชับ
+           return formatDateEngShort(dateValue);
+        },
       },
       // จัดการ
       {
@@ -79,15 +223,16 @@ const MasterFoodGroupsList = () => {
         },
         size: 120,
       },
+      
     ],
-    [] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
+    [statusOptions] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
   );
 
-  const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
-  const mockData = useMemo(() => MASTER_RAW_MATERIAL_MOCKS, []);
+  const initialCriteria = useMemo(() => new MasterNutrientRequestModel(), []);
+  const mockData = useMemo(() => MASTER_NUTRIENT_MOCKS, []);
 
   // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+  const { table, isLoading, refetch } = useServerSideTable<MasterNutrientItemsModel>({
     columns,
     apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
     initialPageSize: 10,
@@ -110,12 +255,12 @@ const MasterFoodGroupsList = () => {
     }
   };
 
-  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+  const handleEdit = async (item: MasterNutrientItemsModel) => {
     try {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
       const updatedGroup = await showFoodGroupModal({
         mode: 'edit',
-        id: item.rawMaterialObjectId,
+        id: item.nutrientId,
         size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
       alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
@@ -125,17 +270,17 @@ const MasterFoodGroupsList = () => {
     }
   };
 
-  const handleView = (item: MasterRawMaterialItemsModel) => {
+  const handleView = (item: MasterNutrientItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showFoodGroupModal({ mode: 'view', id: item.rawMaterialObjectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showFoodGroupModal({ mode: 'view', id: item.nutrientId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
   };
 
 
-  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+  const handleDelete = async (item: MasterNutrientItemsModel) => {
     try {
       // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
       // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
-      const result = await showDeleteConfirm(item.materialId);
+      const result = await showDeleteConfirm(item.nutrientId);
 
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
@@ -165,7 +310,7 @@ const MasterFoodGroupsList = () => {
       <div className="panel-header">
         <div className="flex items-center gap-2">
           <h2 className="panel-title">
-            {t('master.fgList')} {/* หรือชื่อหัวตาราง */}
+            {t('master.nList')} {/* หรือชื่อหัวตาราง */}
           </h2>
           <Button onClick={handleCreate} size={'md'} color={'success'} className='btn'>
             <Icon icon="mdi:plus" className="h-5 w-5" />
@@ -177,7 +322,7 @@ const MasterFoodGroupsList = () => {
       {/* Panel Body */}
       <div className="panel-body">
         <div className="responsive-table-container">
-          <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
+          <div className="responsive-table-scroll-wrapper">
             <Table className="responsive-table">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -238,9 +383,10 @@ const MasterFoodGroupsList = () => {
         </div>
         <TablePagination table={table} />
       </div>
+
     </div>
 
   );
 };
 
-export default MasterFoodGroupsList;
+export default MasterNutrientList;

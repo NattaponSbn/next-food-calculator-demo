@@ -26,6 +26,9 @@
     "cancel": "Cancel",
     "saveData": "Save Data"
   },
+  "require": {
+    "pleaseInput": "Please Input Require"
+  },
   "system": {
     "no": "No",
     "action": "Action",
@@ -36,7 +39,10 @@
       "th": "TH"
     },
     "create": "Create",
-    "hint": "Hint"
+    "hint": "Hint",
+    "status": "Status",
+    "statusActive": "Active",
+    "statusInactive": "Inactiv"
   },
   "master": {
     "fgCode": "Food Group Code",
@@ -45,6 +51,22 @@
     "fgList": "Food Group List",
     "fgCreate": "Create Food Group",
     "fgEdit": "Edit Food Group",
-    "fgDetail": "Detail Food Group"
+    "fgDetail": "Detail Food Group",
+    
+    "ncCode": "Nutrient Categories Code",
+    "ncName": "Nutrient Categories Name",
+    "ncDescription": "Description",
+    "ncList": "Nutrient Categories List",
+    "ncCreate": "Create Nutrient Categories",
+    "ncEdit": "Edit Nutrient Categories",
+    "ncDetail": "Detail Nutrient Categories",
+
+    "nCode": "Nutrient Code",
+    "nName": "Nutrient Name",
+    "nDescription": "Description",
+    "nList": "Nutrient List",
+    "nCreate": "Create Nutrient",
+    "nEdit": "Edit Nutrient",
+    "nDetail": "Detail Nutrient"
   }
 }

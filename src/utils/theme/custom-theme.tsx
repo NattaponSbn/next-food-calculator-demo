@@ -30,7 +30,7 @@ const customTheme = {
         "bg-transparent hover:bg-lightprimary dark:hover:bg-darkprimary hover:text-primary p-0",
     },
     inner: {
-      base: "flex items-center gap-2 transition-all duration-150 justify-center",
+      base: "flex items-center gap-1 transition-all duration-150 justify-center",
     },
   },
 

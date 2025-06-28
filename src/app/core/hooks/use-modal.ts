@@ -8,7 +8,7 @@ import { useModalStore } from '../store/use-modal-store';
  */
 export type InjectedModalProps<TResult = any> = {
   onConfirm: (result: TResult) => void;
-  onClose: () => void;
+   onClose: (options?: { isCancellation: boolean }) => void;
 };
 
 /**
@@ -24,13 +24,18 @@ export function useModal<TModalProps extends object, TModalResult = any>(
   const { open, close } = useModalStore();
 
   const show = (props: TModalProps): Promise<TModalResult> => {
-    return open<TModalResult>(
-      React.createElement(component, {
-        ...props,
-        onConfirm: (result) => close(result),
-        onClose: () => close()
-      })
-    );
+   const elementProps = {
+    ...props,
+    onConfirm: (result: TModalResult) => close(result),
+    onClose: ({ isCancellation = true } = {}) => {
+      close(isCancellation ? undefined : 'MODAL_CLOSED_GRACEFULLY');
+    },
+  };
+  
+  // ส่ง Component และ Props Object ที่สร้างไว้เข้าไป
+  return open<TModalResult>(
+    React.createElement(component, elementProps)
+  );
   };
 
   return show;

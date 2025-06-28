@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button, HelperText, Label, TextInput } from 'flowbite-react';
 import { InjectedModalProps } from '@/app/core/hooks/use-modal';
 import { ModalFrame, ModalSize } from '@/app/components/shared/modals/modal-frame';
@@ -7,39 +8,38 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
-import * as z from 'zod';
 
+// 2. Types
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
-const _foodGroupSchema = z.object({
+const _nutrientCategoriesSchema = z.object({
   code: z.string(),
   nameEng: z.string(),
   nameThai: z.string(),
 });
-export type FoodGroupFormValues = z.infer<typeof _foodGroupSchema>;
-export interface FoodGroupModalProps {
+export interface NutrientCategoriesModalProps {
   mode: Mode;
   id?: string;
   size?: ModalSize;
 }
-type FoodGroupModalResult = FoodGroupFormValues & { id: string };
-
+type NutrientCategoriesModalResult = NutrientCategoriesFormValues & { id: string };
+export type NutrientCategoriesFormValues = z.infer<typeof _nutrientCategoriesSchema>;
 // 3. Mock API
-const saveFoodGroupApi = (data: FoodGroupFormValues, id?: string) =>
-  new Promise<FoodGroupModalResult>(res => setTimeout(() => res({ id: id || `fg_${Date.now()}`, ...data }), 1000));
+const saveNutrientCategoriesApi = (data: NutrientCategoriesFormValues, id?: string) =>
+  new Promise<NutrientCategoriesModalResult>(res => setTimeout(() => res({ id: id || `nc_${Date.now()}`, ...data }), 1000));
 
 // 4. The Modal Component
-export function FoodGroupModal({
+export function NutrientCategoriesModal({
   mode,
   id,
   size,
   onConfirm,
   onClose,
-}: FoodGroupModalProps & InjectedModalProps<FoodGroupModalResult>) {
+}: NutrientCategoriesModalProps & InjectedModalProps<NutrientCategoriesModalResult>) {
   const { t } = useTranslation();
   const isViewMode = mode === 'view';
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const foodGroupSchema = useMemo(() => z.object({
+  const nutrientCategoriesSchema = useMemo(() => z.object({
     code: z.string().min(3, { message: t('require.pleaseInput') }),
     nameEng: z.string().min(3, { message: t('require.pleaseInput') }),
     nameThai: z.string().min(3, { message: t('require.pleaseInput') }),
@@ -50,8 +50,8 @@ export function FoodGroupModal({
     handleSubmit,
     reset, // <-- เพิ่ม 'reset' เพื่ออัปเดตค่าในฟอร์ม
     formState: { errors, isSubmitting },
-  } = useForm<FoodGroupFormValues>({
-    resolver: zodResolver(foodGroupSchema),
+  } = useForm<NutrientCategoriesFormValues>({
+    resolver: zodResolver(nutrientCategoriesSchema),
     // ค่าเริ่มต้นให้เป็นค่าว่างไปก่อน แล้วเราจะใช้ useEffect + reset มาใส่ทีหลัง
     defaultValues: { code: '', nameEng: '', nameThai: '' },
   });
@@ -67,9 +67,9 @@ export function FoodGroupModal({
     }
   }, [mode, id, reset, onClose]);
 
-  const onSubmit = async (data: FoodGroupFormValues) => {
+  const onSubmit = async (data: NutrientCategoriesFormValues) => {
     try {
-      const result = await saveFoodGroupApi(data, id);
+      const result = await saveNutrientCategoriesApi(data, id);
       showSuccessAlert();
       onConfirm(result); // สำเร็จ: ส่งข้อมูลกลับและปิด Modal
     } catch (error) {
@@ -78,7 +78,7 @@ export function FoodGroupModal({
     }
   };
 
-  const handleSaveDataClick = async (data: FoodGroupFormValues) => {
+  const handleSaveDataClick = async (data: NutrientCategoriesFormValues) => {
     const resultConfirm = await showConfirmation();
     if (resultConfirm.isConfirmed) {
       onSubmit(data);
@@ -88,9 +88,9 @@ export function FoodGroupModal({
   }
 
   const titles: Record<Mode, string> = {
-    [ModeTypes.create]: t('master.fgCreate'),
-    [ModeTypes.edit]: t('master.fgEdit'),
-    [ModeTypes.view]: t('master.fgDetail'),
+    [ModeTypes.create]: t('master.ncCreate'),
+    [ModeTypes.edit]: t('master.ncEdit'),
+    [ModeTypes.view]: t('master.ncDetail'),
   };
 
 
@@ -115,7 +115,7 @@ export function FoodGroupModal({
         {/* code Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="code" value={t('master.fgCode')} className='text-dark' color={errors.code && 'failure'} />
+            <Label htmlFor="code" value={t('master.ncCode')} className='text-dark' color={errors.code && 'failure'} />
           </div>
           <TextInput
             id="code"
@@ -130,7 +130,7 @@ export function FoodGroupModal({
         {/* nameEng Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameEng" value={t('master.fgName') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
+            <Label htmlFor="nameEng" value={t('master.ncName') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
           </div>
           <TextInput
             id="nameEng"
@@ -145,7 +145,7 @@ export function FoodGroupModal({
         {/* nameThai Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameThai" value={t('master.fgName') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
+            <Label htmlFor="nameThai" value={t('master.ncName') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
           </div>
           <TextInput
             id="nameThai"
