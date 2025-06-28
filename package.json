@@ -1,6 +1,6 @@
 {
   "name": "food-calculator",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
     "release": "standard-version"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.13",
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.1.1",
