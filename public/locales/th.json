@@ -42,7 +42,10 @@
     "hint": "Hint",
     "status": "สถานะ",
     "statusActive": "Active",
-    "statusInactive": "Inactiv"
+    "statusInactive": "Inactive",
+    "updatedBy": "Updated By",
+    "updatedAt": "Updated At",
+    "filter": "กรอง"
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",

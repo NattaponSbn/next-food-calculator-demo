@@ -42,7 +42,10 @@
     "hint": "Hint",
     "status": "Status",
     "statusActive": "Active",
-    "statusInactive": "Inactiv"
+    "statusInactive": "Inactive",
+    "updatedBy": "Updated By",
+    "updatedAt": "Updated At",
+    "filter": "Filter"
   },
   "master": {
     "fgCode": "Food Group Code",

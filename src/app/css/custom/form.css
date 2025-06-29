@@ -1,0 +1,69 @@
+  .form-rounded-xl input,
+  .form-rounded-xl select,
+  .form-rounded-xl textarea {
+      @apply rounded-xl;
+  }
+
+  .form-control input,
+  .form-control select,
+  .form-control textarea {
+      @apply border border-border bg-white w-full text-sm;
+  }
+
+  /* Default Size (MD) */
+  .form-control-md input,
+  .form-control-md select,
+  .form-control input,
+  .form-control select {
+      /* ตั้งให้ .form-control เป็นขนาดกลาง (md) โดยปริยาย */
+      @apply text-sm px-4 py-2;
+  }
+
+  /* Small Size (SM) */
+  .form-control-sm input,
+  .form-control-sm select {
+      @apply text-xs px-3 py-1.5;
+  }
+
+  /* Large Size (LG) */
+  .form-control-lg input {
+      @apply text-base px-5 py-3;
+  }
+
+  .form-control-rounded input {
+      @apply rounded-full border border-border bg-white w-full text-sm;
+  }
+
+  .form-control-rounded input:focus {
+      @apply border-primary outline-none shadow-none ring-offset-0 ring-transparent;
+  }
+
+
+  .form-control input:focus {
+      @apply border-primary outline-none shadow-none ring-offset-0 ring-transparent;
+  }
+
+  .form-control-input {
+      @apply rounded-md border border-border bg-white w-full text-sm;
+  }
+
+  .form-control-input:focus {
+      @apply border-primary outline-none shadow-none ring-offset-0 ring-transparent;
+  }
+
+  .form-rounded-md input {
+      @apply rounded-md border border-border bg-white w-full text-sm;
+  }
+
+  .form-rounded-md input:focus {
+      @apply border-primary outline-none shadow-none ring-offset-0 ring-transparent;
+  }
+
+  .form-rounded input {
+      @apply rounded-full
+  }
+
+  .has-error input,
+  .has-error select {
+      @apply border-red-500 text-red-900 focus:border-red-500 focus:ring-red-500
+  }

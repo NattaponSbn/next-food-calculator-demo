@@ -17,6 +17,9 @@ import { formatDateEngShort } from '@/app/lib/date-helpers';
 import { useFilter } from '@/app/core/hooks/use-filter';
 import { FilterListItem, StatusFilter } from '../../shared/filters/status-filter';
 import { DateFilter } from '../../shared/filters/date-filter';
+import { FilterControl } from '../../shared/filterable-header';
+import { SortableHeader } from '../../shared/sortable-header';
+import { DateFilterRequestModel } from '@/app/core/models/shared/date-filter.model';
 
 const MasterNutrientList = () => {
   const { t } = useTranslation();
@@ -24,9 +27,9 @@ const MasterNutrientList = () => {
   const { showFilter } = useFilter();
 
   const statusOptions: FilterListItem[] = useMemo(() => [
-    { id: 'PENDING', name: t('status.payment.pending') },
-    { id: 'PAID', name: t('status.payment.paid') },
-    { id: 'FAILED', name: t('status.payment.failed') },
+    { id: 'PENDING', name: 'Pending' },
+    { id: 'PAID', name: 'Paid' },
+    { id: 'FAILED', name: 'Failed' },
   ], [t]);
 
   const handleOpenFilter = async (
@@ -40,7 +43,7 @@ const MasterNutrientList = () => {
     // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
     const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
 
-    let result;
+    let result;    
 
     // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
     switch (filterType) {
@@ -55,7 +58,6 @@ const MasterNutrientList = () => {
           {
             initialValue: currentValue as string[],
             items: statusItems,
-            title: filterTitle,
           },
           event.currentTarget
         );
@@ -66,7 +68,7 @@ const MasterNutrientList = () => {
         result = await showFilter(
           DateFilter,
           {
-            initialValue: currentValue as { condition: string; date: string },
+            initialValue: currentValue as DateFilterRequestModel | undefined,
             title: filterTitle,
           },
           event.currentTarget
@@ -98,59 +100,110 @@ const MasterNutrientList = () => {
       },
       {
         accessorKey: 'nutrientCode',
-        header: t('master.nCode'),
+        header: ({ column }) => (
+          <FilterControl
+            column={column}
+            title={t('master.nCode')}
+            placeholder={t('master.nCode')}
+            meta={{ filterType: 'text' }} // <-- กำหนด filter type
+            onFilterIconClick={handleOpenFilter}
+          />
+        ),
+        meta: { filterType: 'text' }, // meta ที่นี่เพื่อให้ handleOpenFilter อ่านได้ (ถ้าจำเป็น)
         size: 150,
       },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.nName')} ({t('system.language.en')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          // ห่อทุกอย่างด้วย div หลัก และใช้ flex-col
+          <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+             <SortableHeader column={column}>
+              {`${t('master.nName')} (${t('system.language.en')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.nName')} (${t('system.language.en')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
       {
         accessorKey: 'nameThai',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.nName')} ({t('system.language.th')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+             <SortableHeader column={column}>
+              {`${t('master.nName')} (${t('system.language.th')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.nName')} (${t('system.language.th')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
        {
         accessorKey: 'defaultUnit',
-        header: () => t('master.nutrientUnit', 'หน่วย'),
+        header: ({ column }) => (
+           <FilterControl
+              column={column}
+              title={t('master.nUnit')}
+              placeholder={t('master.nUnit')}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+        ),
         size: 100,
       },
       // กลุ่มสารอาหาร
       {
         accessorKey: 'groupName',
-        header: () => t('master.nutrientGroup', 'กลุ่มสารอาหาร'),
+        header: ({ column }) => (
+           <FilterControl
+              column={column}
+              title={t('master.nGroup')}
+              placeholder={t('master.nGroup')}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+        ),
         size: 200,
       },
       // สถานะ
       {
         accessorKey: 'status',
         header: ({ column }) => (
-          // ใช้ flexbox เพื่อจัดวางข้อความและไอคอน
-          <div className="flex items-center justify-center gap-1">
-            <span>{t('system.status')}</span>
-            {/* ปุ่มไอคอน Filter */}
-            <button onClick={(e) => handleOpenFilter(e, column)} className="p-1">
-              <Icon 
-                icon="mdi:filter-variant" 
-                // เปลี่ยนสีไอคอนถ้ามีการ filter อยู่
-                className={column.getIsFiltered() ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}
-              />
-            </button>
+           <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+             <SortableHeader column={column}>
+              {t('system.status')}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={t('system.status')}
+              meta={{ filterType: 'status' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
           </div>
         ),
         meta: {
-          filterType: 'status', // กำหนดประเภท
+          filterType: 'status',
         },
         cell: (info) => (
           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -177,14 +230,20 @@ const MasterNutrientList = () => {
        {
         accessorKey: 'updatedAt',
         header: ({ column }) => (
-          <div className="flex items-center justify-center gap-1">
-            <span>{t('system.updatedAt')}</span>
-            <button onClick={(e) => handleOpenFilter(e, column)} className="p-1">
-              <Icon 
-                icon="mdi:filter-variant"
-                className={column.getIsFiltered() ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}
-              />
-            </button>
+           <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+             <SortableHeader column={column}>
+              {t('system.updatedAt')}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={t('system.updatedAt')}
+              meta={{ filterType: 'date' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
           </div>
         ),
         meta: {
@@ -334,21 +393,7 @@ const MasterNutrientList = () => {
                         className="p-4 align-top border"
                         style={{ width: header.getSize() }}
                       >
-                        <div className="flex flex-col gap-3">
-                          <div className="font-bold text-sm text-gray-600 dark:text-gray-300 flex justify-center">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </div>
-                          {header.column.getCanFilter() && (
-                            <TextInput
-                              id={header.id}
-                              type="text"
-                              value={(header.column.getFilterValue() as string) ?? ''}
-                              onChange={(e) => header.column.setFilterValue(e.target.value)}
-                              placeholder="ค้นหา..."
-                              className="form-control form-rounded-xl"
-                            />
-                          )}
-                        </div>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
                     ))}
                   </tr>

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react'; // เพิ่ม useMemo
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { useTranslation } from 'react-i18next';
 
 // 1. [แก้ไข] สร้าง Type สำหรับ item แต่ละตัว
 // ทำให้ยืดหยุ่น โดยขอแค่มี id และ name
@@ -24,9 +25,10 @@ export function StatusFilter({
   initialValue = [],
   onApply,
   onClose,
-  title = 'Filter by Status',
+  title = 'system.filter',
 }: StatusFilterProps) {
   // 3. ปรับ State ให้รองรับทั้ง string และ number
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<Set<string | number>>(new Set(initialValue));
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -59,8 +61,9 @@ export function StatusFilter({
 
   return (
     <div className="flex w-80 flex-col gap-4">
-      <h4 className="font-semibold">{title}</h4>
+      <h4 className="font-semibold">{t(title)}</h4>
       <TextInput 
+      className='form-control form-rounded-xl'
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

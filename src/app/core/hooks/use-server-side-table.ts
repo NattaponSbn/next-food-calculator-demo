@@ -136,6 +136,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
       columnFilters,
       pagination,
     },
+    enableSortingRemoval: true,
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
