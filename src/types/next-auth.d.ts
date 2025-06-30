@@ -1,32 +1,36 @@
-// types/next-auth.d.ts
+import { DefaultSession, DefaultUser } from "next-auth";
+import { JWT, DefaultJWT } from "next-auth/jwt";
 
-import "next-auth";
-import "next-auth/jwt";
-
-// ขยาย Type ของ User ที่มาจาก NextAuth
-declare module "next-auth" {
-  interface User {
-    // เพิ่ม property ที่คุณต้องการ
+// ขยาย JWT Type ที่มีอยู่แล้ว
+declare module "next-auth/jwt" {
+  interface JWT extends DefaultJWT {
     id: string;
-    token: string;
-    // name และ email มีอยู่แล้ว ไม่ต้องเพิ่ม
-  }
-
-  interface Session {
-    // เพิ่ม property ที่คุณจะส่งไปให้ session
+    name?: string | null; // เพิ่ม name, email
+    email?: string | null;
     accessToken: string;
-    // ขยาย user ใน session ให้มี type ของเรา
-    user: {
-      id: string;
-    } & DefaultSession["user"]; // เอา type เดิมของ user มาด้วย
+    refreshToken: string;
+    error?: string;
   }
 }
 
-// ขยาย Type ของ JWT
-declare module "next-auth/jwt" {
-  interface JWT {
-    // เพิ่ม property ที่เราเก็บใน token
-    accessToken: string;
+// ขยาย Session Type ที่มีอยู่แล้ว
+declare module "next-auth" {
+  interface User extends DefaultUser {
+    // เพิ่ม property ที่ได้จาก API ของคุณ
     id: string;
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+    kind: string;
+  }
+
+  interface Session {
+    // เพิ่ม property ที่ต้องการให้ฝั่ง Client เข้าถึงได้
+    user: {
+      id: string;
+    } & DefaultSession["user"]; // คง type เริ่มต้นของ user ไว้
+    
+    accessToken: string;
+    refreshToken: string;
   }
 }

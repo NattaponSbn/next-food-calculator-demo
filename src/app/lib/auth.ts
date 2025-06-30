@@ -1,14 +1,8 @@
-// src/lib/auth.ts
-import type { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions, User } from "next-auth"; // 👈 ใช้ User จาก next-auth โดยตรง
 import CredentialsProvider from "next-auth/providers/credentials";
+import serverApiClient from "../core/services/server-api-client";
 
-// คุณสามารถประกาศ Type ของคุณที่นี่ หรือ import มาก็ได้
-export type MyUser = {
-  id: string;
-  name: string;
-  email: string;
-  token: string;
-};
+// ❌ ไม่ต้องประกาศ MyUser ที่นี่แล้ว เพราะเราขยาย Type ของ NextAuth โดยตรง
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,63 +12,138 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<MyUser | null> {
-        // ในสถานการณ์จริง คุณจะ fetch จาก API ของคุณ
-        // const res = await fetch(...)
-        // const data = await res.json()
-        
-        // นี่คือข้อมูลจำลอง
-        if (
-          credentials?.username === "admin" &&
-          credentials?.password === "1234"
-        ) {
-          const user: MyUser = {
-            id: "123",
-            name: "John Doe",
-            email: "john@example.com",
-            token: "abc123xyz-from-api" // นี่คือ token ที่คุณได้จาก backend
-          };
-          return user;
+      // 👇 return type เป็น User ที่เราขยายแล้ว
+      async authorize(credentials): Promise<User | null> {
+        if (!credentials?.username || !credentials?.password) {
+          throw new Error("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน");
         }
 
-        // ถ้า login ไม่สำเร็จ ให้ return null
-        return null;
+        try {
+          // 1. เรียก API /auth เพื่อเอา Tokens
+          const authResponse = await serverApiClient.post("/auth/login", {
+            username: credentials.username,
+            password: credentials.password,
+          });
+
+          const tokens = authResponse.data;
+
+          if (tokens && tokens.accessToken) {
+            // 2. ถ้าได้ token มา ให้ return object ที่มีแค่ token
+            //    เราจะดึงข้อมูล user ทีหลังใน jwt callback
+            return {
+              // ข้อมูลจาก API /auth
+              accessToken: tokens.accessToken,
+              refreshToken: tokens.refreshToken,
+              expiresIn: tokens.expiresIn,
+              kind: tokens.kind,
+
+              // ข้อมูลที่ต้องมีตาม DefaultUser (ใส่ค่าชั่วคราว)
+              id: "placeholder-id",
+              name: "",
+              email: "",
+              image: "",
+            };
+          }
+          return null;
+        } catch (error: any) {
+          const errorMessage =
+            error.response?.data?.message || "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+          throw new Error(errorMessage);
+        }
       },
     }),
   ],
   session: {
-    strategy: "jwt", // สำคัญมาก: ต้องเป็น jwt เพื่อให้ callbacks.jwt ทำงาน
+    strategy: "jwt",
   },
   callbacks: {
-    // callback นี้จะถูกเรียกเมื่อ JWT ถูกสร้างหรืออัปเดต
-    async jwt({ token, user }) {
-      // `user` จะมีค่าเฉพาะตอน sign in ครั้งแรก
-      // เราต้องส่งข้อมูลจาก `user` (ที่ได้จาก authorize) ไปยัง `token`
-      if (user) {
-        const myUser = user as MyUser; // Cast user เป็น type ที่เรากำหนด
-        token.accessToken = myUser.token;
-        token.id = myUser.id;
-        token.name = myUser.name;
-        token.email = myUser.email;
+    async jwt({ token, user, account }) {
+      // `user` object จะมีค่าแค่ตอนล็อกอินครั้งแรก
+      if (user && account?.provider === "credentials") {
+        // 1. นำข้อมูล token จาก `user` (ที่ได้จาก authorize) มาใส่ใน `token`
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+
+        // ✨ 2. ใช้ accessToken ไปเรียก API ดึงข้อมูลผู้ใช้ ✨
+        try {
+          const profileResponse = await serverApiClient.post('/user',
+            {}, // ส่ง body ว่างๆ ถ้า API ไม่ต้องการ body
+            {   // options จะเป็น parameter ที่สามสำหรับ .post()
+              headers: {
+                Authorization: `Bearer ${token.accessToken}`,
+              },
+            });
+
+          const userProfile = profileResponse.data;
+
+          // 3. ผนวกข้อมูล profile เข้าไปใน token (ปรับตาม API ที่มี)
+
+          // ถ้า API ไม่มี id, เราอาจจะต้องใช้ข้อมูลอื่นแทน หรือรอ API อัปเดต
+          // ในที่นี้จะลองใช้ userName เป็น id ชั่วคราว
+          token.id = userProfile.userName || token.id; // ใช้ userName หรือ id เดิม (placeholder)
+
+          token.name = userProfile.displayName;
+
+          // ถ้า API ไม่มี email, เราอาจจะใช้ userName เป็น email ชั่วคราว
+          token.email = userProfile.userName || null; // หรือใส่ null ไปเลยถ้าไม่จำเป็น
+          // token.roles = userProfile.roles; // หรือข้อมูลอื่นๆ ที่ต้องการ
+        } catch (error) {
+          console.error("Failed to fetch user profile in JWT callback", error);
+          // อาจจะคืนค่า token เดิม หรือจัดการ error ตามต้องการ
+          // การคืนค่า token ที่มีแค่ access token ก็ยังทำให้ผู้ใช้ล็อกอินได้
+          // แต่อาจจะไม่มีข้อมูลชื่อ/อีเมล
+          return { ...token, error: "FetchProfileError" };
+        }
       }
+
+      // สำหรับการเรียกครั้งต่อๆ ไป จะคืนค่า token ที่มีข้อมูลครบถ้วนแล้ว
       return token;
     },
-    // callback นี้จะถูกเรียกเมื่อ client ขอ session
+
     async session({ session, token }) {
-      // ส่งข้อมูลจาก `token` (ที่ได้จาก jwt callback) ไปยัง `session`
-      // เพื่อให้ฝั่ง client สามารถเข้าถึงข้อมูลเหล่านี้ได้
+      // `token` คือข้อมูลล่าสุดจาก `jwt` callback
+      // เราจะส่งข้อมูลจาก token ไปยัง session
       if (token) {
-        session.accessToken = token.accessToken as string;
-        session.user.id = token.id as string;
+        session.user.id = token.id;
         session.user.name = token.name;
         session.user.email = token.email;
+        // session.user.roles = token.roles;
+
+        session.accessToken = token.accessToken;
+        session.refreshToken = token.refreshToken;
+        // สามารถเพิ่ม error handling ได้
+        // session.error = token.error
       }
       return session;
     },
   },
-  // เพิ่ม secret เพื่อความปลอดภัย
-  secret: process.env.NEXTAUTH_SECRET,
+   events: {
+    async signOut({ token, session }) {
+      // `token` คือ JWT ที่มีข้อมูลทั้งหมด รวมถึง accessToken และ refreshToken
+      console.log("SignOut event triggered. Invalidating token on backend...");
+
+      try {
+        // เรียก API /auth/logout ของคุณจากฝั่ง Server
+        // ส่ง refreshToken ไปด้วยถ้า Backend ต้องการ
+        await serverApiClient.post('/auth/logout', {
+          refreshToken: token.refreshToken,
+        }, {
+          headers: {
+            // ส่ง accessToken ไปด้วยถ้าจำเป็น
+            Authorization: `Bearer ${token.accessToken}`,
+          }
+        });
+
+        console.log("✅ Token successfully invalidated on backend.");
+      } catch (error) {
+        console.error("💥 Failed to invalidate token on backend.", error);
+        // เราอาจจะแค่ log error ไว้ เพราะยังไงฝั่ง client ก็จะ logout อยู่ดี
+      }
+    }
+  },
+
   pages: {
-    signIn: '/login', // (Optional) หากคุณมีหน้า login ของตัวเอง
-  }
+    signIn: "/login", // หน้าล็อกอินของคุณ
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 };
