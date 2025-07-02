@@ -10,6 +10,7 @@
 @import './custom/button.css';
 @import './custom/table.css';
 @import './custom/form.css';
+@import './custom/date-picker.css';
 
 
 @layer components {

@@ -45,7 +45,9 @@
     "statusInactive": "Inactive",
     "updatedBy": "Updated By",
     "updatedAt": "Updated At",
-    "filter": "กรอง"
+    "filter": "กรอง",
+    "unit": "หน่วย",
+    "type": "ประเภท"
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",
@@ -56,6 +58,7 @@
     "fgEdit": "แก้ไขกลุ่มอาหาร",
     "fgDetail": "รายละเอียดกลุ่มอาหาร",
 
+    "ncNutrient": "หมวดหมู่สารอาหาร",
     "ncCode": "รหัสหมวดหมู่สารอาหาร",
     "ncName": "ชื่อหมวดหมู่สารอาหาร",
     "ncDescription": "Description",
@@ -70,6 +73,16 @@
     "nList": "รายการสารอาหาร",
     "nCreate": "สร้างสารอาหารใหม่",
     "nEdit": "แก้ไขสารอาหาร",
-    "nDetail": "รายละเอียดสารอาหาร"
+    "nDetail": "รายละเอียดสารอาหาร",
+
+    "unUnit": "หน่วย",
+    "unCode": "รหัสหน่วย",
+    "unName": "ชื่อหน่วย",
+    "unDescription": "Description",
+    "unList": "รายการหน่วย",
+    "unCreate": "สร้างหน่วยใหม่",
+    "unEdit": "แก้ไขหน่วย",
+    "unDetail": "รายละเอียดหน่วย",
+    "unType": "Type"
   }
 }

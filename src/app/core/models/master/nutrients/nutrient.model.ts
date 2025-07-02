@@ -20,5 +20,5 @@ export class MasterNutrientRequestModel {
   // ... property สำหรับการ filter/search ...
   name: string = '';
   nutrientCode: string = '';
-  status: string = '';
+  status: string[] = [];
 }

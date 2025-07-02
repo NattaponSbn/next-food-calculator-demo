@@ -88,9 +88,9 @@ export function NutrientModal({
   }
 
   const titles: Record<Mode, string> = {
-    [ModeTypes.create]: t('masterdreate'),
-    [ModeTypes.edit]: t('masterddit'),
-    [ModeTypes.view]: t('masterdetail'),
+    [ModeTypes.create]: t('master.nCreate'),
+    [ModeTypes.edit]: t('master.nEdit'),
+    [ModeTypes.view]: t('master.nDetail'),
   };
 
 
@@ -115,7 +115,7 @@ export function NutrientModal({
         {/* code Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="code" value={t('masterdode')} className='text-dark' color={errors.code && 'failure'} />
+            <Label htmlFor="code" value={t('master.nCode')} className='text-dark' color={errors.code && 'failure'} />
           </div>
           <TextInput
             id="code"
@@ -130,7 +130,7 @@ export function NutrientModal({
         {/* nameEng Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameEng" value={t('masterdame') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
+            <Label htmlFor="nameEng" value={t('master.nName') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
           </div>
           <TextInput
             id="nameEng"
@@ -145,7 +145,7 @@ export function NutrientModal({
         {/* nameThai Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameThai" value={t('masterdame') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
+            <Label htmlFor="nameThai" value={t('master.nName') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
           </div>
           <TextInput
             id="nameThai"

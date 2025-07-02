@@ -45,7 +45,9 @@
     "statusInactive": "Inactive",
     "updatedBy": "Updated By",
     "updatedAt": "Updated At",
-    "filter": "Filter"
+    "filter": "Filter",
+    "unit": "Unit",
+    "type": "Type"
   },
   "master": {
     "fgCode": "Food Group Code",
@@ -56,6 +58,7 @@
     "fgEdit": "Edit Food Group",
     "fgDetail": "Detail Food Group",
     
+    "ncNutrient": "Nutrient Categories",
     "ncCode": "Nutrient Categories Code",
     "ncName": "Nutrient Categories Name",
     "ncDescription": "Description",
@@ -70,6 +73,16 @@
     "nList": "Nutrient List",
     "nCreate": "Create Nutrient",
     "nEdit": "Edit Nutrient",
-    "nDetail": "Detail Nutrient"
+    "nDetail": "Detail Nutrient",
+
+    "unUnit": "Unit",
+    "unCode": "Unit Code",
+    "unName": "Unit Name",
+    "unDescription": "Description",
+    "unList": "Unit List",
+    "unCreate": "Create Unit",
+    "unEdit": "Edit Unit",
+    "unDetail": "Detail Unit",
+    "unType": "Type"
   }
 }

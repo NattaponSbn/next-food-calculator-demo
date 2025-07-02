@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Label, Select, TextInput } from 'flowbite-react';
 import { DateFilterCondition, DateFilterRequestModel } from '@/app/core/models/shared/date-filter.model';
+import { CustomDatePicker } from '../custom-date-picker';
 
 interface DateFilterProps {
  initialValue?: DateFilterRequestModel;
@@ -14,8 +15,8 @@ export function DateFilter({
   const [condition, setCondition] = useState<DateFilterCondition>(
     initialValue?.condition || DateFilterCondition.GreaterThanOrEqual
   );
-  const [fromDate, setFromDate] = useState(initialValue?.fromDate || '');
-  const [toDate, setToDate] = useState(initialValue?.toDate || '');
+  const [fromDate, setFromDate] = useState(initialValue?.fromDate || null);
+  const [toDate, setToDate] = useState(initialValue?.toDate || null);
 
   const isRange = condition === DateFilterCondition.Range;
 
@@ -35,7 +36,7 @@ export function DateFilter({
       const result = new DateFilterRequestModel(
         condition,
         fromDate,
-        isRange ? toDate : '' // ส่ง toDate ก็ต่อเมื่อเป็น Range
+        isRange ? toDate : null // ส่ง toDate ก็ต่อเมื่อเป็น Range
       );
       onApply(result);
     } else {
@@ -65,12 +66,10 @@ export function DateFilter({
         {/* From Date Input */}
         <div className="flex-shrink-0">
           <Label htmlFor="from-date" value={isRange ? "จากวันที่" : "วันที่"} className="mb-2 block" />
-          <TextInput 
+          <CustomDatePicker
             id="from-date"
-            type="date" 
-            className='form-control form-rounded-xl' 
-            value={fromDate} 
-            onChange={e => setFromDate(e.target.value)} 
+            value={fromDate}
+            onDateChange={setFromDate} // ส่ง State Setter เข้าไปโดยตรง
           />
         </div>
 
@@ -78,12 +77,12 @@ export function DateFilter({
         {isRange && (
           <div className="flex-shrink-0">
             <Label htmlFor="to-date" value="ถึงวันที่" className="mb-2 block" />
-            <TextInput 
+            <CustomDatePicker
               id="to-date"
-              type="date" 
-              className='form-control form-rounded-xl' 
-              value={toDate} 
-              onChange={e => setToDate(e.target.value)} 
+              value={toDate}
+              onDateChange={setToDate}
+              // 4. (UX Improvement) ป้องกันไม่ให้เลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
+              minDate={fromDate ? new Date(fromDate) : undefined}
             />
           </div>
         )}
