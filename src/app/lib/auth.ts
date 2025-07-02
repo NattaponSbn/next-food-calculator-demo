@@ -66,8 +66,7 @@ export const authOptions: NextAuthOptions = {
 
         // ✨ 2. ใช้ accessToken ไปเรียก API ดึงข้อมูลผู้ใช้ ✨
         try {
-          const profileResponse = await serverApiClient.post('/user',
-            {}, // ส่ง body ว่างๆ ถ้า API ไม่ต้องการ body
+          const profileResponse = await serverApiClient.get('/user/profile',
             {   // options จะเป็น parameter ที่สามสำหรับ .post()
               headers: {
                 Authorization: `Bearer ${token.accessToken}`,
