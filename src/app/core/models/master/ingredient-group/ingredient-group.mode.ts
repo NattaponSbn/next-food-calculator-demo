@@ -1,11 +1,11 @@
-export class MasterRawMaterialRequestModel {
+export class MasterIngredientGroupRequestModel {
     materialId: string = "";
     nameThai: string = "";
     nameEng: string = "";
     categoryId!: number;
 }
 
-export class MasterRawMaterialItemsModel {
+export class MasterIngredientGroupItemsModel {
     rawMaterialObjectId!: string;
     materialId!: string;
     nameThai!: string;
@@ -23,8 +23,21 @@ export class MasterRawMaterialItemsModel {
     updatedAt!: string;
     updatedBy!: string;
 
-    code?: string;
-    name?: string;
-    description?: string;
-    id?: number;
+    code!: string;
+    name!: string;
+    description!: string;
+    id!: number;
+} 
+
+export class MasterIngredientGrouRequestItemModel {
+  name!: string;
+  code!: string;
+  description!: string;
+} 
+
+export class MasterIngredientGroupResponseItemModel {
+  id!: number;
+  name!: string;
+  code!: string;
+  description!: string;
 } 

@@ -8,24 +8,26 @@ import { useTranslation } from 'react-i18next';
 import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
 import * as z from 'zod';
+import { SuccessResponse } from '@/app/core/models/shared/common.model';
+import { MasterIngredientGrouRequestItemModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
+import { ingredientGroupService } from '@/app/core/services/master/ingredient-group.service';
+
 
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
-const _foodGroupSchema = z.object({
-  code: z.string(),
-  nameEng: z.string(),
-  nameThai: z.string(),
+const foodGroupSchemaDefinition = (t: (key: string) => string) => z.object({
+  code: z.string().min(1, { message: t('require.pleaseInput') }),
+  nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
+  nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
 });
-export type FoodGroupFormValues = z.infer<typeof _foodGroupSchema>;
+
+export type FoodGroupFormValues = z.infer<ReturnType<typeof foodGroupSchemaDefinition>>;
 export interface FoodGroupModalProps {
   mode: Mode;
-  id?: string;
+  id?: number;
   size?: ModalSize;
 }
 type FoodGroupModalResult = FoodGroupFormValues & { id: string };
 
-// 3. Mock API
-const saveFoodGroupApi = (data: FoodGroupFormValues, id?: string) =>
-  new Promise<FoodGroupModalResult>(res => setTimeout(() => res({ id: id || `fg_${Date.now()}`, ...data }), 1000));
 
 // 4. The Modal Component
 export function FoodGroupModal({
@@ -34,16 +36,12 @@ export function FoodGroupModal({
   size,
   onConfirm,
   onClose,
-}: FoodGroupModalProps & InjectedModalProps<FoodGroupModalResult>) {
+}: FoodGroupModalProps & InjectedModalProps<SuccessResponse>) {
   const { t } = useTranslation();
   const isViewMode = mode === 'view';
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const foodGroupSchema = useMemo(() => z.object({
-    code: z.string().min(3, { message: t('require.pleaseInput') }),
-    nameEng: z.string().min(3, { message: t('require.pleaseInput') }),
-    nameThai: z.string().min(3, { message: t('require.pleaseInput') }),
-  }), [t]); // ใช้ useMemo เพื่อไม่ให้สร้าง Schema ใหม่ทุกครั้งที่ re-render
+  const foodGroupSchema = useMemo(() => foodGroupSchemaDefinition(t), [t]);
 
   const {
     register,
@@ -57,25 +55,46 @@ export function FoodGroupModal({
   });
 
   useEffect(() => {
-    // ถ้าไม่ใช่โหมด 'create' และมี 'id' ส่งมา
-    if (mode !== 'create' && id) {
-      setIsLoadingData(true);
+    const loadData = async () => {
+      if (mode !== 'create' && id) {
+        setIsLoadingData(true);
+         const data = await ingredientGroupService.getById(id);
+          // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
+          reset({
+            code: data.code,
+            nameEng: data.name,
+            nameThai: data.name,
+          });
+      } else {
+        setIsLoadingData(false);
+      }
+    };
 
-    } else {
-      // ถ้าเป็นโหมด 'create' ไม่ต้องทำอะไร และถือว่าโหลดเสร็จแล้ว
-      setIsLoadingData(false);
-    }
+    loadData();
   }, [mode, id, reset, onClose]);
 
   const onSubmit = async (data: FoodGroupFormValues) => {
-    try {
-      const result = await saveFoodGroupApi(data, id);
-      showSuccessAlert();
-      onConfirm(result); // สำเร็จ: ส่งข้อมูลกลับและปิด Modal
-    } catch (error) {
-      console.error('API Error:', error);
-      onClose(); // ล้มเหลว: ปิด Modal
-    }
+    const request: MasterIngredientGrouRequestItemModel = new MasterIngredientGrouRequestItemModel;
+    request.code = data.code;
+    request.name = data.nameThai;
+    request.description = data.nameThai;
+    let result: SuccessResponse;
+      if (mode === 'create') {
+        // เรียกใช้ service เพื่อสร้างข้อมูล
+        result = await ingredientGroupService.create(request);
+      } else if (id) {
+        // เรียกใช้ service เพื่ออัปเดตข้อมูล
+        result = await ingredientGroupService.update(id, request);
+      } else {
+        throw new Error("ID is required for edit mode.");
+      }
+      console.log(result,'result onSubmit');
+      
+      if(result) {
+        showSuccessAlert();
+        onConfirm(result);
+      }
+      
   };
 
   const handleSaveDataClick = async (data: FoodGroupFormValues) => {

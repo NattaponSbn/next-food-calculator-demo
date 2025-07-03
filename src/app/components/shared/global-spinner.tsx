@@ -1,12 +1,13 @@
 // components/GlobalSpinner.tsx
 "use client";
 
+import { Spinner } from 'flowbite-react';
 import React from 'react';
 
 const GlobalSpinner = () => {
-  return (
-    // 1. Container หลัก: ครอบทั้งหน้าจอและอยู่บนสุด
-    <div 
+ return (
+    // Container หลักที่ทำให้ Spinner อยู่กลางหน้าจอและมีพื้นหลังทึบยังคงเหมือนเดิม
+    <div
       className="
         fixed inset-0 z-50 
         flex items-center justify-center 
@@ -17,15 +18,12 @@ const GlobalSpinner = () => {
       role="alert"
       aria-busy="true"
     >
-      {/* 2. ตัว Spinner: วงกลมหมุนๆ */}
-      <div 
-        className="
-          h-16 w-16 
-          animate-spin 
-          rounded-full 
-          border-4 border-solid border-white border-t-transparent
-        "
-      ></div>
+      {/* 2. แทนที่ div เดิมด้วย Spinner Component */}
+      <Spinner
+        aria-label="Loading application content"
+        size="xl" // สามารถปรับขนาดได้: 'xs', 'sm', 'md', 'lg', 'xl'
+        color="info" // สามารถเปลี่ยนสีได้: 'failure', 'gray', 'info', 'pink', 'purple', 'success', 'warning'
+      />
     </div>
   );
 };

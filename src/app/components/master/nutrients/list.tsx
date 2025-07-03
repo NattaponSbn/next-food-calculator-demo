@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
 import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
@@ -20,6 +20,7 @@ import { DateFilter } from '../../shared/filters/date-filter';
 import { FilterControl } from '../../shared/filterable-header';
 import { SortableHeader } from '../../shared/sortable-header';
 import { DateFilterRequestModel } from '@/app/core/models/shared/date-filter.model';
+import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 
 const MasterNutrientList = () => {
   const { t } = useTranslation();
@@ -288,19 +289,22 @@ const MasterNutrientList = () => {
   );
 
   const initialCriteria = useMemo(() => new MasterNutrientRequestModel(), []);
-  const mockData = useMemo(() => MASTER_NUTRIENT_MOCKS, []);
 
-  // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading, refetch } = useServerSideTable<MasterNutrientItemsModel>({
-    columns,
-    apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
-    initialPageSize: 10,
-    initialCriteria: initialCriteria,
-
-    // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
-    mockData: mockData
-  });
+    const USE_MOCK_DATA = true;
+      // --- Data Fetching Logic ---
+    // const realFetchFn = useCallback((request: ApiSearchRequest) => {
+    //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+    //     return ingredientGroupService.search(request);
+    // }, [ingredientGroupService]);
+    const mockFetchFn = useCallback(createMockFetchFn(MASTER_NUTRIENT_MOCKS), []);
+    const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  
+    const { table, isLoading, refetch } = useServerSideTable<MasterNutrientItemsModel>({
+      fetchDataFn: fetchDataFunction,
+      columns,
+      initialPageSize: 10,
+      initialCriteria: initialCriteria,
+    });
 
 
   const handleCreate = async () => {
@@ -390,8 +394,8 @@ const MasterNutrientList = () => {
                       <th
                         key={header.id}
                         scope="col"
-                        className="p-4 align-top border"
-                        style={{ width: header.getSize() }}
+                        className="w-auto p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>

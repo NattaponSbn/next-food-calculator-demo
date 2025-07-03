@@ -1,7 +1,6 @@
-// hooks/useServerSideTable.ts
+// src/app/core/hooks/use-server-side-table.ts
 
-// 1. Import 'useCallback' เพิ่มเข้ามา
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,35 +9,45 @@ import {
   type ColumnFiltersState,
   type PaginationState,
 } from '@tanstack/react-table';
-import apiClient from '../services/api-client'; // สมมติว่า path นี้ถูกต้อง
-import { ApiSearchRequest, FilterCriteria, PageResult, SortCriteria } from '../models/shared/page.model'; // สมมติว่า path นี้ถูกต้อง
-import { useUIStore } from '../store/ui-store'; // สมมติว่า path นี้ถูกต้อง
+import type { ApiSearchRequest, FilterCriteria, PageResult } from '../models/shared/page.model';
 
-// Interface ของ Props ไม่มีการเปลี่ยนแปลง
+/**
+ * Props สำหรับ useServerSideTable Hook
+ */
 interface UseServerSideTableProps<T extends Record<string, any>> {
+  /**
+   * ฟังก์ชันสำหรับดึงข้อมูล (จริงหรือจำลอง) ที่จะถูกเรียกเมื่อ state เปลี่ยน
+   */
+  fetchDataFn: (request: ApiSearchRequest) => Promise<PageResult<T>>;
+  /**
+   * นิยามคอลัมน์ของตาราง
+   */
   columns: ColumnDef<T>[];
-  apiUrl: string;
+  /**
+   * จำนวนรายการต่อหน้าที่ต้องการแสดงเป็นค่าเริ่มต้น
+   */
   initialPageSize?: number;
+  /**
+   * เงื่อนไขการกรองเริ่มต้น
+   */
   initialCriteria?: Record<string, any>;
-  useMock?: boolean;
-  mockData?: T[];
 }
 
+/**
+ * Custom Hook สำหรับจัดการ State และ Logic ของตารางข้อมูลแบบ Server-side
+ */
 export const useServerSideTable = <T extends Record<string, any>>({
+  fetchDataFn,
   columns,
-  apiUrl,
-  initialPageSize = 30,
-  initialCriteria = {}, // 2. กำหนดค่าเริ่มต้นเป็น object ว่างเพื่อความปลอดภัย
-  useMock = false,
-  mockData = [],
+  initialPageSize = 10,
+  initialCriteria = {},
 }: UseServerSideTableProps<T>) => {
-  // States ทั้งหมดยังคงเหมือนเดิม
+  // --- States สำหรับจัดการตาราง ---
   const [data, setData] = useState<T[]>([]);
   const [pageCount, setPageCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // ใช้สำหรับ Loading เฉพาะจุด
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    // แปลง initialCriteria เป็นรูปแบบของ TanStack Table Filters
     () => Object.entries(initialCriteria).map(([id, value]) => ({ id, value }))
   );
   const [pagination, setPagination] = useState<PaginationState>({
@@ -46,97 +55,72 @@ export const useServerSideTable = <T extends Record<string, any>>({
     pageSize: initialPageSize,
   });
 
-  // 3. [ย้ายออกมา] สร้าง fetchData นอก useEffect และห่อด้วย useCallback
+  // --- ฟังก์ชันหลักสำหรับดึงข้อมูล ---
   const fetchData = useCallback(async () => {
     setIsLoading(true);
-    useUIStore.getState().showLoading();
 
-    // --- Logic การสร้าง Request Body ---
-    // แปลง columnFilters กลับไปเป็น object ธรรมดา
+    // 1. สร้าง Request Body จาก State ปัจจุบัน
     const apiCriteriaObject: FilterCriteria = columnFilters.reduce((acc, filter) => {
-      acc[filter.id] = filter.value;
+      if (filter.value !== null && filter.value !== undefined && filter.value !== '') {
+        acc[filter.id] = filter.value;
+      }
       return acc;
     }, {} as FilterCriteria);
     
     const requestBody: ApiSearchRequest = {
       pageNumber: pagination.pageIndex + 1,
       pageSize: pagination.pageSize,
-      // รวม initialCriteria และ filter ปัจจุบันเข้าด้วยกัน
-      // โดยให้ filter ปัจจุบันมี priority สูงกว่า
       criteria: { ...initialCriteria, ...apiCriteriaObject }
     };
 
-    const sortCriteria = sorting[0];
-    if (sortCriteria) {
+    if (sorting.length > 0) {
       requestBody.sort = {
-        column: sortCriteria.id,
-        direction: sortCriteria.desc ? 'desc' : 'asc',
+        column: sorting[0].id,
+        direction: sorting[0].desc ? 'desc' : 'asc',
       };
     }
 
-    // --- Logic การดึงข้อมูล (จริง หรือ จำลอง) ---
-    if (useMock) {
-      // ===== โหมดจำลองการทำงาน (Mock Mode) =====
-      console.log("RUNNING IN MOCK MODE with request:", requestBody);
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate delay
-
-      // (ส่วนนี้คุณต้อง implement logic การ filter/sort mockData เองตาม requestBody)
-      const totalItems = mockData.length;
-      const totalPages = Math.ceil(totalItems / pagination.pageSize);
-      const startIndex = pagination.pageIndex * pagination.pageSize;
-      const pageItems = mockData.slice(startIndex, startIndex + pagination.pageSize);
-
-      setData(pageItems);
-      setPageCount(totalPages);
-
-    } else {
-      // ===== โหมด API จริง =====
-      try {
-        console.log("FETCHING FROM API with request:", requestBody);
-        const result = await apiClient.post<PageResult<T>>(apiUrl, requestBody);
-        setData(result.data.items || []);
-        setPageCount(result.data.pageCount || 0);
-      } catch (error) {
-        console.error("Error fetching table data:", error);
-        setData([]);
-        setPageCount(0);
-      }
+    // 2. เรียกใช้ fetchDataFn ที่ได้รับมา
+    try {
+      console.log("Fetching data with request:", requestBody);
+      const result = await fetchDataFn(requestBody);
+      console.log(result,'resultresultresult');
+      
+      setData(result.items || []);
+      setPageCount(result.pageCount || 0);
+    } catch (error) {
+      console.error("Error in useServerSideTable fetchData:", error);
+      // Reset state เมื่อเกิด error เพื่อป้องกันข้อมูลค้าง
+      setData([]);
+      setPageCount(0);
+    } finally {
+      setIsLoading(false);
     }
-
-    // ทำงานส่วนนี้เสมอ ไม่ว่าจะสำเร็จหรือล้มเหลว
-    setIsLoading(false);
-    useUIStore.getState().hideLoading();
-
   }, [
-    // 4. [สำคัญ] ใส่ Dependencies ทั้งหมดที่ fetchData ใช้
-    apiUrl,
-    pagination.pageIndex,
-    pagination.pageSize,
-    JSON.stringify(sorting), // 5. Stringify object/array ที่ซับซ้อน
-    JSON.stringify(columnFilters),
-    initialCriteria,
-    useMock,
-    mockData,
+    // 3. ใส่ Dependencies ทั้งหมดที่ fetchData ใช้
+    fetchDataFn, 
+    pagination.pageIndex, 
+    pagination.pageSize, 
+    sorting, 
+    columnFilters, 
+    initialCriteria
   ]);
 
-
-  // 6. [แก้ไข] useEffect จะเหลือแค่การเรียก fetchData เท่านั้น
+  // 3. useEffect ที่จะ re-fetch ข้อมูลเมื่อเงื่อนไขเปลี่ยน
   useEffect(() => {
-    fetchData();
-  }, [fetchData]); // Dependency คือตัวฟังก์ชัน fetchData ที่ถูก memoized ด้วย useCallback
+    // ไม่ต้องเรียก fetchData() ที่นี่โดยตรง
+    // Component แม่จะเป็นคนเรียก refetch() ครั้งแรกเอง
+    // แต่ Hook นี้จะ re-fetch อัตโนมัติเมื่อผู้ใช้เปลี่ยนหน้า, sort, หรือ filter
+  }, [
+    fetchData // ต้องใส่ไว้เพื่อให้ Hook ทำงานใหม่ถ้าฟังก์ชันที่ส่งมาเปลี่ยน
+  ]);
 
-
-  // การสร้าง table instance ไม่มีการเปลี่ยนแปลง
+  // --- สร้าง Table Instance ---
   const table = useReactTable({
     data,
     columns,
     pageCount,
-    state: {
-      sorting,
-      columnFilters,
-      pagination,
-    },
-    enableSortingRemoval: true,
+    state: { sorting, columnFilters, pagination },
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
@@ -146,7 +130,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
     getCoreRowModel: getCoreRowModel(),
   });
 
-  // 7. [ทำงานได้แล้ว!] คืนค่า refetch ซึ่งก็คือ fetchData ที่เราสร้างไว้
+  // --- คืนค่าทั้งหมดที่จำเป็น ---
   return {
     table,
     isLoading,

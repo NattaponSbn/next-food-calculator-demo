@@ -58,14 +58,20 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
+      console.log("--- JWT CALLBACK START ---");
+      console.log("Input token:", token);
+      console.log("Input user:", user);
+      console.log("Input account:", account);
       // `user` object จะมีค่าแค่ตอนล็อกอินครั้งแรก
       if (user && account?.provider === "credentials") {
+        console.log("JWT: Initial sign in, attaching tokens from user object...");
         // 1. นำข้อมูล token จาก `user` (ที่ได้จาก authorize) มาใส่ใน `token`
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
 
         // ✨ 2. ใช้ accessToken ไปเรียก API ดึงข้อมูลผู้ใช้ ✨
         try {
+          console.log("JWT: Attempting to fetch profile with new access token...");
           const profileResponse = await serverApiClient.get('/user/profile',
             {   // options จะเป็น parameter ที่สามสำหรับ .post()
               headers: {
@@ -74,6 +80,7 @@ export const authOptions: NextAuthOptions = {
             });
 
           const userProfile = profileResponse.data;
+          console.log("JWT: Profile fetched successfully:", userProfile);
 
           // 3. ผนวกข้อมูล profile เข้าไปใน token (ปรับตาม API ที่มี)
 
@@ -87,19 +94,24 @@ export const authOptions: NextAuthOptions = {
           token.email = userProfile.userName || null; // หรือใส่ null ไปเลยถ้าไม่จำเป็น
           // token.roles = userProfile.roles; // หรือข้อมูลอื่นๆ ที่ต้องการ
         } catch (error) {
-          console.error("Failed to fetch user profile in JWT callback", error);
-          // อาจจะคืนค่า token เดิม หรือจัดการ error ตามต้องการ
-          // การคืนค่า token ที่มีแค่ access token ก็ยังทำให้ผู้ใช้ล็อกอินได้
-          // แต่อาจจะไม่มีข้อมูลชื่อ/อีเมล
-          return { ...token, error: "FetchProfileError" };
+          console.error("!!!!!!!! JWT: FAILED TO FETCH PROFILE !!!!!!!", error);
+          // คืนค่า token ที่มี accessToken ไปก่อน เพื่อให้ session ยังทำงานได้
+          // แต่เพิ่ม error flag เข้าไป
+          const errorToken = { ...token, error: "FetchProfileError" };
+          console.log("JWT: Returning token with error:", errorToken);
+          return errorToken;
         }
       }
 
       // สำหรับการเรียกครั้งต่อๆ ไป จะคืนค่า token ที่มีข้อมูลครบถ้วนแล้ว
+      console.log("--- JWT CALLBACK END --- Returning token:", token);
       return token;
     },
 
     async session({ session, token }) {
+      console.log("--- SESSION CALLBACK START ---");
+      console.log("Input session:", session);
+      console.log("Input token (from JWT):", token);
       // `token` คือข้อมูลล่าสุดจาก `jwt` callback
       // เราจะส่งข้อมูลจาก token ไปยัง session
       if (token) {
@@ -113,10 +125,11 @@ export const authOptions: NextAuthOptions = {
         // สามารถเพิ่ม error handling ได้
         // session.error = token.error
       }
+      console.log("--- SESSION CALLBACK END --- Returning session:", session);
       return session;
     },
   },
-   events: {
+  events: {
     async signOut({ token, session }) {
       // `token` คือ JWT ที่มีข้อมูลทั้งหมด รวมถึง accessToken และ refreshToken
       console.log("SignOut event triggered. Invalidating token on backend...");

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
 import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
@@ -20,6 +20,7 @@ import { DateFilterRequestModel } from '@/app/core/models/shared/date-filter.mod
 import { UnitsModal, UnitsModalProps } from './modals/editor-units-modal';
 import { MasterUnitsItemsModel, MasterUnitsRequestModel } from '@/app/core/models/master/units/units.model';
 import { MASTER_UNIT_MOCKS } from '@/app/core/models/_mock/units-data.mock';
+import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 
 const MasterUnitsList = () => {
   const { t } = useTranslation();
@@ -280,19 +281,22 @@ const MasterUnitsList = () => {
   );
 
   const initialCriteria = useMemo(() => new MasterUnitsRequestModel(), []);
-  const mockData = useMemo(() => MASTER_UNIT_MOCKS, []);
 
-  // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading, refetch } = useServerSideTable<MasterUnitsItemsModel>({
-    columns,
-    apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
-    initialPageSize: 10,
-    initialCriteria: initialCriteria,
-
-    // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
-    mockData: mockData
-  });
+    const USE_MOCK_DATA = true;
+      // --- Data Fetching Logic ---
+    // const realFetchFn = useCallback((request: ApiSearchRequest) => {
+    //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+    //     return ingredientGroupService.search(request);
+    // }, [ingredientGroupService]);
+    const mockFetchFn = useCallback(createMockFetchFn(MASTER_UNIT_MOCKS), []);
+    const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  
+    const { table, isLoading, refetch } = useServerSideTable<MasterUnitsItemsModel>({
+      fetchDataFn: fetchDataFunction,
+      columns,
+      initialPageSize: 10,
+      initialCriteria: initialCriteria,
+    });
 
 
   const handleCreate = async () => {
@@ -382,8 +386,8 @@ const MasterUnitsList = () => {
                       <th
                         key={header.id}
                         scope="col"
-                        className="p-4 align-top border"
-                        style={{ width: header.getSize() }}
+                        className="w-auto p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>

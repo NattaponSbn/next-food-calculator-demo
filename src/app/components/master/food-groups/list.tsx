@@ -1,26 +1,57 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
-import { flexRender, type ColumnDef } from '@tanstack/react-table';
+import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
-import { Pagination } from '../../shared/pagination';
 import { TablePagination } from '../../shared/table-pagination';
-import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
 import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
 import { useTranslation } from 'react-i18next';
 import { TableStatusRow } from '../../shared/table-status-row';
 import { useModal } from '@/app/core/hooks/use-modal';
 import { FoodGroupModal, FoodGroupModalProps } from './modals/editor-food-group-modal';
 import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
+import { MasterIngredientGroupItemsModel, MasterIngredientGroupRequestModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
+import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
+import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
+import { ingredientGroupService } from '@/app/core/services/master/ingredient-group.service';
+import { FilterControl } from '../../shared/filterable-header';
+import { DateFilterRequestModel } from '@/app/core/models/shared/date-filter.model';
+import { SortableHeader } from '../../shared/sortable-header';
 
 const MasterFoodGroupsList = () => {
   const { t } = useTranslation();
   const showFoodGroupModal = useModal<FoodGroupModalProps, any>(FoodGroupModal);
 
+    const handleOpenFilter = async (
+      event: React.MouseEvent<HTMLButtonElement>,
+      column: Column<any, any> // รับ column instance เข้ามา
+    ) => {
+      const filterType = column.columnDef.meta?.filterType;
+      const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
+      const currentValue = column.getFilterValue();
+      
+      // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
+      const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
+  
+      let result;    
+  
+      // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
+      switch (filterType) {
+        // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
+        default:
+          console.warn(`No filter implemented for type: ${filterType}`);
+          return;
+      }
+      
+      if (result?.applied) {
+        column.setFilterValue(result.value);
+      }
+    };
+
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
-  const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
+  const columns = useMemo<ColumnDef<MasterIngredientGroupItemsModel>[]>(
     () => [
       {
         id: 'no',
@@ -32,27 +63,57 @@ const MasterFoodGroupsList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'materialId',
-        header: t('master.fgCode'),
+        accessorKey: 'code',
+        header: ({ column }) => (
+          <FilterControl
+            column={column}
+            title={t('master.fgCode')}
+            placeholder={t('master.fgCode')}
+            meta={{ filterType: 'text' }}
+            onFilterIconClick={handleOpenFilter}
+          />
+        ),
         size: 150,
       },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.en')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.nName')} (${t('system.language.en')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.nName')} (${t('system.language.en')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
       {
-        accessorKey: 'nameThai',
+        accessorKey: 'name',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.fgName')} ({t('system.language.th')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-2">
+            
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.nName')} (${t('system.language.th')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.nName')} (${t('system.language.th')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
@@ -83,68 +144,74 @@ const MasterFoodGroupsList = () => {
     [] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
   );
 
-  const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
-  const mockData = useMemo(() => MASTER_RAW_MATERIAL_MOCKS, []);
+  const initialCriteria = useMemo(() => new MasterIngredientGroupRequestModel(), []);
+  const USE_MOCK_DATA = false;
+    // --- Data Fetching Logic ---
+  const realFetchFn = useCallback((request: ApiSearchRequest) => {
+      console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+      return ingredientGroupService.search(request);
+  }, [ingredientGroupService]);
+  const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
+  // const fetchDataFunction = USE_MOCK_DATA ? mockFetchFn : realFetchFn;
+  const fetchDataFunction = realFetchFn;
 
   // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+  const { table, isLoading, refetch } = useServerSideTable<MasterIngredientGroupItemsModel>({
+    fetchDataFn: fetchDataFunction,
     columns,
-    apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
     initialPageSize: 10,
     initialCriteria: initialCriteria,
-
-    // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
-    mockData: mockData
   });
 
+ useEffect(() => {
+    console.log("[MasterList] Triggering initial data fetch via refetch()");
+    refetch();
+  }, [refetch]); // ใช้ refetch เป็น dependency
 
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
       const newGroup = await showFoodGroupModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
-      alert(`สร้างกลุ่มใหม่สำเร็จ: ${newGroup.name}`);
-      // TODO: เพิ่ม newGroup เข้าไปใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
     }
   };
 
-  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+  const handleEdit = async (item: MasterIngredientGroupItemsModel) => {
     try {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
       const updatedGroup = await showFoodGroupModal({
         mode: 'edit',
-        id: item.rawMaterialObjectId,
+        id: item.id,
         size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
-      alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
-      // TODO: อัปเดตข้อมูล group ใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การแก้ไขถูกยกเลิก');
     }
   };
 
-  const handleView = (item: MasterRawMaterialItemsModel) => {
+  const handleView = (item: MasterIngredientGroupItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showFoodGroupModal({ mode: 'view', id: item.rawMaterialObjectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showFoodGroupModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
   };
 
 
-  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+  const handleDelete = async (item: MasterIngredientGroupItemsModel) => {
     try {
       // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
       // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
-      const result = await showDeleteConfirm(item.materialId);
+      const result = await showDeleteConfirm();
 
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
       if (result.isConfirmed) {
         console.log(`กำลังลบ ${item.nameThai}...`);
-        // TODO: ใส่ Logic การเรียก API เพื่อลบข้อมูลจริงที่นี่
-
+        const result = await ingredientGroupService.delete(item.id);
+        if(!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
-        showSuccessAlert('ลบสำเร็จ!', `${item.nameThai} ถูกลบแล้ว`);
+        showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
 
         // TODO: โหลดข้อมูลตารางใหม่
         refetch();
@@ -183,27 +250,13 @@ const MasterFoodGroupsList = () => {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                      <th
+                       <th
                         key={header.id}
                         scope="col"
-                        className="p-4 align-top border"
-                        style={{ width: header.getSize() }}
+                        className="w-auto p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
                       >
-                        <div className="flex flex-col gap-3">
-                          <div className="font-bold text-sm text-gray-600 dark:text-gray-300 flex justify-center">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </div>
-                          {header.column.getCanFilter() && (
-                            <TextInput
-                              id={header.id}
-                              type="text"
-                              value={(header.column.getFilterValue() as string) ?? ''}
-                              onChange={(e) => header.column.setFilterValue(e.target.value)}
-                              placeholder="ค้นหา..."
-                              className="form-control form-rounded-xl"
-                            />
-                          )}
-                        </div>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
                     ))}
                   </tr>
@@ -219,7 +272,7 @@ const MasterFoodGroupsList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

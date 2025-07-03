@@ -3,7 +3,7 @@
 // 1. Type สำหรับข้อมูลแต่ละรายการใน 'items'
 // T คือ Generic Type ที่จะแทนข้อมูลแต่ละแถว เช่น Provider, Policy, etc.
 export interface PageResult<T> {
-  _kind: string;
+  _kind?: string;
   pageNumber: number;
   totalItemCount: number;
   pageCount: number;

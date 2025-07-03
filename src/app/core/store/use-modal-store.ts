@@ -11,7 +11,7 @@ interface ModalState {
   close: (value?: any) => void;
 }
 
-const MODAL_CLOSED_GRACEFULLY = Symbol("MODAL_CLOSED_GRACEFULLY");
+export const MODAL_CLOSED_GRACEFULLY = Symbol("MODAL_CLOSED_GRACEFULLY");
 
 export const useModalStore = create<ModalState>((set, get) => ({
   isOpen: false, content: null, resolve: null, reject: null,

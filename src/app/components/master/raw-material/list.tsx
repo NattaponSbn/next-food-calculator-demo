@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Table, TextInput } from 'flowbite-react';
 import { flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
@@ -9,6 +9,7 @@ import { Pagination } from '../../shared/pagination';
 import { TablePagination } from '../../shared/table-pagination';
 import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
 import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
+import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 
 const MasterRawMaterialList = () => {
   // --- [ลบ] State ทั้งหมดนี้จะถูกย้ายไปจัดการใน useServerSideTable hook ---
@@ -136,16 +137,22 @@ const MasterRawMaterialList = () => {
   );
 
   // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
-  const { table, isLoading } = useServerSideTable<MasterRawMaterialItemsModel>({
-    columns,
-    apiUrl: '/api/providers/search', // URL ของ API ที่จะค้นหา
-    initialPageSize: 10,
-    initialCriteria: new MasterRawMaterialRequestModel(),
 
-    // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
-    mockData: MASTER_RAW_MATERIAL_MOCKS, // <--- ส่งข้อมูลจำลองเข้าไป
-  });
+     const USE_MOCK_DATA = true;
+        // --- Data Fetching Logic ---
+      // const realFetchFn = useCallback((request: ApiSearchRequest) => {
+      //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+      //     return ingredientGroupService.search(request);
+      // }, [ingredientGroupService]);
+      const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
+      const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+    
+      const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+        fetchDataFn: fetchDataFunction,
+        columns,
+        initialPageSize: 10,
+        initialCriteria: {},
+      });
 
   // --- [ลบ] ไม่จำเป็นต้องสร้าง table instance เองอีกต่อไป ---
   // const table = useReactTable({ ... });

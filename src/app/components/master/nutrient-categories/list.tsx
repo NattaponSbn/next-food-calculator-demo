@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
 import { flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
@@ -13,6 +13,8 @@ import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
 import { NutrientCategoriesModal, NutrientCategoriesModalProps } from './modals/editor-nutrient-categories-modal';
 import { MasterNutrientCategoriesItemsModel, MasterNutrientCategoriesRequestModel } from '@/app/core/models/master/nutrient-categories/nutrient-categories.model';
 import { MASTER_NUTRIENT_CATEGORIES_MOCKS } from '@/app/core/models/_mock/nutrient-categories-data.mock';
+import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
+import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 
 const MasterNutrientCategoriesList = () => {
   const { t } = useTranslation();
@@ -83,18 +85,20 @@ const MasterNutrientCategoriesList = () => {
   );
 
   const initialCriteria = useMemo(() => new MasterNutrientCategoriesRequestModel(), []);
-  const mockData = useMemo(() => MASTER_NUTRIENT_CATEGORIES_MOCKS, []);
+  const USE_MOCK_DATA = true;
+    // --- Data Fetching Logic ---
+  // const realFetchFn = useCallback((request: ApiSearchRequest) => {
+  //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+  //     return ingredientGroupService.search(request);
+  // }, [ingredientGroupService]);
+  const mockFetchFn = useCallback(createMockFetchFn(MASTER_NUTRIENT_CATEGORIES_MOCKS), []);
+  const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
 
-  // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
   const { table, isLoading, refetch } = useServerSideTable<MasterNutrientCategoriesItemsModel>({
+    fetchDataFn: fetchDataFunction,
     columns,
-    apiUrl: '/ingredient-group/search', // URL ของ API ที่จะค้นหา
     initialPageSize: 10,
     initialCriteria: initialCriteria,
-
-    // --- สวิตช์สำหรับโหมดจำลอง ---
-    useMock: true, // <--- เปิดใช้งานโหมดจำลอง
-    mockData: mockData
   });
 
 
@@ -185,8 +189,8 @@ const MasterNutrientCategoriesList = () => {
                       <th
                         key={header.id}
                         scope="col"
-                        className="p-4 align-top border"
-                        style={{ width: header.getSize() }}
+                        className="w-auto p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
                       >
                         <div className="flex flex-col gap-3">
                           <div className="font-bold text-sm text-gray-600 dark:text-gray-300 flex justify-center">

@@ -47,7 +47,10 @@
     "updatedAt": "Updated At",
     "filter": "กรอง",
     "unit": "หน่วย",
-    "type": "ประเภท"
+    "type": "ประเภท",
+    "error": {
+      "title": "เกิดข้อผิดพลาด"
+    }
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",

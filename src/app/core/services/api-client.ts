@@ -2,6 +2,8 @@
 
 import axios from 'axios';
 import { useUIStore } from '../store/ui-store';
+import toast from 'react-hot-toast';
+import { getSession } from 'next-auth/react';
 
 // สร้าง Axios instance
 const apiClient = axios.create({
@@ -16,23 +18,26 @@ const apiClient = axios.create({
 
 // 1. Request Interceptor: ทำงานก่อนที่ request จะถูกส่งออกไป
 apiClient.interceptors.request.use(
-  (config) => {
+  async (config) => {
     // โค้ดที่ต้องทำทุกครั้งก่อนส่ง request
     useUIStore.getState().showLoading(); // เปิด Loading
-    
-    // ตัวอย่าง: การดึง Token จาก Local Storage หรือ Cookie แล้วใส่ใน Header
-    const token = localStorage.getItem('accessToken'); 
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
 
     // (เสริม) อาจจะเปิด global loading state ที่นี่
     // store.dispatch(showLoading());
+    const session = await getSession(); 
 
+    if (session?.accessToken) {
+      // ถ้ามี session และ accessToken, ให้ใส่ Header
+      console.log("[apiClient] Session found, attaching token to header.");
+      config.headers['Authorization'] = `Bearer ${session.accessToken}`;
+    } else {
+      console.warn("[apiClient] No session found. Request sent without token.");
+    }
     return config;
   },
   (error) => {
     // จัดการกับ error ที่เกิดขึ้นก่อนการส่ง request
+    useUIStore.getState().hideLoading();
     return Promise.reject(error);
   }
 );
@@ -40,60 +45,55 @@ apiClient.interceptors.request.use(
 // 2. Response Interceptor: ทำงานหลังจากได้รับ response กลับมา
 apiClient.interceptors.response.use(
   (response) => {
-    // โค้ดที่ต้องทำเมื่อได้รับ response ที่สำเร็จ (status 2xx)
-    useUIStore.getState().hideLoading(); // ปิด Loading
-    // (เสริม) อาจจะปิด global loading state ที่นี่
-    // store.dispatch(hideLoading());
-    
-    // โดยปกติเราจะสนใจเฉพาะส่วน data ของ response
-    return response.data; 
+    useUIStore.getState().hideLoading(); // hideLoading จะจัดการนับ request เอง
+    return response; 
   },
   (error) => {
-    // โค้ดที่ต้องทำเมื่อได้รับ response ที่เป็น error (status 3xx, 4xx, 5xx)
-    useUIStore.getState().hideLoading(); // ปิด Loading
-    // (เสริม) ปิด global loading state
-    // store.dispatch(hideLoading());
+    useUIStore.getState().hideLoading();
 
-    if (axios.isAxiosError(error) && error.response) {
-      // Server ตอบกลับมาพร้อม status code ที่ไม่ใช่ 2xx
-      const { status, data } = error.response;
+    let errorMessage = 'An unexpected error occurred.';
 
-      switch (status) {
-        case 401:
-          // Unauthorized: อาจจะหมายถึง Token หมดอายุ
-          // ทำการ redirect ไปหน้า login หรือเรียก API เพื่อ refresh token
-          console.error('Unauthorized, redirecting to login...');
-          // window.location.href = '/login';
-          break;
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server ตอบกลับมา
+        const { status, data } = error.response;
+        const serverMessage = data?.message || data?.title || error.message;
 
-        case 403:
-          // Forbidden: ไม่มีสิทธิ์เข้าถึงข้อมูล
-          console.error('Forbidden access.');
-          // แสดงข้อความแจ้งเตือน
-          break;
-
-        case 404:
-          // Not Found
-          console.error('Resource not found.');
-          break;
-        
-        case 500:
-          // Internal Server Error
-          console.error('Internal Server Error.');
-          break;
-
-        default:
-          // จัดการ error อื่นๆ
-          console.error(`Error ${status}:`, data);
-          break;
+        switch (status) {
+          case 401:
+            errorMessage = 'Session expired. Please log in again.';
+            // อาจจะเพิ่ม logic redirect ที่นี่
+            // window.location.href = '/login';
+            break;
+          case 403:
+            errorMessage = 'Access Denied: You do not have permission.';
+            break;
+          case 404:
+            errorMessage = `Not Found: ${serverMessage}`;
+            break;
+          case 400: // Bad Request (มักจะมาจาก Validation)
+            // ถ้า Backend ส่งรายละเอียด validation error มา
+            if (data?.errors) {
+              // แสดง error แรกที่เจอ
+              const firstErrorKey = Object.keys(data.errors)[0];
+              errorMessage = data.errors[firstErrorKey][0];
+            } else {
+              errorMessage = serverMessage;
+            }
+            break;
+          default:
+            errorMessage = serverMessage;
+            break;
+        }
+      } else if (error.request) {
+        // Request ถูกส่งไปแต่ไม่ได้รับการตอบกลับ (เช่น network error)
+        errorMessage = 'Network error. Please check your connection.';
       }
-    } else {
-      // จัดการกับ error ที่ไม่ได้มาจาก server (เช่น network error)
-      console.error('Network or other error:', error.message);
     }
     
-    // ส่งต่อ error เพื่อให้ .catch() ที่เรียกใช้ API สามารถจัดการต่อได้
-    return Promise.reject(error);
+    toast.error(errorMessage); // แสดง Toast แจ้งเตือน
+    
+    return Promise.resolve(null);
   }
 );
 

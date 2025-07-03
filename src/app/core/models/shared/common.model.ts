@@ -5,3 +5,9 @@ export class CommonModel {
   code?: string;
   description?: string;
 }
+
+
+export class SuccessResponse {
+  isSuccess!: boolean;
+  message: string | null = '';
+}

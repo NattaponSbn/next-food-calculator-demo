@@ -37,13 +37,15 @@ const Profile = () => {
       // 2. รอให้การ signOut ฝั่ง server เสร็จสิ้น
       await signOut({ redirect: false });
 
+        // 4. พาผู้ใช้ไปหน้า login
+      router.push("/auth/login");
+
+    
+
       // 3. เมื่อ signOut สำเร็จแล้ว จึงอัปเดต Toast และ redirect
       toast.success('ออกจากระบบเรียบร้อยแล้ว', {
         id: logoutToast, // อ้างอิงถึง Toast loading เดิมเพื่ออัปเดต
       });
-
-      // 4. พาผู้ใช้ไปหน้า login
-      router.push("/auth/login");
 
       // 5. Refresh เพื่อให้ server component (เช่น layout) อัปเดตสถานะ
       router.refresh();

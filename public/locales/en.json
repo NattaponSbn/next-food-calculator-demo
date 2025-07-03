@@ -47,7 +47,10 @@
     "updatedAt": "Updated At",
     "filter": "Filter",
     "unit": "Unit",
-    "type": "Type"
+    "type": "Type",
+    "error": {
+      "title": "เกิดข้อผิดพลาด"
+    }
   },
   "master": {
     "fgCode": "Food Group Code",

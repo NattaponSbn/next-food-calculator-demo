@@ -1,7 +1,7 @@
 // hooks/useModal.ts
 
-import React from 'react';
-import { useModalStore } from '../store/use-modal-store';
+import React, { createElement } from 'react';
+import { MODAL_CLOSED_GRACEFULLY, useModalStore } from '../store/use-modal-store';
 
 /**
  * Props ที่จะถูก "ฉีด" (inject) เข้าไปใน Modal Component
@@ -28,14 +28,20 @@ export function useModal<TModalProps extends object, TModalResult = any>(
     ...props,
     onConfirm: (result: TModalResult) => close(result),
     onClose: ({ isCancellation = true } = {}) => {
-      close(isCancellation ? undefined : 'MODAL_CLOSED_GRACEFULLY');
+      if (isCancellation) {
+            // ถ้าเป็นการยกเลิก (เช่น กดปุ่ม Cancel) ให้ close แบบปกติ (ซึ่งจะ reject)
+            close(undefined);
+        } else {
+            // ถ้าไม่ใช่การยกเลิก (เช่น ปิดโหมด view) ให้ close แบบ gracefully (ซึ่งจะ resolve ด้วย null)
+            close(MODAL_CLOSED_GRACEFULLY);
+        }
     },
   };
   
   // ส่ง Component และ Props Object ที่สร้างไว้เข้าไป
-  return open<TModalResult>(
-    React.createElement(component, elementProps)
-  );
+   return open<TModalResult>(
+      createElement(component, elementProps)
+    );
   };
 
   return show;
