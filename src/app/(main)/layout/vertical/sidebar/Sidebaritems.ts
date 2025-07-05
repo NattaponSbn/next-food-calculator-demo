@@ -74,6 +74,17 @@ const SidebarContent: MenuItem[] = [
       },
     ],
   },
+  {
+    headingKey: "menu.headings.diet_calculation",
+    children: [
+      {
+        nameKey: "menu.items.calculator_formula",
+        icon: "solar:archive-broken",
+        id: uniqueId(),
+        url: "/ui/expanded-raw-material",
+      },
+    ],
+  }
   // {
   //   heading: "HOME",
   //   children: [
