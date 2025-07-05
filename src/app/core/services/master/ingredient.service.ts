@@ -11,7 +11,7 @@ const RESOURCE_PATH = '/ingredient-group';
  * @param apiClient - instance ของ Axios ที่ถูกเตรียมไว้แล้ว (มี Token)
  * @returns Object ที่มีฟังก์ชันสำหรับจัดการ Food Group
  */
-export const ingredientGroupService = {
+export const ingredientService = {
   
   /**
    * ค้นหาข้อมูล Ingredient Group

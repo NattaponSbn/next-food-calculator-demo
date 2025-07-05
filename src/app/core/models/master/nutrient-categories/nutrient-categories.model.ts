@@ -22,4 +22,22 @@ export class MasterNutrientCategoriesItemsModel {
     status!: string;
     updatedAt!: string;
     updatedBy!: string;
+
+    code!: string;
+    name!: string;
+    description!: string;
+    id!: number;
+} 
+
+export class MasterNutrientCategoriesRequestItemModel {
+  name!: string;
+  code!: string;
+  description!: string;
+} 
+
+export class MasterNutrientCategoriesResponseItemModel {
+  id!: number;
+  name!: string;
+  code!: string;
+  description!: string;
 } 

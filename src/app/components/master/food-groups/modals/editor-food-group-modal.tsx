@@ -9,7 +9,7 @@ import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
 import * as z from 'zod';
 import { SuccessResponse } from '@/app/core/models/shared/common.model';
-import { MasterIngredientGrouRequestItemModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
+import { MasterIngredientGroupRequestItemModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
 import { ingredientGroupService } from '@/app/core/services/master/ingredient-group.service';
 
 
@@ -58,13 +58,13 @@ export function FoodGroupModal({
     const loadData = async () => {
       if (mode !== 'create' && id) {
         setIsLoadingData(true);
-         const data = await ingredientGroupService.getById(id);
-          // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
-          reset({
-            code: data.code,
-            nameEng: data.name,
-            nameThai: data.name,
-          });
+        const data = await ingredientGroupService.getById(id);
+        // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
+        reset({
+          code: data.code,
+          nameEng: data.name,
+          nameThai: data.name,
+        });
       } else {
         setIsLoadingData(false);
       }
@@ -74,27 +74,27 @@ export function FoodGroupModal({
   }, [mode, id, reset, onClose]);
 
   const onSubmit = async (data: FoodGroupFormValues) => {
-    const request: MasterIngredientGrouRequestItemModel = new MasterIngredientGrouRequestItemModel;
+    const request: MasterIngredientGroupRequestItemModel = new MasterIngredientGroupRequestItemModel;
     request.code = data.code;
     request.name = data.nameThai;
     request.description = data.nameThai;
     let result: SuccessResponse;
-      if (mode === 'create') {
-        // เรียกใช้ service เพื่อสร้างข้อมูล
-        result = await ingredientGroupService.create(request);
-      } else if (id) {
-        // เรียกใช้ service เพื่ออัปเดตข้อมูล
-        result = await ingredientGroupService.update(id, request);
-      } else {
-        throw new Error("ID is required for edit mode.");
-      }
-      console.log(result,'result onSubmit');
-      
-      if(result) {
-        showSuccessAlert();
-        onConfirm(result);
-      }
-      
+    if (mode === 'create') {
+      // เรียกใช้ service เพื่อสร้างข้อมูล
+      result = await ingredientGroupService.create(request);
+    } else if (id) {
+      // เรียกใช้ service เพื่ออัปเดตข้อมูล
+      result = await ingredientGroupService.update(id, request);
+    } else {
+      throw new Error("ID is required for edit mode.");
+    }
+    console.log(result, 'result onSubmit');
+
+    if (result) {
+      showSuccessAlert();
+      onConfirm(result);
+    }
+
   };
 
   const handleSaveDataClick = async (data: FoodGroupFormValues) => {

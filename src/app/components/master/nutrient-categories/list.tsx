@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
-import { flexRender, type ColumnDef } from '@tanstack/react-table';
+import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
 import { TablePagination } from '../../shared/table-pagination';
@@ -15,10 +15,39 @@ import { MasterNutrientCategoriesItemsModel, MasterNutrientCategoriesRequestMode
 import { MASTER_NUTRIENT_CATEGORIES_MOCKS } from '@/app/core/models/_mock/nutrient-categories-data.mock';
 import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
+import { FilterControl } from '../../shared/filterable-header';
+import { SortableHeader } from '../../shared/sortable-header';
+import { nutritionGroupService } from '@/app/core/services/master/nutrition-group.service';
 
 const MasterNutrientCategoriesList = () => {
   const { t } = useTranslation();
   const showFoodGroupModal = useModal<NutrientCategoriesModalProps, any>(NutrientCategoriesModal);
+
+  const handleOpenFilter = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    column: Column<any, any> // รับ column instance เข้ามา
+  ) => {
+    const filterType = column.columnDef.meta?.filterType;
+    const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
+    const currentValue = column.getFilterValue();
+
+    // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
+    const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
+
+    let result;
+
+    // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
+    switch (filterType) {
+      // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
+      default:
+        console.warn(`No filter implemented for type: ${filterType}`);
+        return;
+    }
+
+    if (result?.applied) {
+      column.setFilterValue(result.value);
+    }
+  };
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
   const columns = useMemo<ColumnDef<MasterNutrientCategoriesItemsModel>[]>(
@@ -33,27 +62,57 @@ const MasterNutrientCategoriesList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'materialId',
-        header: t('master.ncCode'),
-        size: 150,
+        accessorKey: 'code',
+        header: ({ column }) => (
+          <FilterControl
+            column={column}
+            title={t('master.ncCode')}
+            placeholder={t('master.ncCode')}
+            meta={{ filterType: 'text' }}
+            onFilterIconClick={handleOpenFilter}
+          />
+        ),
+        size: 120,
       },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.ncName')} ({t('system.language.en')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-2">
+
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.ncName')} (${t('system.language.en')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.ncName')} (${t('system.language.en')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
       {
-        accessorKey: 'nameThai',
+        accessorKey: 'name',
         header: ({ column }) => (
-          <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-            {t('master.ncName')} ({t('system.language.th')})
-            {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-          </button>
+          <div className="flex flex-col items-center justify-center gap-2">
+
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.nName')} (${t('system.language.th')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.nName')} (${t('system.language.th')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
         ),
         size: 250,
       },
@@ -85,14 +144,14 @@ const MasterNutrientCategoriesList = () => {
   );
 
   const initialCriteria = useMemo(() => new MasterNutrientCategoriesRequestModel(), []);
-  const USE_MOCK_DATA = true;
-    // --- Data Fetching Logic ---
-  // const realFetchFn = useCallback((request: ApiSearchRequest) => {
-  //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
-  //     return ingredientGroupService.search(request);
-  // }, [ingredientGroupService]);
+  const USE_MOCK_DATA = false;
+  // --- Data Fetching Logic ---
+  const realFetchFn = useCallback((request: ApiSearchRequest) => {
+    return nutritionGroupService.search(request);
+  }, [nutritionGroupService]);
   const mockFetchFn = useCallback(createMockFetchFn(MASTER_NUTRIENT_CATEGORIES_MOCKS), []);
-  const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  // const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  const fetchDataFunction = realFetchFn;
 
   const { table, isLoading, refetch } = useServerSideTable<MasterNutrientCategoriesItemsModel>({
     fetchDataFn: fetchDataFunction,
@@ -101,13 +160,15 @@ const MasterNutrientCategoriesList = () => {
     initialCriteria: initialCriteria,
   });
 
+  useEffect(() => {
+    refetch();
+  }, [refetch]); // ใช้ refetch เป็น dependency
 
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
       const newGroup = await showFoodGroupModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
-      alert(`สร้างกลุ่มใหม่สำเร็จ: ${newGroup.name}`);
-      // TODO: เพิ่ม newGroup เข้าไปใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
     }
@@ -118,11 +179,10 @@ const MasterNutrientCategoriesList = () => {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
       const updatedGroup = await showFoodGroupModal({
         mode: 'edit',
-        id: item.objectId,
+        id: item.id,
         size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
-      alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
-      // TODO: อัปเดตข้อมูล group ใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การแก้ไขถูกยกเลิก');
     }
@@ -130,7 +190,7 @@ const MasterNutrientCategoriesList = () => {
 
   const handleView = (item: MasterNutrientCategoriesItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showFoodGroupModal({ mode: 'view', id: item.objectId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showFoodGroupModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
   };
 
 
@@ -143,11 +203,10 @@ const MasterNutrientCategoriesList = () => {
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
       if (result.isConfirmed) {
-        console.log(`กำลังลบ ${item.nameThai}...`);
-        // TODO: ใส่ Logic การเรียก API เพื่อลบข้อมูลจริงที่นี่
-
+        const result = await nutritionGroupService.delete(item.id);
+        if (!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
-        showSuccessAlert('ลบสำเร็จ!', `${item.nameThai} ถูกลบแล้ว`);
+        showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
 
         // TODO: โหลดข้อมูลตารางใหม่
         refetch();
@@ -190,23 +249,9 @@ const MasterNutrientCategoriesList = () => {
                         key={header.id}
                         scope="col"
                         className="w-auto p-4 align-top border whitespace-nowrap"
-                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
+                        style={{ width: header.getSize() }}
                       >
-                        <div className="flex flex-col gap-3">
-                          <div className="font-bold text-sm text-gray-600 dark:text-gray-300 flex justify-center">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </div>
-                          {header.column.getCanFilter() && (
-                            <TextInput
-                              id={header.id}
-                              type="text"
-                              value={(header.column.getFilterValue() as string) ?? ''}
-                              onChange={(e) => header.column.setFilterValue(e.target.value)}
-                              placeholder="ค้นหา..."
-                              className="form-control form-rounded-xl"
-                            />
-                          )}
-                        </div>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
                     ))}
                   </tr>
@@ -222,7 +267,7 @@ const MasterNutrientCategoriesList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

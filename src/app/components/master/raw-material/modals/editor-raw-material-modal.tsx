@@ -8,93 +8,94 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
-import { nutritionService } from '@/app/core/services/master/nutrition.service';
-import { MasterNutrientRequestItemModel } from '@/app/core/models/master/nutrients/nutrient.model';
 import { SuccessResponse } from '@/app/core/models/shared/common.model';
+import { MasterRawMaterialRequestItemModel } from '@/app/core/models/master/raw-material/raw-material.model';
+import { nutritionService } from '@/app/core/services/master/nutrition.service';
 
 // 2. Types
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
-const nutrientSchemaDefinition = (t: (key: string) => string) => z.object({
+const rawMaterialSchemaDefinition = (t: (key: string) => string) => z.object({
   code: z.string().min(1, { message: t('require.pleaseInput') }),
   nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
   nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
 });
-export interface NutrientModalProps {
+export interface RawMaterialModalProps {
   mode: Mode;
   id?: number;
   size?: ModalSize;
 }
-type NutrientModalResult = NutrientFormValues & { id: string };
-export type NutrientFormValues = z.infer<ReturnType<typeof nutrientSchemaDefinition>>;
+type RawMaterialModalResult = RawMaterialFormValues & { id: string };
+export type RawMaterialFormValues = z.infer<ReturnType<typeof rawMaterialSchemaDefinition>>;
 
 // 4. The Modal Component
-export function NutrientModal({
+export function RawMaterialModal({
   mode,
   id,
   size,
   onConfirm,
   onClose,
-}: NutrientModalProps & InjectedModalProps<SuccessResponse>) {
+}: RawMaterialModalProps & InjectedModalProps<SuccessResponse>) {
   const { t } = useTranslation();
   const isViewMode = mode === 'view';
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const nutrientSchema = useMemo(() => nutrientSchemaDefinition(t), [t]);
+  const rawMaterialSchema = useMemo(() => rawMaterialSchemaDefinition(t), [t]);
 
   const {
     register,
     handleSubmit,
     reset, // <-- เพิ่ม 'reset' เพื่ออัปเดตค่าในฟอร์ม
     formState: { errors, isSubmitting },
-  } = useForm<NutrientFormValues>({
-    resolver: zodResolver(nutrientSchema),
+  } = useForm<RawMaterialFormValues>({
+    resolver: zodResolver(rawMaterialSchema),
     // ค่าเริ่มต้นให้เป็นค่าว่างไปก่อน แล้วเราจะใช้ useEffect + reset มาใส่ทีหลัง
     defaultValues: { code: '', nameEng: '', nameThai: '' },
   });
 
   useEffect(() => {
-   const loadData = async () => {
-        if (mode !== 'create' && id) {
-          setIsLoadingData(true);
-          const data = await nutritionService.getById(id);
-          // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
-          reset({
-            code: data.code,
-            nameEng: data.name,
-            nameThai: data.name,
-          });
-        } else {
-          setIsLoadingData(false);
-        }
-      };
-  
-      loadData();
+    const loadData = async () => {
+      if (mode !== 'create' && id) {
+        setIsLoadingData(true);
+        const data = await nutritionService.getById(id);
+        // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
+        reset({
+          code: data.code,
+          nameEng: data.name,
+          nameThai: data.name,
+        });
+      } else {
+        setIsLoadingData(false);
+      }
+    };
+
+    loadData();
   }, [mode, id, reset, onClose]);
 
-  const onSubmit = async (data: NutrientFormValues) => {
-      const request: MasterNutrientRequestItemModel = new MasterNutrientRequestItemModel;
-       request.code = data.code;
-       request.name = data.nameThai;
-       request.description = data.nameThai;
-       let result: SuccessResponse;
-       if (mode === 'create') {
-         // เรียกใช้ service เพื่อสร้างข้อมูล
-         result = await nutritionService.create(request);
-       } else if (id) {
-         // เรียกใช้ service เพื่ออัปเดตข้อมูล
-         result = await nutritionService.update(id, request);
-       } else {
-         throw new Error("ID is required for edit mode.");
-       }
-       console.log(result, 'result onSubmit');
-   
-       if (result) {
-         showSuccessAlert();
-         onConfirm(result);
-       }
+  const onSubmit = async (data: RawMaterialFormValues) => {
+    const request: MasterRawMaterialRequestItemModel = new MasterRawMaterialRequestItemModel;
+    request.code = data.code;
+    request.name = data.nameThai;
+    request.description = data.nameThai;
+    let result: SuccessResponse;
+    if (mode === 'create') {
+      // เรียกใช้ service เพื่อสร้างข้อมูล
+      result = await nutritionService.create(request);
+    } else if (id) {
+      // เรียกใช้ service เพื่ออัปเดตข้อมูล
+      result = await nutritionService.update(id, request);
+    } else {
+      throw new Error("ID is required for edit mode.");
+    }
+    console.log(result, 'result onSubmit');
+
+    if (result) {
+      showSuccessAlert();
+      onConfirm(result);
+    }
+
   };
 
-  const handleSaveDataClick = async (data: NutrientFormValues) => {
+  const handleSaveDataClick = async (data: RawMaterialFormValues) => {
     const resultConfirm = await showConfirmation();
     if (resultConfirm.isConfirmed) {
       onSubmit(data);
@@ -104,9 +105,9 @@ export function NutrientModal({
   }
 
   const titles: Record<Mode, string> = {
-    [ModeTypes.create]: t('master.nCreate'),
-    [ModeTypes.edit]: t('master.nEdit'),
-    [ModeTypes.view]: t('master.nDetail'),
+    [ModeTypes.create]: t('master.rmCreate'),
+    [ModeTypes.edit]: t('master.rmEdit'),
+    [ModeTypes.view]: t('master.rmDetail'),
   };
 
 
@@ -131,7 +132,7 @@ export function NutrientModal({
         {/* code Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="code" value={t('master.nCode')} className='text-dark' color={errors.code && 'failure'} />
+            <Label htmlFor="code" value={t('master.rmCode')} className='text-dark' color={errors.code && 'failure'} />
           </div>
           <TextInput
             id="code"
@@ -146,7 +147,7 @@ export function NutrientModal({
         {/* nameEng Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameEng" value={t('master.nName') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
+            <Label htmlFor="nameEng" value={t('master.rmName') + ' (' + t('system.language.en') + ')'} className='text-dark' color={errors.nameEng && 'failure'} />
           </div>
           <TextInput
             id="nameEng"
@@ -161,7 +162,7 @@ export function NutrientModal({
         {/* nameThai Field */}
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nameThai" value={t('master.nName') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
+            <Label htmlFor="nameThai" value={t('master.rmName') + ' (' + t('system.language.th') + ')'} className='text-dark' color={errors.nameThai && 'failure'} />
           </div>
           <TextInput
             id="nameThai"

@@ -1,4 +1,4 @@
-export class MasterUnitsItemsModel {
+export class MasterBaseItemsModel {
   unitId!: string;
   unitCode!: string;
   nameEng!: string;
@@ -7,15 +7,10 @@ export class MasterUnitsItemsModel {
   status!: 'ACTIVE' | 'INACTIVE';
   updatedBy!: string;
   updatedAt!: string; // ISO DateTime string
-
-  code!: string;
-  name!: string;
-  description!: string;
-  id!: number;
 }
 
 // สำหรับใช้ในฟอร์มสร้าง/แก้ไข
-export class MasterUnitsRequestModel {
+export class MasterBaseRequestModel {
   unitCode: string = '';
   nameEng: string = '';
   nameThai: string = '';
@@ -23,16 +18,3 @@ export class MasterUnitsRequestModel {
   description: string = '';
   status: string[] = [];
 }
-
-export class MasterUnitsRequestItemModel {
-  name!: string;
-  code!: string;
-  description!: string;
-}
-
-export class MasterUnitsResponseItemModel {
-  id!: number;
-  name!: string;
-  code!: string;
-  description!: string;
-} 

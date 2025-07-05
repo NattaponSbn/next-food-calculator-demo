@@ -86,6 +86,14 @@
     "unCreate": "สร้างหน่วยใหม่",
     "unEdit": "แก้ไขหน่วย",
     "unDetail": "รายละเอียดหน่วย",
-    "unType": "Type"
+    "unType": "Type",
+
+    "rmCode": "รหัสวัตถุดิบ",
+    "rmName": "ชื่อวัตถุดิบ",
+    "rmDescription": "Description",
+    "rmList": "รายการวัตถุดิบ",
+    "rmCreate": "สร้างวัตถุดิบใหม่",
+    "rmEdit": "แก้ไขวัตถุดิบ",
+    "rmDetail": "รายละเอียดวัตถุดิบ"
   }
 }

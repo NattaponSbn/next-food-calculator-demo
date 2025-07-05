@@ -8,24 +8,24 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
+import { nutritionGroupService } from '@/app/core/services/master/nutrition-group.service';
+import { SuccessResponse } from '@/app/core/models/shared/common.model';
+import { MasterNutrientCategoriesRequestItemModel } from '@/app/core/models/master/nutrient-categories/nutrient-categories.model';
 
 // 2. Types
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
-const _nutrientCategoriesSchema = z.object({
-  code: z.string(),
-  nameEng: z.string(),
-  nameThai: z.string(),
+const nutrientCategoriesSchemaDefinition = (t: (key: string) => string) => z.object({
+  code: z.string().min(1, { message: t('require.pleaseInput') }),
+  nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
+  nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
 });
 export interface NutrientCategoriesModalProps {
   mode: Mode;
-  id?: string;
+  id?: number;
   size?: ModalSize;
 }
 type NutrientCategoriesModalResult = NutrientCategoriesFormValues & { id: string };
-export type NutrientCategoriesFormValues = z.infer<typeof _nutrientCategoriesSchema>;
-// 3. Mock API
-const saveNutrientCategoriesApi = (data: NutrientCategoriesFormValues, id?: string) =>
-  new Promise<NutrientCategoriesModalResult>(res => setTimeout(() => res({ id: id || `nc_${Date.now()}`, ...data }), 1000));
+export type NutrientCategoriesFormValues = z.infer<ReturnType<typeof nutrientCategoriesSchemaDefinition>>;
 
 // 4. The Modal Component
 export function NutrientCategoriesModal({
@@ -34,16 +34,12 @@ export function NutrientCategoriesModal({
   size,
   onConfirm,
   onClose,
-}: NutrientCategoriesModalProps & InjectedModalProps<NutrientCategoriesModalResult>) {
+}: NutrientCategoriesModalProps & InjectedModalProps<SuccessResponse>) {
   const { t } = useTranslation();
   const isViewMode = mode === 'view';
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const nutrientCategoriesSchema = useMemo(() => z.object({
-    code: z.string().min(3, { message: t('require.pleaseInput') }),
-    nameEng: z.string().min(3, { message: t('require.pleaseInput') }),
-    nameThai: z.string().min(3, { message: t('require.pleaseInput') }),
-  }), [t]); // ใช้ useMemo เพื่อไม่ให้สร้าง Schema ใหม่ทุกครั้งที่ re-render
+  const nutrientCategoriesSchema = useMemo(() => nutrientCategoriesSchemaDefinition(t), [t]);
 
   const {
     register,
@@ -57,25 +53,46 @@ export function NutrientCategoriesModal({
   });
 
   useEffect(() => {
-    // ถ้าไม่ใช่โหมด 'create' และมี 'id' ส่งมา
-    if (mode !== 'create' && id) {
-      setIsLoadingData(true);
+    const loadData = async () => {
+      if (mode !== 'create' && id) {
+        setIsLoadingData(true);
+        const data = await nutritionGroupService.getById(id);
+        // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
+        reset({
+          code: data.code,
+          nameEng: data.name,
+          nameThai: data.name,
+        });
+      } else {
+        setIsLoadingData(false);
+      }
+    };
 
-    } else {
-      // ถ้าเป็นโหมด 'create' ไม่ต้องทำอะไร และถือว่าโหลดเสร็จแล้ว
-      setIsLoadingData(false);
-    }
+    loadData();
   }, [mode, id, reset, onClose]);
 
   const onSubmit = async (data: NutrientCategoriesFormValues) => {
-    try {
-      const result = await saveNutrientCategoriesApi(data, id);
-      showSuccessAlert();
-      onConfirm(result); // สำเร็จ: ส่งข้อมูลกลับและปิด Modal
-    } catch (error) {
-      console.error('API Error:', error);
-      onClose(); // ล้มเหลว: ปิด Modal
+    const request: MasterNutrientCategoriesRequestItemModel = new MasterNutrientCategoriesRequestItemModel;
+    request.code = data.code;
+    request.name = data.nameThai;
+    request.description = data.nameThai;
+    let result: SuccessResponse;
+    if (mode === 'create') {
+      // เรียกใช้ service เพื่อสร้างข้อมูล
+      result = await nutritionGroupService.create(request);
+    } else if (id) {
+      // เรียกใช้ service เพื่ออัปเดตข้อมูล
+      result = await nutritionGroupService.update(id, request);
+    } else {
+      throw new Error("ID is required for edit mode.");
     }
+    console.log(result, 'result onSubmit');
+
+    if (result) {
+      showSuccessAlert();
+      onConfirm(result);
+    }
+
   };
 
   const handleSaveDataClick = async (data: NutrientCategoriesFormValues) => {

@@ -29,7 +29,7 @@ export class MasterIngredientGroupItemsModel {
     id!: number;
 } 
 
-export class MasterIngredientGrouRequestItemModel {
+export class MasterIngredientGroupRequestItemModel {
   name!: string;
   code!: string;
   description!: string;

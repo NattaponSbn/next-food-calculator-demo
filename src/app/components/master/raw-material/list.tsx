@@ -1,214 +1,295 @@
 "use client";
 
-import React, { useCallback, useMemo } from 'react';
-import { Table, TextInput } from 'flowbite-react';
-import { flexRender, type ColumnDef } from '@tanstack/react-table';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { Button, Table, TextInput } from 'flowbite-react';
+import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
-import { Pagination } from '../../shared/pagination';
 import { TablePagination } from '../../shared/table-pagination';
-import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
-import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
+import { useTranslation } from 'react-i18next';
+import { TableStatusRow } from '../../shared/table-status-row';
+import { useModal } from '@/app/core/hooks/use-modal';
+import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
+import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
+import { FilterControl } from '../../shared/filterable-header';
+import { SortableHeader } from '../../shared/sortable-header';
+import { nutritionGroupService } from '@/app/core/services/master/nutrition-group.service';
+import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
+import { RawMaterialModal, RawMaterialModalProps } from './modals/editor-raw-material-modal';
+import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
+import { ingredientService } from '@/app/core/services/master/ingredient.service';
 
 const MasterRawMaterialList = () => {
-  // --- [ลบ] State ทั้งหมดนี้จะถูกย้ายไปจัดการใน useServerSideTable hook ---
-  // const [data, setData] = useState<Policy[]>(() => [...mockData]);
-  // const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  // const [sorting, setSorting] = useState<SortingState>([]);
+  const { t } = useTranslation();
+  const showRawMaterModal = useModal<RawMaterialModalProps, any>(RawMaterialModal);
 
-  // --- [เพิ่ม] ฟังก์ชัน Handler ยังคงอยู่ที่นี่ได้ ---
-  const handleEdit = (item: MasterRawMaterialItemsModel) => {
-    alert(`แก้ไข: ${item.rawMaterialObjectId} - ${item.nameThai}`);
-  };
+  const handleOpenFilter = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    column: Column<any, any> // รับ column instance เข้ามา
+  ) => {
+    const filterType = column.columnDef.meta?.filterType;
+    const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
+    const currentValue = column.getFilterValue();
 
-  const handleDelete = (item: MasterRawMaterialItemsModel) => {
-    if (window.confirm(`ลบ: ${item.nameThai}?`)) {
-      alert(`ลบ ${item.rawMaterialObjectId} เรียบร้อย`);
+    // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
+    const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
+
+    let result;
+
+    // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
+    switch (filterType) {
+      // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
+      default:
+        console.warn(`No filter implemented for type: ${filterType}`);
+        return;
+    }
+
+    if (result?.applied) {
+      column.setFilterValue(result.value);
     }
   };
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
   const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
     () => [
-      // ลำดับที่
-    {
-      id: 'no',
-      header: 'ลำดับ',
-      cell: (info) => 
-        info.row.index + 1 + 
-        (info.table.getState().pagination.pageIndex * info.table.getState().pagination.pageSize),
-      size: 60,
-      enableSorting: false,
-    },
-    // รหัสวัตถุดิบ
-    {
-      accessorKey: 'materialId',
-      header: 'รหัสวัตถุดิบ',
-      size: 150,
-    },
-    // ชื่อวัตถุดิบ (ไทย)
-    {
-      accessorKey: 'nameThai',
-      header: ({ column }) => (
-        <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-          ชื่อวัตถุดิบ (ไทย)
-          {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-        </button>
-      ),
-      size: 250,
-    },
-    // ชื่อวัตถุดิบ (อังกฤษ)
-    {
-      accessorKey: 'nameEng',
-      header: ({ column }) => (
-        <button className="flex items-center gap-2" onClick={() => column.toggleSorting()}>
-          ชื่อวัตถุดิบ (อังกฤษ)
-          {column.getIsSorted() === 'asc' ? <Icon icon="akar-icons:arrow-up" /> : column.getIsSorted() === 'desc' ? <Icon icon="akar-icons:arrow-down" /> : null}
-        </button>
-      ),
-      size: 250,
-    },
-    // หมวดหมู่
-    {
-      accessorKey: 'categoryName',
-      header: 'หมวดหมู่',
-      size: 150,
-    },
-    // พลังงาน (kcal)
-    {
-      accessorKey: 'energy_kcal',
-      header: 'พลังงาน (kcal)',
-      cell: (info) => info.getValue()?.toLocaleString() ?? 'N/A', // จัดรูปแบบตัวเลข
-      size: 150,
-    },
-    // โปรตีน (g)
-    {
-      accessorKey: 'protein_g',
-      header: 'โปรตีน (g)',
-      cell: (info) => info.getValue()?.toLocaleString() ?? 'N/A',
-      size: 120,
-    },
-    // คาร์โบไฮเดรต (g)
-    {
-      accessorKey: 'carbohydrate_g',
-      header: 'คาร์บ (g)',
-      cell: (info) => info.getValue()?.toLocaleString() ?? 'N/A',
-      size: 120,
-    },
-    // ไขมัน (g)
-    {
-      accessorKey: 'fatTotal_g',
-      header: 'ไขมัน (g)',
-      cell: (info) => info.getValue()?.toLocaleString() ?? 'N/A',
-      size: 120,
-    },
-    // สถานะ
-    {
-      accessorKey: 'status',
-      header: 'สถานะ',
-      cell: (info) => {
-        // const status = info.getValue();
-        // const colorClass = status === 'ACTIVE' ? 'text-green-600' : 'text-red-600';
-        // return <span className={`font-semibold ${colorClass}`}>{status}</span>;
+      {
+        id: 'no',
+        header: t('system.no'),
+        cell: (info) =>
+          info.row.index + 1 +
+          (info.table.getState().pagination.pageIndex * info.table.getState().pagination.pageSize),
+        size: 60,
+        enableSorting: false,
       },
-      size: 100,
-    },
-    // จัดการ
-    {
-      id: 'actions',
-      header: 'จัดการ',
-      cell: (info) => (
-        console.log(info,"info")
-        
-        // <div className="flex items-center justify-center gap-2">
-        //   <button onClick={() => handleEdit(row.)} className="text-blue-600 hover:text-blue-800" title="แก้ไข">
-        //     <Icon icon="mdi:pencil" width="20" />
-        //   </button>
-        //   <button onClick={() => handleDelete(row)} className="text-red-600 hover:text-red-800" title="ลบ">
-        //     <Icon icon="mdi:trash-can-outline" width="20" />
-        //   </button>
-        // </div>
-      ),
-      size: 120,
-    },
+      {
+        accessorKey: 'code',
+        header: ({ column }) => (
+          <FilterControl
+            column={column}
+            title={t('master.rmCode')}
+            placeholder={t('master.rmCode')}
+            meta={{ filterType: 'text' }}
+            onFilterIconClick={handleOpenFilter}
+          />
+        ),
+        size: 150,
+      },
+      {
+        accessorKey: 'nameEng',
+        header: ({ column }) => (
+          <div className="flex flex-col items-center justify-center gap-2">
+
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.rmName')} (${t('system.language.en')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.rmName')} (${t('system.language.en')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
+        ),
+        size: 250,
+      },
+      {
+        accessorKey: 'name',
+        header: ({ column }) => (
+          <div className="flex flex-col items-center justify-center gap-2">
+
+            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
+            <SortableHeader column={column}>
+              {`${t('master.rmName')} (${t('system.language.th')})`}
+            </SortableHeader>
+
+            {/* ส่วนที่ 2: Filter Control */}
+            <FilterControl
+              column={column}
+              placeholder={`${t('master.rmName')} (${t('system.language.th')})`}
+              meta={{ filterType: 'text' }} // <-- กำหนด filter type
+              onFilterIconClick={handleOpenFilter}
+            />
+          </div>
+        ),
+        size: 250,
+      },
+      // จัดการ
+      {
+        id: 'actions',
+        header: t('system.action'),
+        cell: (info) => {
+          const item = info.row.original; // ดึงข้อมูล item ของแถวนี้
+
+          return (
+            <div className="flex items-center justify-center gap-2">
+              <button onClick={() => handleView(item)} className="text-blue-600 hover:text-blue-800" title="ดู">
+                <Icon icon="mdi:eye" width="20" />
+              </button>
+              <button onClick={() => handleEdit(item)} className="text-blue-600 hover:text-blue-800" title="แก้ไข">
+                <Icon icon="mdi:pencil" width="20" />
+              </button>
+              <button onClick={() => handleDelete(item)} className="text-red-600 hover:text-red-800" title="ลบ">
+                <Icon icon="mdi:trash-can-outline" width="20" />
+              </button>
+            </div>
+          );
+        },
+        size: 120,
+      },
     ],
     [] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
   );
 
-  // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
+  const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
+  const USE_MOCK_DATA = false;
+  // --- Data Fetching Logic ---
+  const realFetchFn = useCallback((request: ApiSearchRequest) => {
+    return ingredientService.search(request);
+  }, [ingredientService]);
+  const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
+  // const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  const fetchDataFunction = realFetchFn;
 
-     const USE_MOCK_DATA = true;
-        // --- Data Fetching Logic ---
-      // const realFetchFn = useCallback((request: ApiSearchRequest) => {
-      //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
-      //     return ingredientGroupService.search(request);
-      // }, [ingredientGroupService]);
-      const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
-      const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
-    
-      const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
-        fetchDataFn: fetchDataFunction,
-        columns,
-        initialPageSize: 10,
-        initialCriteria: {},
+  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+    fetchDataFn: fetchDataFunction,
+    columns,
+    initialPageSize: 10,
+    initialCriteria: initialCriteria,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]); // ใช้ refetch เป็น dependency
+
+  const handleCreate = async () => {
+    try {
+      // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
+      const newGroup = await showRawMaterModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
+      refetch();
+    } catch (error) {
+      console.info('การสร้างถูกยกเลิก');
+    }
+  };
+
+  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+    try {
+      // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
+      const updatedGroup = await showRawMaterModal({
+        mode: 'edit',
+        id: item.id,
+        size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
+      refetch();
+    } catch (error) {
+      console.info('การแก้ไขถูกยกเลิก');
+    }
+  };
 
-  // --- [ลบ] ไม่จำเป็นต้องสร้าง table instance เองอีกต่อไป ---
-  // const table = useReactTable({ ... });
+  const handleView = (item: MasterRawMaterialItemsModel) => {
+    // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
+    showRawMaterModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+  };
+
+
+  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+    try {
+      // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
+      // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
+      const result = await showDeleteConfirm(item.materialId);
+
+      // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
+      // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
+      if (result.isConfirmed) {
+        const result = await nutritionGroupService.delete(item.id!);
+        if (!result) return;
+        // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
+        showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
+
+        // TODO: โหลดข้อมูลตารางใหม่
+        refetch();
+      } else if (result.isDismissed) {
+        // `result.isDismissed` จะเป็น true ถ้าผู้ใช้กด "ยกเลิก" หรือคลิกนอก Modal
+        console.log('การลบถูกยกเลิก');
+      }
+    } catch (error) {
+      // ดักจับข้อผิดพลาดที่ไม่คาดคิด
+      console.error('เกิดข้อผิดพลาดระหว่างการยืนยัน:', error);
+    }
+  };
 
   // Render UI
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-      {/* 
-        [เพิ่ม] UI สำหรับ Loading 
-        ถ้าใช้ GlobalSpinner ที่คุมโดย Zustand/Redux ผ่าน Interceptor ไม่จำเป็นต้องมีบรรทัดนี้
-        แต่ถ้าอยากให้ loading เฉพาะส่วนตาราง ให้ใช้บรรทัดนี้
-      */}
-      <div className="relative overflow-x-auto">
-        <Table className="table-fixed border w-full">
-          <thead className="text-xs text-gray-700 uppercase bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} scope="col" className="p-4 align-top border" style={{ width: header.getSize() }}>
-                    <div className="flex flex-col gap-3">
-                      <div className="font-bold text-sm text-gray-600 dark:text-gray-300 flex justify-center">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </div>
-                      {header.column.getCanFilter() && (
-                        <TextInput
-                          id={header.id}
-                          type="text"
-                          value={(header.column.getFilterValue() as string) ?? ''}
-                          onChange={(e) => header.column.setFilterValue(e.target.value)}
-                          placeholder="ค้นหา..."
-                          className="form-control form-rounded-xl"
-                        />
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="bg-white border dark:bg-gray-800 dark:border-gray-700">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+    <div className="panel">
+      {/* Panel Header */}
+      <div className="panel-header">
+        <div className="flex items-center gap-2">
+          <h2 className="panel-title">
+            {t('master.rmList')} {/* หรือชื่อหัวตาราง */}
+          </h2>
+          <Button onClick={handleCreate} size={'md'} color={'success'} className='btn'>
+            <Icon icon="mdi:plus" className="h-5 w-5" />
+            {t('system.create')} {/* หรือ "สร้างใหม่" */}
+          </Button>
+        </div>
       </div>
 
-      {/* --- [เพิ่ม] เพิ่ม Component Pagination และส่ง table instance เข้าไป --- */}
-      <TablePagination table={table} />
+      {/* Panel Body */}
+      <div className="panel-body">
+        <div className="responsive-table-container">
+          <div className="responsive-table-scroll-wrapper">
+            <Table className="responsive-table">
+              <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        scope="col"
+                        className="w-auto p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.getSize() }}
+                      >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.length > 0 ? (
+                  table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="bg-white border dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <TableStatusRow colSpan={columns.length} status="no-data" />
+                )
+                }
+
+              </tbody>
+            </Table>
+          </div>
+
+        </div>
+        <TablePagination table={table} />
+      </div>
+
     </div>
+
   );
 };
 

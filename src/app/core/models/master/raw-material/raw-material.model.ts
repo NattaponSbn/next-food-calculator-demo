@@ -28,3 +28,16 @@ export class MasterRawMaterialItemsModel {
     description?: string;
     id?: number;
 } 
+
+export class MasterRawMaterialRequestItemModel {
+  name!: string;
+  code!: string;
+  description!: string;
+}
+
+export class MasterRawMaterialResponseItemModel {
+  id!: number;
+  name!: string;
+  code!: string;
+  description!: string;
+} 

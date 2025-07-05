@@ -86,6 +86,14 @@
     "unCreate": "Create Unit",
     "unEdit": "Edit Unit",
     "unDetail": "Detail Unit",
-    "unType": "Type"
+    "unType": "Type",
+
+    "rmCode": "Ram Material Code",
+    "rmName": "Ram Material Name",
+    "rmDescription": "Description",
+    "rmList": "Ram Material List",
+    "rmCreate": "Create Ram Material",
+    "rmEdit": "Edit Ram Material",
+    "rmDetail": "Detail Ram Material"
   }
 }

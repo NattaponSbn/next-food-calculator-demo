@@ -10,7 +10,9 @@ import { ModalFrame, ModalSize } from '@/app/components/shared/modals/modal-fram
 import { useTranslation } from 'react-i18next';
 import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
-import { MasterUnitsRequestModel } from '@/app/core/models/master/units/units.model';
+import { MasterUnitsRequestItemModel, MasterUnitsRequestModel } from '@/app/core/models/master/units/units.model';
+import { unitsService } from '@/app/core/services/master/units.service';
+import { SuccessResponse } from '@/app/core/models/shared/common.model';
 
 // --- 1. Schema & Types (ปรับให้เป็นของ Unit) ---
 const unitSchemaDefinition = (t: (key: string) => string) => z.object({
@@ -27,21 +29,12 @@ export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
 
 export interface UnitsModalProps {
   mode: Mode;
-  id?: string | number;
+  id?: number;
   size?: ModalSize;
 }
 export type UnitFormValues = z.infer<ReturnType<typeof unitSchemaDefinition>>;
 type UnitModalResult = MasterUnitsRequestModel & { id: string };
 
-// --- 2. Mock API (ปรับให้เป็นของ Unit) ---
-const saveUnitApi = (data: MasterUnitsRequestModel, id?: string | number) =>
-  new Promise<UnitModalResult>((resolve) =>
-    setTimeout(() => {
-      const resultData = { id: id ? String(id) : `U_${Date.now()}`, ...data };
-      console.log('Saving Unit Data:', resultData);
-      resolve(resultData);
-    }, 1000)
-  );
 
 // --- 3. The Modal Component (ปรับให้เป็น UnitModal) ---
 export function UnitsModal({
@@ -50,7 +43,7 @@ export function UnitsModal({
   size,
   onConfirm,
   onClose,
-}: UnitsModalProps & InjectedModalProps<UnitModalResult>) {
+}: UnitsModalProps & InjectedModalProps<SuccessResponse>) {
   const { t } = useTranslation();
   const isViewMode = mode === 'view';
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -78,40 +71,44 @@ export function UnitsModal({
 
   // Logic การดึงข้อมูลสำหรับ Edit/View Mode
   useEffect(() => {
-    if (mode !== 'create' && id) {
-      setIsLoadingData(true);
-      // TODO: ใส่ Logic การ fetch ข้อมูลจริงจาก API โดยใช้ id
-      // สมมติว่าได้ข้อมูลมาแล้ว
-      const mockFetchedData: MasterUnitsRequestModel = {
-        unitCode: 'g',
-        nameEng: 'Gram',
-        nameThai: 'กรัม',
-        unitType: 'Weight',
-        description: 'หน่วยวัดน้ำหนักพื้นฐาน',
-        status: ['ACTIVE'],
-      };
-      setIsLoadingData(false);
-    } else {
-      setIsLoadingData(false);
-    }
+  const loadData = async () => {
+       if (mode !== 'create' && id) {
+         setIsLoadingData(true);
+         const data = await unitsService.getById(id);
+         // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
+         reset({
+           unitCode: data.code,
+           nameEng: data.name,
+           nameThai: data.name,
+         });
+       } else {
+         setIsLoadingData(false);
+       }
+     };
+ 
+     loadData();
   }, [mode, id, reset]);
 
   // Logic การ Submit ฟอร์ม
   const onSubmit = async (data: UnitFormValues) => {
-    try {
-      // แปลงข้อมูลจากฟอร์มให้อยู่ในรูปแบบ Request Model
-      const requestData = new MasterUnitsRequestModel();
-      Object.assign(requestData, data, {
-        status: data.status ? 'ACTIVE' : 'INACTIVE',
-      });
-
-      const result = await saveUnitApi(requestData, id);
-      showSuccessAlert();
-      onConfirm(result);
-    } catch (error) {
-      console.error('API Error:', error);
-      onClose();
-    }
+    const request: MasterUnitsRequestItemModel = new MasterUnitsRequestItemModel;
+     request.code = data.unitCode;
+     request.name = data.nameThai;
+     request.description = data.nameThai;
+     let result: SuccessResponse;
+     if (mode === 'create') {
+       // เรียกใช้ service เพื่อสร้างข้อมูล
+       result = await unitsService.create(request);
+     } else if (id) {
+       // เรียกใช้ service เพื่ออัปเดตข้อมูล
+       result = await unitsService.update(id, request);
+     } else {
+       throw new Error("ID is required for edit mode.");
+     }
+     if (result) {
+       showSuccessAlert();
+       onConfirm(result);
+     }
   };
 
   const handleSaveDataClick = async (data: UnitFormValues) => {

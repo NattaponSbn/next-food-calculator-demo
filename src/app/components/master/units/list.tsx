@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Button, Table, TextInput } from 'flowbite-react';
 import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
@@ -21,6 +21,8 @@ import { UnitsModal, UnitsModalProps } from './modals/editor-units-modal';
 import { MasterUnitsItemsModel, MasterUnitsRequestModel } from '@/app/core/models/master/units/units.model';
 import { MASTER_UNIT_MOCKS } from '@/app/core/models/_mock/units-data.mock';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
+import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
+import { unitsService } from '@/app/core/services/master/units.service';
 
 const MasterUnitsList = () => {
   const { t } = useTranslation();
@@ -100,18 +102,18 @@ const MasterUnitsList = () => {
         enableSorting: false,
       },
       {
-         accessorKey: 'unitCode',
-         header: ({ column }) => (
-           <FilterControl
-             column={column}
-             title={t('master.unCode')}
-             placeholder={t('master.unCode')}
-             meta={{ filterType: 'text' }} // <-- กำหนด filter type
-             onFilterIconClick={handleOpenFilter}
-           />
-         ),
-         size: 150,
-       },
+        accessorKey: 'code',
+        header: ({ column }) => (
+          <FilterControl
+            column={column}
+            title={t('master.unCode')}
+            placeholder={t('master.unCode')}
+            meta={{ filterType: 'text' }} // <-- กำหนด filter type
+            onFilterIconClick={handleOpenFilter}
+          />
+        ),
+        size: 200,
+      },
       {
         accessorKey: 'nameEng',
         header: ({ column }) => (
@@ -135,7 +137,7 @@ const MasterUnitsList = () => {
         size: 200,
       },
       {
-        accessorKey: 'nameThai',
+        accessorKey: 'name',
         header: ({ column }) => (
           <div className="flex flex-col items-center justify-center gap-2">
 
@@ -174,7 +176,7 @@ const MasterUnitsList = () => {
             />
           </div>
         ),
-        size: 150,
+        size: 200,
       },
       // สถานะ
       {
@@ -282,29 +284,31 @@ const MasterUnitsList = () => {
 
   const initialCriteria = useMemo(() => new MasterUnitsRequestModel(), []);
 
-    const USE_MOCK_DATA = true;
-      // --- Data Fetching Logic ---
-    // const realFetchFn = useCallback((request: ApiSearchRequest) => {
-    //     console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
-    //     return ingredientGroupService.search(request);
-    // }, [ingredientGroupService]);
-    const mockFetchFn = useCallback(createMockFetchFn(MASTER_UNIT_MOCKS), []);
-    const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
-  
-    const { table, isLoading, refetch } = useServerSideTable<MasterUnitsItemsModel>({
-      fetchDataFn: fetchDataFunction,
-      columns,
-      initialPageSize: 10,
-      initialCriteria: initialCriteria,
-    });
+  const USE_MOCK_DATA = false;
+  const realFetchFn = useCallback((request: ApiSearchRequest) => {
+    return unitsService.search(request);
+  }, [unitsService]);
+  const mockFetchFn = useCallback(createMockFetchFn(MASTER_UNIT_MOCKS), []);
+  // const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  const fetchDataFunction = realFetchFn;
+
+  const { table, isLoading, refetch } = useServerSideTable<MasterUnitsItemsModel>({
+    fetchDataFn: fetchDataFunction,
+    columns,
+    initialPageSize: 10,
+    initialCriteria: initialCriteria,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]); // ใช้ refetch เป็น dependency
 
 
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
       const newGroup = await showUnitsModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
-      alert(`สร้างกลุ่มใหม่สำเร็จ: ${newGroup.name}`);
-      // TODO: เพิ่ม newGroup เข้าไปใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
     }
@@ -315,11 +319,10 @@ const MasterUnitsList = () => {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
       const updatedGroup = await showUnitsModal({
         mode: 'edit',
-        id: item.unitId,
+        id: item.id,
         size: 'lg:max-w-3xl lg:min-w-[700px]'
       });
-      alert(`แก้ไขสำเร็จ: ${updatedGroup.name}`);
-      // TODO: อัปเดตข้อมูล group ใน state ของตาราง
+      refetch();
     } catch (error) {
       console.info('การแก้ไขถูกยกเลิก');
     }
@@ -327,7 +330,7 @@ const MasterUnitsList = () => {
 
   const handleView = (item: MasterUnitsItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showUnitsModal({ mode: 'view', id: item.unitId, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showUnitsModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
   };
 
 
@@ -340,11 +343,10 @@ const MasterUnitsList = () => {
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
       if (result.isConfirmed) {
-        console.log(`กำลังลบ ${item.nameThai}...`);
-        // TODO: ใส่ Logic การเรียก API เพื่อลบข้อมูลจริงที่นี่
-
+        const result = await unitsService.delete(item.id);
+        if (!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
-        showSuccessAlert('ลบสำเร็จ!', `${item.nameThai} ถูกลบแล้ว`);
+        showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
 
         // TODO: โหลดข้อมูลตารางใหม่
         refetch();
@@ -386,8 +388,8 @@ const MasterUnitsList = () => {
                       <th
                         key={header.id}
                         scope="col"
-                        className="w-auto p-4 align-top border whitespace-nowrap"
-                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
+                        className="w-auto w-100 p-4 align-top border whitespace-nowrap"
+                        style={{ width: header.getSize() }}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
@@ -405,7 +407,7 @@ const MasterUnitsList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

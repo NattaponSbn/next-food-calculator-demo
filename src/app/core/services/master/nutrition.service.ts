@@ -1,40 +1,42 @@
+// src/app/core/services/food-group.service.ts
+
+import { MasterNutrientItemsModel, MasterNutrientRequestItemModel, MasterNutrientResponseItemModel } from "../../models/master/nutrients/nutrient.model";
 import { SuccessResponse } from "../../models/shared/common.model";
-import { MasterIngredientGroupItemsModel, MasterIngredientGroupResponseItemModel, MasterIngredientGroupRequestItemModel } from "../../models/master/ingredient-group/ingredient-group.mode";
 import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
 
 // --- กำหนด Path หลักของ Resource นี้ ---
-const RESOURCE_PATH = '/ingredient-group';
+const RESOURCE_PATH = '/nutrition';
 
 /**
- * Factory Function สำหรับสร้าง Ingredient Group Service
+ * Factory Function สำหรับสร้าง Nutrition Group Service
  * @param apiClient - instance ของ Axios ที่ถูกเตรียมไว้แล้ว (มี Token)
  * @returns Object ที่มีฟังก์ชันสำหรับจัดการ Food Group
  */
-export const ingredientGroupService = {
+export const nutritionService = {
   
   /**
-   * ค้นหาข้อมูล Ingredient Group
+   * ค้นหาข้อมูล Nutrition Group
    * @param request - Object ที่มี pageNumber, pageSize, criteria, sort
-   * @returns PageResult ของ Ingredient Group
+   * @returns PageResult ของ Nutrition Group
    */
-  search: async (request: ApiSearchRequest): Promise<PageResult<MasterIngredientGroupItemsModel>> => {
-    const result = await apiClient.post<PageResult<MasterIngredientGroupItemsModel>>(`${RESOURCE_PATH}/search`, request);
+  search: async (request: ApiSearchRequest): Promise<PageResult<MasterNutrientItemsModel>> => {
+    const result = await apiClient.post<PageResult<MasterNutrientItemsModel>>(`${RESOURCE_PATH}/search`, request);
     return result.data!;
   },
 
-  getById: async (id: number): Promise<MasterIngredientGroupResponseItemModel> => {
+  getById: async (id: number): Promise<MasterNutrientResponseItemModel> => {
     // Interceptor ของเราแกะ .data มาแล้ว
-    const result = await apiClient.get<MasterIngredientGroupResponseItemModel>(`${RESOURCE_PATH}/${id}`);
+    const result = await apiClient.get<MasterNutrientResponseItemModel>(`${RESOURCE_PATH}/${id}`);
     return result.data!;
   },
 
-  create: async (createData: MasterIngredientGroupRequestItemModel): Promise<SuccessResponse> => {
+  create: async (createData: MasterNutrientRequestItemModel): Promise<SuccessResponse> => {
     const result = await apiClient.post<SuccessResponse>(RESOURCE_PATH, createData);
     return result.data!;
   },
 
-  update: async (id: number, updateData: MasterIngredientGroupRequestItemModel): Promise<SuccessResponse> => {
+  update: async (id: number, updateData: MasterNutrientRequestItemModel): Promise<SuccessResponse> => {
     const result = await apiClient.patch<SuccessResponse>(`${RESOURCE_PATH}/${id}`, updateData);
     return result.data!;
   },

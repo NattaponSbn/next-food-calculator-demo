@@ -24,31 +24,31 @@ const MasterFoodGroupsList = () => {
   const { t } = useTranslation();
   const showFoodGroupModal = useModal<FoodGroupModalProps, any>(FoodGroupModal);
 
-    const handleOpenFilter = async (
-      event: React.MouseEvent<HTMLButtonElement>,
-      column: Column<any, any> // รับ column instance เข้ามา
-    ) => {
-      const filterType = column.columnDef.meta?.filterType;
-      const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
-      const currentValue = column.getFilterValue();
-      
-      // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
-      const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
-  
-      let result;    
-  
-      // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
-      switch (filterType) {
-        // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
-        default:
-          console.warn(`No filter implemented for type: ${filterType}`);
-          return;
-      }
-      
-      if (result?.applied) {
-        column.setFilterValue(result.value);
-      }
-    };
+  const handleOpenFilter = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+    column: Column<any, any> // รับ column instance เข้ามา
+  ) => {
+    const filterType = column.columnDef.meta?.filterType;
+    const columnId = column.id; // <-- ใช้ ID ของคอลัมน์ในการตัดสินใจ
+    const currentValue = column.getFilterValue();
+
+    // สร้าง Title แบบ Dynamic จาก Header ของคอลัมน์
+    const filterTitle = `${t('system.filter')} : ${String(column.columnDef.header)}`;
+
+    let result;
+
+    // --- ใช้ switch-case หรือ if-else เพื่อจัดการตามประเภทและ ID ---
+    switch (filterType) {
+      // สามารถเพิ่ม case 'text', 'numberRange' ฯลฯ ได้ในอนาคต
+      default:
+        console.warn(`No filter implemented for type: ${filterType}`);
+        return;
+    }
+
+    if (result?.applied) {
+      column.setFilterValue(result.value);
+    }
+  };
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
   const columns = useMemo<ColumnDef<MasterIngredientGroupItemsModel>[]>(
@@ -79,16 +79,16 @@ const MasterFoodGroupsList = () => {
         accessorKey: 'nameEng',
         header: ({ column }) => (
           <div className="flex flex-col items-center justify-center gap-2">
-            
+
             {/* ส่วนที่ 1: Title และปุ่ม Sort */}
             <SortableHeader column={column}>
-              {`${t('master.nName')} (${t('system.language.en')})`}
+              {`${t('master.fgName')} (${t('system.language.en')})`}
             </SortableHeader>
 
             {/* ส่วนที่ 2: Filter Control */}
             <FilterControl
               column={column}
-              placeholder={`${t('master.nName')} (${t('system.language.en')})`}
+              placeholder={`${t('master.fgName')} (${t('system.language.en')})`}
               meta={{ filterType: 'text' }} // <-- กำหนด filter type
               onFilterIconClick={handleOpenFilter}
             />
@@ -100,16 +100,16 @@ const MasterFoodGroupsList = () => {
         accessorKey: 'name',
         header: ({ column }) => (
           <div className="flex flex-col items-center justify-center gap-2">
-            
+
             {/* ส่วนที่ 1: Title และปุ่ม Sort */}
             <SortableHeader column={column}>
-              {`${t('master.nName')} (${t('system.language.th')})`}
+              {`${t('master.fgName')} (${t('system.language.th')})`}
             </SortableHeader>
 
             {/* ส่วนที่ 2: Filter Control */}
             <FilterControl
               column={column}
-              placeholder={`${t('master.nName')} (${t('system.language.th')})`}
+              placeholder={`${t('master.fgName')} (${t('system.language.th')})`}
               meta={{ filterType: 'text' }} // <-- กำหนด filter type
               onFilterIconClick={handleOpenFilter}
             />
@@ -146,10 +146,10 @@ const MasterFoodGroupsList = () => {
 
   const initialCriteria = useMemo(() => new MasterIngredientGroupRequestModel(), []);
   const USE_MOCK_DATA = false;
-    // --- Data Fetching Logic ---
+  // --- Data Fetching Logic ---
   const realFetchFn = useCallback((request: ApiSearchRequest) => {
-      console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
-      return ingredientGroupService.search(request);
+    console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+    return ingredientGroupService.search(request);
   }, [ingredientGroupService]);
   const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
   // const fetchDataFunction = USE_MOCK_DATA ? mockFetchFn : realFetchFn;
@@ -163,7 +163,7 @@ const MasterFoodGroupsList = () => {
     initialCriteria: initialCriteria,
   });
 
- useEffect(() => {
+  useEffect(() => {
     console.log("[MasterList] Triggering initial data fetch via refetch()");
     refetch();
   }, [refetch]); // ใช้ refetch เป็น dependency
@@ -209,7 +209,7 @@ const MasterFoodGroupsList = () => {
       if (result.isConfirmed) {
         console.log(`กำลังลบ ${item.nameThai}...`);
         const result = await ingredientGroupService.delete(item.id);
-        if(!result) return;
+        if (!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
         showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
 
@@ -250,11 +250,11 @@ const MasterFoodGroupsList = () => {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
-                       <th
+                      <th
                         key={header.id}
                         scope="col"
                         className="w-auto p-4 align-top border whitespace-nowrap"
-                        style={{ width: header.column.getSize() !== 150 ? header.getSize() : undefined }}
+                        style={{ width: header.getSize() }}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
