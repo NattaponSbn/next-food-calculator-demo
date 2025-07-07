@@ -43,4 +43,5 @@ export const ingredientGroupService = {
     const result = await apiClient.delete<SuccessResponse>(`${RESOURCE_PATH}/${id}`);
     return result.data!;
   },
+
 };

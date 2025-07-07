@@ -6,7 +6,8 @@
   "menu": {
     "headings": {
       "diet_calculation": "คำนวณสูตรอาหาร",
-      "master": "ข้อมูลหลัก"
+      "master": "ข้อมูลหลัก",
+      "raw_material_nutrition_facts": "ข้อมูลโภชนาการวัตถุดิบ"
     },
     "items": {
       "calculator_formula": "เครื่องคำนวณ",
@@ -15,7 +16,8 @@
       "nutrients": "สารอาหาร",
       "units": "หน่วย",
       "raw_material": "วัตถุดิบ",
-      "formula": "สูตร"
+      "formula": "สูตร",
+      "nutrition_data_table": "ตารางข้อมูลโภชนาการ"
     }
   },
   "button": {
@@ -95,5 +97,8 @@
     "rmCreate": "สร้างวัตถุดิบใหม่",
     "rmEdit": "แก้ไขวัตถุดิบ",
     "rmDetail": "รายละเอียดวัตถุดิบ"
+  },
+  "nutrition": {
+    "list": "รายการข้อมูลโภชนาการ"
   }
 }

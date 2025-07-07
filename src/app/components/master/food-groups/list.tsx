@@ -245,7 +245,7 @@ const MasterFoodGroupsList = () => {
       <div className="panel-body">
         <div className="responsive-table-container">
           <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
-            <Table className="responsive-table">
+            <Table className="responsive-table table-separated">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>

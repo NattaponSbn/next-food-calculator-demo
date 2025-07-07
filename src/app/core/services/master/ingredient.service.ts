@@ -2,9 +2,10 @@ import { SuccessResponse } from "../../models/shared/common.model";
 import { MasterIngredientGroupItemsModel, MasterIngredientGroupResponseItemModel, MasterIngredientGroupRequestItemModel } from "../../models/master/ingredient-group/ingredient-group.mode";
 import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
+import { ERMColumnHeaderStructureResponseModel, ERMNutritionItemsModel } from "../../models/expanded-raw-material/expanded-raw-material.mode";
 
 // --- กำหนด Path หลักของ Resource นี้ ---
-const RESOURCE_PATH = '/ingredient-group';
+const RESOURCE_PATH = '/ingredient';
 
 /**
  * Factory Function สำหรับสร้าง Ingredient Group Service
@@ -41,6 +42,16 @@ export const ingredientService = {
 
   delete: async (id: number): Promise<SuccessResponse> => {
     const result = await apiClient.delete<SuccessResponse>(`${RESOURCE_PATH}/${id}`);
+    return result.data!;
+  },
+
+  getInitialField: async (): Promise<ERMColumnHeaderStructureResponseModel> => {
+    const result = await apiClient.get<ERMColumnHeaderStructureResponseModel>(`${RESOURCE_PATH}/initial-field`);
+    return result.data!;
+  },
+
+  fullSearch: async (request: ApiSearchRequest): Promise<PageResult<ERMNutritionItemsModel>> => {
+    const result = await apiClient.post<PageResult<ERMNutritionItemsModel>>(`${RESOURCE_PATH}/full/search`, request);
     return result.data!;
   },
 };

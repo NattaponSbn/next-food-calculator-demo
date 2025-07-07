@@ -6,7 +6,8 @@
   "menu": {
     "headings": {
       "diet_calculation": "Diet Calculation",
-      "master": "Master Data"
+      "master": "Master Data",
+      "raw_material_nutrition_facts": "Raw Material Nutrition Facts"
     },
     "items": {
       "calculator_formula": "Calculator",
@@ -15,7 +16,8 @@
       "nutrients": "Nutrients",
       "units": "Units",
       "raw_material": "Raw Materials",
-      "formula": "Formulas"
+      "formula": "Formulas",
+      "nutrition_data_table": "Nutrition Data Table"
     }
   },
   "button": {
@@ -95,5 +97,8 @@
     "rmCreate": "Create Ram Material",
     "rmEdit": "Edit Ram Material",
     "rmDetail": "Detail Ram Material"
+  },
+  "nutrition": {
+    "list": "Nutrition Data List"
   }
 }

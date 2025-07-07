@@ -32,3 +32,46 @@ export class ExpandedRawMaterialModel {
   // Other
   sugarG!: number | null;
 }
+
+
+export class ERMColumnNutritionModel {
+  id!: number;
+  name!: string;
+  nameEN!: string;
+  code!: string; // นี่คือ accessorKey ที่เราจะใช้!
+  unitName!: string;
+}
+
+export class ERMColumnNutrientFieldGroupModel {
+  id!: number;
+  name!: string; // 'Main nutrients'
+  nutritions!: ERMColumnNutritionModel[];
+}
+
+export class ERMColumnHeaderStructureResponseModel {
+  nutrientFieldGroups!: ERMColumnNutrientFieldGroupModel[];
+}
+
+// --- Model สำหรับ API ค้นหาข้อมูล (Search) ---
+export class ERMColumnItemNutritionValueModel {
+  nutritionId!: number;
+  value!: string | number | null;
+}
+
+export class ERMNutritionItemsModel {
+  id!: number;
+  name!: string;    // nameThai
+  nameEN!: string;  // nameEng
+  foodId!: string;
+  // ...ฟีลด์อื่นๆ ที่ตายตัว
+  nutritions!: ERMColumnItemNutritionValueModel[]; // Array ของค่าสารอาหาร
+}
+
+export class ERMNutritionRequestModel {
+  name: string = ""
+  nameEN: string = ""
+  foodId: string = ""
+  groupId!: number;
+  groupName: string = ""
+}
+

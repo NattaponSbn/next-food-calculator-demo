@@ -27,3 +27,12 @@
 .responsive-table-header {
   @apply sticky top-0 z-10 text-center;
 }
+
+.table-border-collapse {
+  border-spacing: 0;
+  border-collapse: unset!important;
+}
+
+.table-separated {
+  @apply border-separate border-spacing-0;
+}
