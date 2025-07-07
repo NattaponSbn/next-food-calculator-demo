@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.23](https://github.com/NattaponSbn/next-food-calculator-demo/compare/v1.0.21...v1.0.23) (2025-07-07)
+
 ### [1.0.22](https://github.com/NattaponSbn/next-food-calculator-demo/compare/v1.0.15...v1.0.22) (2025-07-05)
 
 ### [1.0.21](https://github.com/NattaponSbn/next-food-calculator-demo/compare/v1.0.20...v1.0.21) (2025-07-03)
