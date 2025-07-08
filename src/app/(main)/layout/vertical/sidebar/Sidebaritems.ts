@@ -23,6 +23,17 @@ import { uniqueId } from "lodash";
 
 const SidebarContent: MenuItem[] = [
   {
+    headingKey: "menu.headings.raw_material_nutrition_facts",
+    children: [
+      {
+        nameKey: "menu.items.nutrition_data_table",
+        icon: "solar:archive-broken",
+        id: uniqueId(),
+        url: "/ui/expanded-raw-material",
+      },
+    ],
+  },
+  {
     headingKey: "menu.headings.diet_calculation",
     children: [
       {
@@ -74,17 +85,7 @@ const SidebarContent: MenuItem[] = [
       },
     ],
   },
-  {
-    headingKey: "menu.headings.raw_material_nutrition_facts",
-    children: [
-      {
-        nameKey: "menu.items.nutrition_data_table",
-        icon: "solar:archive-broken",
-        id: uniqueId(),
-        url: "/ui/expanded-raw-material",
-      },
-    ],
-  }
+  
   // {
   //   heading: "HOME",
   //   children: [
