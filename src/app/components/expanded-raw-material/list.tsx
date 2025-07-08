@@ -11,6 +11,7 @@ import { ERMColumnNutrientFieldGroupModel, ERMNutritionItemsModel, ERMNutritionR
 import { FilterControl } from '../shared/filterable-header';
 import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
 import { ingredientService } from '@/app/core/services/master/ingredient.service';
+import { TablePagination } from '../shared/table-pagination';
 
 const handleOpenFilter = async (
   event: React.MouseEvent<HTMLButtonElement>,
@@ -54,9 +55,9 @@ const ExpandedRawMaterialList = () => {
                 onFilterIconClick={handleOpenFilter}
               />
             ),
-            size: 250,
+            size: 280,
             cell: (info) => (
-             <span className='text-start block'>{info.getValue<string>()}</span>
+             <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
             ),
           },
           {
@@ -70,9 +71,9 @@ const ExpandedRawMaterialList = () => {
                 onFilterIconClick={handleOpenFilter}
               />
             ),
-            size: 250,
+            size: 280,
              cell: (info) => (
-             <span className='text-start block'>{info.getValue<string>()}</span>
+             <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
             ),
           },
         ],
@@ -198,7 +199,7 @@ const ExpandedRawMaterialList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
+                          className="w-auto px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
@@ -213,7 +214,7 @@ const ExpandedRawMaterialList = () => {
               </tbody>
             </Table>
           </div>
-
+          <TablePagination table={table} />
         </div>
       </div>
 

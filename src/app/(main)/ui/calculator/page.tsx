@@ -1,4 +1,4 @@
-import CalculatorManageComponent from "@/app/components/calculator/calculator";
+import CalculatorRawMaterialPage from "@/app/components/calculator/cal-raw-material";
 import { Metadata } from "next";
 
 type CalculatorManageProps = {}
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const CalculatorManage = ({}: CalculatorManageProps) => {
   return (
-    <CalculatorManageComponent />
+    <CalculatorRawMaterialPage />
   )
 }
 

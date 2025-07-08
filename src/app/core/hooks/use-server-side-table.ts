@@ -8,6 +8,7 @@ import {
   type SortingState,
   type ColumnFiltersState,
   type PaginationState,
+  TableOptions,
 } from '@tanstack/react-table';
 import type { ApiSearchRequest, FilterCriteria, PageResult } from '../models/shared/page.model';
 
@@ -31,6 +32,7 @@ interface UseServerSideTableProps<T extends Record<string, any>> {
    * เงื่อนไขการกรองเริ่มต้น
    */
   initialCriteria?: Record<string, any>;
+  tanstackTableOptions?: Partial<TableOptions<T>>;
 }
 
 /**
@@ -41,6 +43,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
   columns,
   initialPageSize = 10,
   initialCriteria = {},
+  tanstackTableOptions = {},
 }: UseServerSideTableProps<T>) => {
   // --- States สำหรับจัดการตาราง ---
   const [data, setData] = useState<T[]>([]);
@@ -120,7 +123,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
     data,
     columns,
     pageCount,
-    state: { sorting, columnFilters, pagination },
+    state: { sorting, columnFilters, pagination, ...tanstackTableOptions.state, },
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
@@ -128,6 +131,7 @@ export const useServerSideTable = <T extends Record<string, any>>({
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
+    ...tanstackTableOptions, 
   });
 
   // --- คืนค่าทั้งหมดที่จำเป็น ---
