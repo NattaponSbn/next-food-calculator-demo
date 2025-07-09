@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Button, Checkbox, Label, Table, TextInput } from 'flowbite-react';
 import { type InjectedModalProps } from '@/app/core/hooks/use-modal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
-import { ModalFrame, ModalSize } from '../shared/modals/modal-frame';
+import { ModalFrame, ModalSize } from '../../shared/modals/modal-frame';
 import { useTranslation } from 'react-i18next';
 import { Column, ColumnDef, flexRender } from '@tanstack/react-table';
-import { FilterControl } from '../shared/filterable-header';
-import { TablePagination } from '../shared/table-pagination';
-import { TableStatusRow } from '../shared/table-status-row';
+import { FilterControl } from '../../shared/filterable-header';
+import { TablePagination } from '../../shared/table-pagination';
+import { TableStatusRow } from '../../shared/table-status-row';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 
@@ -187,8 +187,7 @@ export const RawMaterialSelectModal = ({
                 </>
             }
         >
-            <div className="max-h-[60vh] overflow-y-auto">
-                <div className="responsive-table-container">
+             <div className="responsive-table-container">
                     <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
                         <Table className="responsive-table table-separated">
                             <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
@@ -235,7 +234,6 @@ export const RawMaterialSelectModal = ({
 
                 </div>
                 <TablePagination table={table} />
-            </div>
         </ModalFrame>
     );
 };

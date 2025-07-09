@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { useModal } from '@/app/core/hooks/use-modal';
-import { RawMaterialSelectModal, RawMaterialSelectProps } from './raw-material-select-modal';
+import { RawMaterialSelectModal, RawMaterialSelectProps } from './modals/raw-material-select-modal';
 import { IngredientRow } from './ingredient-row';
 import { NutritionSummary } from './nutrition-summary';
 import { useDebounce } from '@/app/core/hooks/use-debounce';
@@ -67,7 +67,7 @@ const CalculatorRawMaterialPage = () => {
 
   const handleOpenModal = async () => {
     try {
-      const selectedItems = await showSelectModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[1080px]' });
+      const selectedItems = await showSelectModal({ mode: 'create', size: '5xl' });
       if (selectedItems && selectedItems.length > 0) {
         handleAddIngredients(selectedItems);
       }
