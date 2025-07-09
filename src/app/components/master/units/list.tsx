@@ -115,7 +115,7 @@ const MasterUnitsList = () => {
         size: 200,
       },
       {
-        accessorKey: 'nameEng',
+        accessorKey: 'nameEN',
         header: ({ column }) => (
           // ห่อทุกอย่างด้วย div หลัก และใช้ flex-col
           <div className="flex flex-col items-center justify-center gap-2">

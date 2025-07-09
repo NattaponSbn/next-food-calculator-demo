@@ -76,7 +76,7 @@ const MasterRawMaterialList = () => {
         size: 150,
       },
       {
-        accessorKey: 'nameEng',
+        accessorKey: 'nameEN',
         header: ({ column }) => (
           <div className="flex flex-col items-center justify-center gap-2">
 

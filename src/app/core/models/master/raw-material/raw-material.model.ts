@@ -25,6 +25,7 @@ export class MasterRawMaterialItemsModel {
 
     code?: string;
     name?: string;
+    nameEN?: string;
     description?: string;
     id?: number;
 } 

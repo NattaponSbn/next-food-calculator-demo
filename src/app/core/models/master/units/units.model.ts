@@ -10,6 +10,7 @@ export class MasterUnitsItemsModel {
 
   code!: string;
   name!: string;
+  nameEN!: string;
   description!: string;
   id!: number;
 }

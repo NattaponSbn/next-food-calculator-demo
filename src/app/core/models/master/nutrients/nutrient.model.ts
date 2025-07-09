@@ -20,6 +20,7 @@ export class MasterNutrientItemsModel {
   updatedBy!: string;
   code!: string;
   name!: string;
+  nameEN!: string;
   description!: string;
   id!: number;
 }
