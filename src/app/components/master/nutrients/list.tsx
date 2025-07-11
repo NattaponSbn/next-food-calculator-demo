@@ -136,6 +136,9 @@ const MasterNutrientList = () => {
           </div>
         ),
         size: 250,
+         cell: (info) => (
+            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+          ),
       },
       {
         accessorKey: 'name',
@@ -157,6 +160,9 @@ const MasterNutrientList = () => {
           </div>
         ),
         size: 250,
+         cell: (info) => (
+            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+          ),
       },
       {
         accessorKey: 'defaultUnit',
@@ -184,82 +190,6 @@ const MasterNutrientList = () => {
           />
         ),
         size: 200,
-      },
-      // สถานะ
-      {
-        accessorKey: 'status',
-        header: ({ column }) => (
-          <div className="flex flex-col items-center justify-center gap-2">
-
-            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
-            <SortableHeader column={column}>
-              {t('system.status')}
-            </SortableHeader>
-
-            {/* ส่วนที่ 2: Filter Control */}
-            <FilterControl
-              column={column}
-              placeholder={t('system.status')}
-              meta={{ filterType: 'status' }} // <-- กำหนด filter type
-              onFilterIconClick={handleOpenFilter}
-            />
-          </div>
-        ),
-        meta: {
-          filterType: 'status',
-        },
-        cell: (info) => (
-          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${info.getValue() === 'ACTIVE'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-            }`}>
-            {info.getValue() === 'ACTIVE' ? t('system.statusActive') : t('system.statusInactive')}
-          </span>
-        ),
-        size: 120,
-      },
-      {
-        accessorKey: 'updatedBy',
-        header: () => t('system.updatedBy'),
-        size: 150,
-        cell: (info) => (
-          // สามารถใส่ icon หรือ avatar เล็กๆ ข้างหน้าชื่อได้ถ้าต้องการ
-          <div className="flex items-center justify-center gap-2">
-            <span className="font-medium">{info.getValue<string>()}</span>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'updatedAt',
-        header: ({ column }) => (
-          <div className="flex flex-col items-center justify-center gap-2">
-
-            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
-            <SortableHeader column={column}>
-              {t('system.updatedAt')}
-            </SortableHeader>
-
-            {/* ส่วนที่ 2: Filter Control */}
-            <FilterControl
-              column={column}
-              placeholder={t('system.updatedAt')}
-              meta={{ filterType: 'date' }} // <-- กำหนด filter type
-              onFilterIconClick={handleOpenFilter}
-            />
-          </div>
-        ),
-        meta: {
-          filterType: 'date',
-        },
-        size: 180,
-        cell: (info) => {
-          const dateValue = info.getValue<string>();
-
-          // จัดรูปแบบวันที่ (แนะนำให้ใช้ date-fns ในโปรเจกต์จริง)
-          // new Date(dateValue).toLocaleDateString('th-TH', { ... })
-          // ตัวอย่างนี้จะแสดงผลแบบสั้นๆ เพื่อความกระชับ
-          return formatDateEngShort(dateValue);
-        },
       },
       // จัดการ
       {
@@ -415,7 +345,7 @@ const MasterNutrientList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>

@@ -60,7 +60,7 @@ export function RawMaterialModal({
         // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
         reset({
           code: data.code,
-          nameEng: data.name,
+          nameEng: data.nameEN,
           nameThai: data.name,
         });
       } else {
@@ -75,6 +75,7 @@ export function RawMaterialModal({
     const request: MasterRawMaterialRequestItemModel = new MasterRawMaterialRequestItemModel;
     request.code = data.code;
     request.name = data.nameThai;
+    request.nameEN = data.nameEng;
     request.description = data.nameThai;
     let result: SuccessResponse;
     if (mode === 'create') {

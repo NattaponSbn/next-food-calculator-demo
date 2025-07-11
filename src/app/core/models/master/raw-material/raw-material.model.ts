@@ -1,37 +1,37 @@
+import { CalculatorResponseItemModel } from "../../calculator/calculator.mode";
+
 export class MasterRawMaterialRequestModel {
-    materialId: string = "";
-    nameThai: string = "";
-    nameEng: string = "";
-    categoryId!: number;
+  materialId: string = "";
+  nameThai: string = "";
+  nameEng: string = "";
+  categoryId!: number;
 }
 
 export class MasterRawMaterialItemsModel {
-    rawMaterialObjectId!: string;
-    materialId!: string;
-    nameThai!: string;
-    nameEng!: string;
-    categoryName!: string;
-    baseUnit!: string;
-    baseQuantity!: number;
+  kind!: string;
+  id!: number
+  name!: string;
+  nameEN!: string;
+  foodId!: string;
+  description!: string;
+  groupId!: number
+  dataPerUnit!: number
+  perUnitId!: number
+  nutritions!: MasterRawMaterialNutritionModel[]
+  perUnitName!: string;
+}
 
-    // สารอาหารหลัก
-    energyKcal!: number;
-    proteinG!: number;
-    carbohydrateG!: number;
-    fatTotalG!: number;
-    status!: string;
-    updatedAt!: string;
-    updatedBy!: string;
-
-    code?: string;
-    name?: string;
-    nameEN?: string;
-    description?: string;
-    id?: number;
-} 
+export class MasterRawMaterialNutritionModel {
+  kind!: string;
+  nutritionId!: number;
+  value!: string;
+  nutritionName!: string;
+  unitId!: number;
+}
 
 export class MasterRawMaterialRequestItemModel {
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 }
@@ -39,6 +39,19 @@ export class MasterRawMaterialRequestItemModel {
 export class MasterRawMaterialResponseItemModel {
   id!: number;
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 } 
+
+export class MasterRawSelectedIngredientModel {
+  id!: number;
+  data!: MasterRawMaterialItemsModel | CalculatorResponseItemModel;
+  quantity!: number;
+  unit!: string;
+}
+export class MasterRawNutritionSummaryModel {
+  mainNutrients!: { [key: string]: string };
+  vitamins!: { [key: string]: string };
+  minerals!: { [key: string]: string };
+}

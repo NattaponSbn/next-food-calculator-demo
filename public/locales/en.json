@@ -17,7 +17,8 @@
       "units": "Units",
       "raw_material": "Raw Materials",
       "formula": "Formulas",
-      "nutrition_data_table": "Nutrition Data Table"
+      "nutrition_data_table": "Nutrition Data Table",
+      "calculator_history": "History"
     }
   },
   "button": {
@@ -26,10 +27,19 @@
     "submit": "Submit",
     "close": "Close",
     "cancel": "Cancel",
-    "saveData": "Save Data"
+    "saveData": "Save Data",
+    "save": "Save",
+    "update": "Update",
+    "saveAndNext": "Save And Next",
+    "edit": "Edit",
+    "back": "Back"
   },
   "require": {
     "pleaseInput": "Please Input Require"
+  },
+  "alertTitle": {},
+  "alertText": {
+    "pleaseEnterCalculationAddLeastOne": "กรุณากรอกชื่อการคำนวณ และเพิ่มวัตถุดิบอย่างน้อย 1 รายการ"
   },
   "system": {
     "no": "No",
@@ -52,7 +62,8 @@
     "type": "Type",
     "error": {
       "title": "เกิดข้อผิดพลาด"
-    }
+    },
+    "version": "Version"
   },
   "master": {
     "fgCode": "Food Group Code",
@@ -62,7 +73,6 @@
     "fgCreate": "Create Food Group",
     "fgEdit": "Edit Food Group",
     "fgDetail": "Detail Food Group",
-    
     "ncNutrient": "Nutrient Categories",
     "ncCode": "Nutrient Categories Code",
     "ncName": "Nutrient Categories Name",
@@ -71,7 +81,6 @@
     "ncCreate": "Create Nutrient Categories",
     "ncEdit": "Edit Nutrient Categories",
     "ncDetail": "Detail Nutrient Categories",
-
     "nCode": "Nutrient Code",
     "nName": "Nutrient Name",
     "nDescription": "Description",
@@ -79,7 +88,6 @@
     "nCreate": "Create Nutrient",
     "nEdit": "Edit Nutrient",
     "nDetail": "Detail Nutrient",
-
     "unUnit": "Unit",
     "unCode": "Unit Code",
     "unName": "Unit Name",
@@ -89,16 +97,36 @@
     "unEdit": "Edit Unit",
     "unDetail": "Detail Unit",
     "unType": "Type",
-
     "rmCode": "Ram Material Code",
     "rmName": "Ram Material Name",
     "rmDescription": "Description",
     "rmList": "Ram Material List",
     "rmCreate": "Create Ram Material",
     "rmEdit": "Edit Ram Material",
-    "rmDetail": "Detail Ram Material"
+    "rmDetail": "Detail Ram Material",
+    "rmFoodId": "Food Id"
   },
   "nutrition": {
     "list": "Nutrition Data List"
+  },
+  "calculator": {
+    "code": "Code",
+    "name": "Name",
+    "list": "Calculator List",
+    "create": "Create Calculator",
+    "edit": "Edit Calculator",
+    "detail": "Detail Calculator",
+    "hisList": "Calculator History List",
+    "new": "Calculator New",
+    "pageSubtitle": "จัดการสูตรอาหารและดูสรุปโภชนาการ",
+    "calculationNamePlaceholder": "เช่น สูตรไก่ผัดบรอกโคลี",
+    "ingredientListTitle": "รายการวัตถุดิบ",
+    "addIngredient": "เพิ่มวัตถุดิบ",
+    "noIngredients": "ยังไม่มีวัตถุดิบ",
+    "noIngredientsHint": "กด 'เพิ่มวัตถุดิบ' เพื่อเริ่มต้น",
+    "nutritionSummaryTitle": "สรุปคุณค่าทางโภชนาการ",
+    "calculating": "กำลังคำนวณ...",
+    "noSummary": "ผลรวมสารอาหารจะแสดงที่นี่",
+    "selectIngredients": "เลือกวัถุดิบ"
   }
 }

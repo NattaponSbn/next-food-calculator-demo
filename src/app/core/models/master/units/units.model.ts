@@ -27,6 +27,7 @@ export class MasterUnitsRequestModel {
 
 export class MasterUnitsRequestItemModel {
   name!: string;
+   nameEN!: string;
   code!: string;
   description!: string;
 }
@@ -34,6 +35,7 @@ export class MasterUnitsRequestItemModel {
 export class MasterUnitsResponseItemModel {
   id!: number;
   name!: string;
+   nameEN!: string;
   code!: string;
   description!: string;
 } 

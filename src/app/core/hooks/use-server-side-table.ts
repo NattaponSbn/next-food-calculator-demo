@@ -49,14 +49,25 @@ export const useServerSideTable = <T extends Record<string, any>>({
   const [data, setData] = useState<T[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false); // ใช้สำหรับ Loading เฉพาะจุด
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+   const [internalSorting, setInternalSorting] = useState<SortingState>([]);
+  const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>(
     () => Object.entries(initialCriteria).map(([id, value]) => ({ id, value }))
   );
-  const [pagination, setPagination] = useState<PaginationState>({
+  const [internalPagination, setInternalPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: initialPageSize,
   });
+
+  const isControlled = tanstackTableOptions && tanstackTableOptions.state;
+
+  const sorting = isControlled ? tanstackTableOptions.state!.sorting! : internalSorting;
+  const columnFilters = isControlled ? tanstackTableOptions.state!.columnFilters! : internalColumnFilters;
+  const pagination = isControlled ? tanstackTableOptions.state!.pagination! : internalPagination;
+
+  // 3. สร้าง Handler ที่จะอัปเดตทั้ง State จากข้างนอกและข้างใน
+  const onSortingChange = tanstackTableOptions.onSortingChange ?? setInternalSorting;
+  const onColumnFiltersChange = tanstackTableOptions.onColumnFiltersChange ?? setInternalColumnFilters;
+  const onPaginationChange = tanstackTableOptions.onPaginationChange ?? setInternalPagination;
 
   // --- ฟังก์ชันหลักสำหรับดึงข้อมูล ---
   const fetchData = useCallback(async () => {
@@ -123,15 +134,23 @@ export const useServerSideTable = <T extends Record<string, any>>({
     data,
     columns,
     pageCount,
-    state: { sorting, columnFilters, pagination, ...tanstackTableOptions.state, },
+    state: {
+      sorting,
+      columnFilters,
+      pagination,
+      ...tanstackTableOptions.state,
+    },
+    // ใช้ Handler ที่เราสร้างขึ้น
+    onSortingChange,
+    onColumnFiltersChange,
+    onPaginationChange,
+    
+    getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    ...tanstackTableOptions, 
+    // กระจาย Options ที่เหลือจากข้างนอก
+    ...tanstackTableOptions,
   });
 
   // --- คืนค่าทั้งหมดที่จำเป็น ---

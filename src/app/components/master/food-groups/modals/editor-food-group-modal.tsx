@@ -9,7 +9,7 @@ import { showConfirmation, showSuccessAlert } from '@/app/lib/swal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
 import * as z from 'zod';
 import { SuccessResponse } from '@/app/core/models/shared/common.model';
-import { MasterIngredientGroupRequestItemModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
+import { MasterIngredientGroupRequestItemModel, MasterIngredientGroupResponseItemModel } from '@/app/core/models/master/ingredient-group/ingredient-group.mode';
 import { ingredientGroupService } from '@/app/core/services/master/ingredient-group.service';
 
 
@@ -62,7 +62,7 @@ export function FoodGroupModal({
         // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
         reset({
           code: data.code,
-          nameEng: data.name,
+          nameEng: data.nameEN,
           nameThai: data.name,
         });
       } else {
@@ -74,9 +74,10 @@ export function FoodGroupModal({
   }, [mode, id, reset, onClose]);
 
   const onSubmit = async (data: FoodGroupFormValues) => {
-    const request: MasterIngredientGroupRequestItemModel = new MasterIngredientGroupRequestItemModel;
+    const request: MasterIngredientGroupResponseItemModel = new MasterIngredientGroupResponseItemModel;
     request.code = data.code;
     request.name = data.nameThai;
+    request.nameEN = data.nameEng;
     request.description = data.nameThai;
     let result: SuccessResponse;
     if (mode === 'create') {

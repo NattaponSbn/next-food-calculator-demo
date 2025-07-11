@@ -27,6 +27,7 @@ export class MasterNutrientItemsModel {
 
 export class MasterNutrientRequestItemModel {
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 }
@@ -34,6 +35,7 @@ export class MasterNutrientRequestItemModel {
 export class MasterNutrientResponseItemModel {
   id!: number;
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 } 

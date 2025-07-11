@@ -6,23 +6,24 @@ import { Column, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { Icon } from '@iconify/react';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
 import { TablePagination } from '../../shared/table-pagination';
+import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
 import { useTranslation } from 'react-i18next';
 import { TableStatusRow } from '../../shared/table-status-row';
-import { useModal } from '@/app/core/hooks/use-modal';
 import { showDeleteConfirm, showSuccessAlert } from '@/app/lib/swal';
 import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 import { FilterControl } from '../../shared/filterable-header';
+import { DateFilterRequestModel } from '@/app/core/models/shared/date-filter.model';
 import { SortableHeader } from '../../shared/sortable-header';
-import { nutritionGroupService } from '@/app/core/services/master/nutrition-group.service';
-import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
-import { RawMaterialModal, RawMaterialModalProps } from './modals/editor-raw-material-modal';
-import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
-import { ingredientService } from '@/app/core/services/master/ingredient.service';
+import { recipeService } from '@/app/core/services/calculator/recipe.service';
+import { CalculatorItemsModel, CalculatorRequestModel } from '@/app/core/models/calculator/calculator.mode';
+import { useRouter } from 'next/navigation';
+import { ModeTypes } from '@/app/core/models/const/type.const';
 
-const MasterRawMaterialList = () => {
+const CalculatorRawMaterialHistoryListPage = () => {
   const { t } = useTranslation();
-  const showRawMaterModal = useModal<RawMaterialModalProps, any>(RawMaterialModal);
+  const router = useRouter();
+  const modeType = ModeTypes;
 
   const handleOpenFilter = async (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -51,7 +52,7 @@ const MasterRawMaterialList = () => {
   };
 
   // --- [แก้ไข] ปรับปรุง Columns Definition ---
-  const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(
+  const columns = useMemo<ColumnDef<CalculatorItemsModel>[]>(
     () => [
       {
         id: 'no',
@@ -63,65 +64,28 @@ const MasterRawMaterialList = () => {
         enableSorting: false,
       },
       {
-        accessorKey: 'foodId',
-        header: ({ column }) => (
-          <FilterControl
-            column={column}
-            title={t('master.rmFoodId')}
-            placeholder={t('master.rmFoodId')}
-            meta={{ filterType: 'text' }}
-            onFilterIconClick={handleOpenFilter}
-          />
-        ),
-        size: 150,
-      },
-      {
-        accessorKey: 'nameEN',
-        header: ({ column }) => (
-          <div className="flex flex-col items-center justify-center gap-2">
-
-            {/* ส่วนที่ 1: Title และปุ่ม Sort */}
-            <SortableHeader column={column}>
-              {`${t('master.rmName')} (${t('system.language.en')})`}
-            </SortableHeader>
-
-            {/* ส่วนที่ 2: Filter Control */}
-            <FilterControl
-              column={column}
-              placeholder={`${t('master.rmName')} (${t('system.language.en')})`}
-              meta={{ filterType: 'text' }} // <-- กำหนด filter type
-              onFilterIconClick={handleOpenFilter}
-            />
-          </div>
-        ),
-        size: 250,
-        cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
-      },
-      {
         accessorKey: 'name',
         header: ({ column }) => (
           <div className="flex flex-col items-center justify-center gap-2">
 
             {/* ส่วนที่ 1: Title และปุ่ม Sort */}
             <SortableHeader column={column}>
-              {`${t('master.rmName')} (${t('system.language.th')})`}
+              {`${t('calculator.name')}`}
             </SortableHeader>
 
             {/* ส่วนที่ 2: Filter Control */}
             <FilterControl
               column={column}
-              placeholder={`${t('master.rmName')} (${t('system.language.th')})`}
+              placeholder={`${t('calculator.name')}`}
               meta={{ filterType: 'text' }} // <-- กำหนด filter type
               onFilterIconClick={handleOpenFilter}
             />
           </div>
         ),
-        size: 250,
-        cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
+        size: 700,
+         cell: (info) => (
+             <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+            ),
       },
       // จัดการ
       {
@@ -150,17 +114,19 @@ const MasterRawMaterialList = () => {
     [] // dependency array ว่างไว้ เพราะ handleEdit/handleDelete ควรถูก memoized ถ้าจำเป็น
   );
 
-  const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
+  const initialCriteria = useMemo(() => new CalculatorRequestModel(), []);
   const USE_MOCK_DATA = false;
   // --- Data Fetching Logic ---
   const realFetchFn = useCallback((request: ApiSearchRequest) => {
-    return ingredientService.search(request);
-  }, [ingredientService]);
+    console.log('[MasterList] fetchDataFunction is called. Service instance is ready.');
+    return recipeService.search(request);
+  }, [recipeService]);
   const mockFetchFn = useCallback(createMockFetchFn(MASTER_RAW_MATERIAL_MOCKS), []);
-  // const fetchDataFunction = USE_MOCK_DATA && mockFetchFn;
+  // const fetchDataFunction = USE_MOCK_DATA ? mockFetchFn : realFetchFn;
   const fetchDataFunction = realFetchFn;
 
-  const { table, isLoading, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+  // --- [เปลี่ยน] เรียกใช้ Custom Hook เพื่อจัดการ Logic ทั้งหมด ---
+  const { table, isLoading, refetch } = useServerSideTable<CalculatorItemsModel>({
     fetchDataFn: fetchDataFunction,
     columns,
     initialPageSize: 10,
@@ -168,40 +134,35 @@ const MasterRawMaterialList = () => {
   });
 
   useEffect(() => {
+    console.log("[MasterList] Triggering initial data fetch via refetch()");
     refetch();
   }, [refetch]); // ใช้ refetch เป็น dependency
 
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
-      const newGroup = await showRawMaterModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
-      refetch();
+      router.replace(`/ui/calculator-history/manage?mode=${modeType.create}`);
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
     }
   };
 
-  const handleEdit = async (item: MasterRawMaterialItemsModel) => {
+  const handleEdit = async (item: CalculatorItemsModel) => {
     try {
       // เรียกใช้โหมด 'edit' พร้อมส่งข้อมูลเริ่มต้น
-      const updatedGroup = await showRawMaterModal({
-        mode: 'edit',
-        id: item.id,
-        size: 'lg:max-w-3xl lg:min-w-[700px]'
-      });
-      refetch();
+      router.replace(`/ui/calculator-history/manage?mode=${modeType.edit}&id=${item.id}`);
     } catch (error) {
       console.info('การแก้ไขถูกยกเลิก');
     }
   };
 
-  const handleView = (item: MasterRawMaterialItemsModel) => {
+  const handleView = (item: CalculatorItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showRawMaterModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    router.replace(`/ui/calculator-history/manage?mode=${modeType.view}&id=${item.id}`);
   };
 
 
-  const handleDelete = async (item: MasterRawMaterialItemsModel) => {
+  const handleDelete = async (item: CalculatorItemsModel) => {
     try {
       // 2. เรียกใช้ฟังก์ชัน showDeleteConfirm และ "await" ผลลัพธ์
       // ส่งชื่อของ item เข้าไปเพื่อให้ข้อความดูเป็นมิตร
@@ -210,7 +171,8 @@ const MasterRawMaterialList = () => {
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
       if (result.isConfirmed) {
-        const result = await nutritionGroupService.delete(item.id!);
+        console.log(`กำลังลบ ${item.name}...`);
+        const result = await recipeService.delete(item.id);
         if (!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
         showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);
@@ -234,7 +196,7 @@ const MasterRawMaterialList = () => {
       <div className="panel-header">
         <div className="flex items-center gap-2">
           <h2 className="panel-title">
-            {t('master.rmList')} {/* หรือชื่อหัวตาราง */}
+            {t('calculator.hisList')} {/* หรือชื่อหัวตาราง */}
           </h2>
           <Button onClick={handleCreate} size={'md'} color={'success'} className='btn'>
             <Icon icon="mdi:plus" className="h-5 w-5" />
@@ -246,7 +208,7 @@ const MasterRawMaterialList = () => {
       {/* Panel Body */}
       <div className="panel-body">
         <div className="responsive-table-container">
-          <div className="responsive-table-scroll-wrapper">
+          <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
             <Table className="responsive-table table-separated">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -258,7 +220,7 @@ const MasterRawMaterialList = () => {
                         className="w-auto p-4 align-top border whitespace-nowrap"
                         style={{ width: header.getSize() }}
                       >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
                     ))}
                   </tr>
@@ -293,10 +255,9 @@ const MasterRawMaterialList = () => {
         </div>
         <TablePagination table={table} />
       </div>
-
     </div>
 
   );
 };
 
-export default MasterRawMaterialList;
+export default CalculatorRawMaterialHistoryListPage;

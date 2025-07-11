@@ -13,7 +13,7 @@ i18n
   .use(initReactI18next)
   // ตั้งค่า i18next
   .init({
-    debug: process.env.NODE_ENV === 'development', // แสดง log ตอน dev
+    // debug: process.env.NODE_ENV === 'development', // แสดง log ตอน dev
     lng: "th",
     fallbackLng: 'th', // ภาษาเริ่มต้นถ้าหาภาษาที่ต้องการไม่เจอ
     interpolation: {

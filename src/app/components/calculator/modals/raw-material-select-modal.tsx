@@ -6,31 +6,18 @@ import { type InjectedModalProps } from '@/app/core/hooks/use-modal';
 import { ModeTypes } from '@/app/core/models/const/type.const';
 import { ModalFrame, ModalSize } from '../../shared/modals/modal-frame';
 import { useTranslation } from 'react-i18next';
-import { Column, ColumnDef, flexRender } from '@tanstack/react-table';
+import { Column, ColumnDef, ColumnFiltersState, flexRender, PaginationState, SortingState } from '@tanstack/react-table';
 import { FilterControl } from '../../shared/filterable-header';
 import { TablePagination } from '../../shared/table-pagination';
 import { TableStatusRow } from '../../shared/table-status-row';
 import { useServerSideTable } from '@/app/core/hooks/use-server-side-table';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
+import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
+import { ingredientService } from '@/app/core/services/master/ingredient.service';
+import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
 
-// --- Mock Data & Models (ในอนาคตจะมาจาก API) ---
-interface MasterRawMaterialItem {
-    rawMaterialObjectId: string;
-    nameThai: string;
-    nameEng: string;
-    baseUnit: string;
-}
-
-const MOCK_RAW_MATERIALS: MasterRawMaterialItem[] = [
-    { rawMaterialObjectId: 'raw_001', nameThai: 'อกไก่ (ไม่ติดหนัง)', nameEng: 'Chicken Breast', baseUnit: 'g' },
-    { rawMaterialObjectId: 'raw_002', nameThai: 'ข้าวกล้องหอมมะลิ', nameEng: 'Brown Rice', baseUnit: 'g' },
-    { rawMaterialObjectId: 'raw_003', nameThai: 'บรอกโคลี', nameEng: 'Broccoli', baseUnit: 'g' },
-    { rawMaterialObjectId: 'raw_004', nameThai: 'น้ำมันมะกอก', nameEng: 'Olive Oil', baseUnit: 'ml' },
-    { rawMaterialObjectId: 'raw_005', nameThai: 'ไข่ไก่', nameEng: 'Egg', baseUnit: 'ฟอง' },
-];
 
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
-
 export interface RawMaterialSelectProps {
     mode: Mode;
     id?: number;
@@ -43,11 +30,17 @@ export const RawMaterialSelectModal = ({
     size,
     onConfirm,
     onClose
-}: RawMaterialSelectProps & InjectedModalProps<MasterRawMaterialItem[]>) => {
+}: RawMaterialSelectProps & InjectedModalProps<MasterRawMaterialItemsModel[]>) => {
     const { t } = useTranslation();
     const isViewMode = mode === 'view';
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [rowSelection, setRowSelection] = useState({});
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [pagination, setPagination] = useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 10,
+    });
 
     const handleOpenFilter = async (
         event: React.MouseEvent<HTMLButtonElement>,
@@ -77,7 +70,7 @@ export const RawMaterialSelectModal = ({
 
 
     // --- Column Definitions with Filter Controls ---
-    const columns = useMemo<ColumnDef<MasterRawMaterialItem>[]>(() => [
+    const columns = useMemo<ColumnDef<MasterRawMaterialItemsModel>[]>(() => [
         {
             id: 'select',
             header: ({ table }) => (
@@ -101,21 +94,21 @@ export const RawMaterialSelectModal = ({
             header: ({ column }) => (
                 <FilterControl
                     column={column}
-                    title={t('Food Id')}
-                    placeholder={t('Food Id')}
+                    title={t('master.rmFoodId')}
+                    placeholder={t('master.rmFoodId')}
                     meta={{ filterType: 'text' }}
                     onFilterIconClick={handleOpenFilter}
                 />
             ),
-            size: 120,
+            size: 90,
         },
         {
-            accessorKey: 'nameThai',
+            accessorKey: 'name',
             header: ({ column }) => (
                 <FilterControl
                     column={column}
-                    title={t('Thai')}
-                    placeholder={t('Thai')}
+                    title={`${t('master.rmName')} (${t('system.language.th')})`}
+                    placeholder={`${t('master.rmName')} (${t('system.language.th')})`}
                     meta={{ filterType: 'text' }}
                     onFilterIconClick={handleOpenFilter}
                 />
@@ -126,12 +119,12 @@ export const RawMaterialSelectModal = ({
             ),
         },
         {
-            accessorKey: 'nameEng',
+            accessorKey: 'nameEN',
             header: ({ column }) => (
                 <FilterControl
                     column={column}
-                    title={t('English')}
-                    placeholder={t('English')}
+                    title={`${t('master.rmName')} (${t('system.language.en')})`}
+                    placeholder={`${t('master.rmName')} (${t('system.language.en')})`}
                     meta={{ filterType: 'text' }}
                     onFilterIconClick={handleOpenFilter}
                 />
@@ -143,28 +136,43 @@ export const RawMaterialSelectModal = ({
         },
     ], []);
 
+      const initialCriteria = useMemo(() => new MasterRawMaterialRequestModel(), []);
+
     // --- Data Fetching Logic ---
-    const mockFetchFn = useCallback(createMockFetchFn(MOCK_RAW_MATERIALS), []);
+    const realFetchFn = useCallback((request: ApiSearchRequest) => {
+        return ingredientService.search(request);
+    }, [ingredientService]);
     // const realFetchFn = ...
 
-    const { table, refetch } = useServerSideTable<MasterRawMaterialItem>({
-        fetchDataFn: mockFetchFn, // ในอนาคตเปลี่ยนเป็น API จริง
+    const { table, refetch } = useServerSideTable<MasterRawMaterialItemsModel>({
+        fetchDataFn: realFetchFn, // ในอนาคตเปลี่ยนเป็น API จริง
         columns,
-        initialPageSize: 5,
+        initialPageSize: 10,
+        initialCriteria: initialCriteria,
         // ส่ง Options สำหรับ Row Selection เข้าไป
         tanstackTableOptions: {
-            state: { rowSelection },
-            enableRowSelection: true,
+           state: { 
+                // รวม State ทั้งหมดที่ตารางต้องใช้
+                rowSelection, 
+                sorting, 
+                columnFilters, 
+                pagination 
+            },
+            // ส่ง Handler ทั้งหมดเข้าไปด้วย
             onRowSelectionChange: setRowSelection,
-            // ทำให้สามารถเลือกแถวได้โดยการคลิกที่ไหนก็ได้ในแถว (Optional)
+            onSortingChange: setSorting,
+            onColumnFiltersChange: setColumnFilters,
+            onPaginationChange: setPagination,
+
+            enableRowSelection: true,
             enableMultiRowSelection: true,
         },
     });
 
     // --- Initial Data Load ---
-    useEffect(() => {
-        refetch();
-    }, [refetch]);
+     useEffect(() => {
+            refetch();
+        }, [refetch, pagination, sorting, columnFilters]);
 
 
     const handleConfirm = () => {
@@ -174,7 +182,7 @@ export const RawMaterialSelectModal = ({
 
     return (
         <ModalFrame
-            title={t('เลือกวัถุดิบ')}
+            title={t('calculator.selectIngredients')}
             size={size}
             footer={
                 <>
@@ -187,53 +195,53 @@ export const RawMaterialSelectModal = ({
                 </>
             }
         >
-             <div className="responsive-table-container">
-                    <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
-                        <Table className="responsive-table table-separated">
-                            <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <th
-                                                key={header.id}
-                                                scope="col"
-                                                className="w-auto p-4 align-top border whitespace-nowrap"
-                                                style={{ width: header.getSize() }}
+            <div className="responsive-table-container">
+                <div className="responsive-table-scroll-wrapper"> {/* สามารถ custom style={{ '--table-max-height': '500px' } as React.CSSProperties} */}
+                    <Table className="responsive-table table-separated">
+                        <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <th
+                                            key={header.id}
+                                            scope="col"
+                                            className="w-auto p-4 align-top border whitespace-nowrap"
+                                            style={{ width: header.getSize() }}
+                                        >
+                                            {flexRender(header.column.columnDef.header, header.getContext())}
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
+                        </thead>
+                        <tbody>
+                            {table.getRowModel().rows.length > 0 ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <tr
+                                        key={row.id}
+                                        className="bg-white border dark:bg-gray-800 dark:border-gray-700"
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td
+                                                key={cell.id}
+                                                className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
                                             >
-                                                {flexRender(header.column.columnDef.header, header.getContext())}
-                                            </th>
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>
                                         ))}
                                     </tr>
-                                ))}
-                            </thead>
-                            <tbody>
-                                {table.getRowModel().rows.length > 0 ? (
-                                    table.getRowModel().rows.map((row) => (
-                                        <tr
-                                            key={row.id}
-                                            className="bg-white border dark:bg-gray-800 dark:border-gray-700"
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <td
-                                                    key={cell.id}
-                                                    className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
-                                                >
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </td>
-                                            ))}
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <TableStatusRow colSpan={columns.length} status="no-data" />
-                                )
-                                }
+                                ))
+                            ) : (
+                                <TableStatusRow colSpan={columns.length} status="no-data" />
+                            )
+                            }
 
-                            </tbody>
-                        </Table>
-                    </div>
-
+                        </tbody>
+                    </Table>
                 </div>
-                <TablePagination table={table} />
+
+            </div>
+            <TablePagination table={table} />
         </ModalFrame>
     );
 };

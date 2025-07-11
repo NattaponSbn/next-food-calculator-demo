@@ -32,6 +32,7 @@ export class MasterNutrientCategoriesItemsModel {
 
 export class MasterNutrientCategoriesRequestItemModel {
   name!: string;
+   nameEN!: string;
   code!: string;
   description!: string;
 } 
@@ -39,6 +40,7 @@ export class MasterNutrientCategoriesRequestItemModel {
 export class MasterNutrientCategoriesResponseItemModel {
   id!: number;
   name!: string;
+   nameEN!: string;
   code!: string;
   description!: string;
 } 

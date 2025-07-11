@@ -9,10 +9,12 @@ import { Drawer } from "flowbite-react";
 import MobileSidebar from "../sidebar/MobileSidebar";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const [isSticky, setIsSticky] = useState(false);
-
+  const { t } = useTranslation();
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -48,18 +50,18 @@ const Header = () => {
 
           <div className="flex gap-3 items-center justify-between w-full ">
             <div className="flex gap-2 items-center">
-              <span
+              {/* <span
                 onClick={() => setIsOpen(true)}
                 className="h-10 w-10 flex text-black dark:text-white text-opacity-65 xl:hidden hover:text-primary hover:bg-lightprimary rounded-full justify-center items-center cursor-pointer"
               >
                 <Icon icon="solar:hamburger-menu-line-duotone" height={21} />
               </span>
-              <Notification />
+              <Notification /> */}
             </div>
 
             <div className="flex gap-4 items-center">
              <div className="px-4 py-2 text-xs text-gray-500">
-                Version: {process.env.NEXT_PUBLIC_APP_VERSION}
+                {t('system.version')}: {process.env.NEXT_PUBLIC_APP_VERSION}
               </div>
               <LanguageSwitcher />
               <Profile />

@@ -17,7 +17,8 @@
       "units": "หน่วย",
       "raw_material": "วัตถุดิบ",
       "formula": "สูตร",
-      "nutrition_data_table": "ตารางข้อมูลโภชนาการ"
+      "nutrition_data_table": "ตารางข้อมูลโภชนาการ",
+      "calculator_history": "ประวัติการคำนวณ"
     }
   },
   "button": {
@@ -26,10 +27,19 @@
     "submit": "ยืนยัน",
     "close": "ปิด",
     "cancel": "ยกเลิก",
-    "saveData": "บันทึกข้อมูล"
+    "saveData": "บันทึกข้อมูล",
+    "save": "บันทึก",
+    "update": "อัปเดต",
+    "saveAndNext": "บันทึกและเพิ่ม",
+    "edit": "แก้ไข",
+    "back": "กลับ"
   },
   "require": {
     "pleaseInput": "กรุณากรอกข้อมูล"
+  },
+  "alertTitle": {},
+  "alertText": {
+    "pleaseEnterCalculationAddLeastOne": "กรุณากรอกชื่อการคำนวณ และเพิ่มวัตถุดิบอย่างน้อย 1 รายการ"
   },
   "system": {
     "no": "ลำดับ",
@@ -40,7 +50,7 @@
       "en": "อังกฤษ",
       "th": "ไทย"
     },
-    "create": "Create",
+    "create": "สร้าง",
     "hint": "Hint",
     "status": "สถานะ",
     "statusActive": "Active",
@@ -52,7 +62,8 @@
     "type": "ประเภท",
     "error": {
       "title": "เกิดข้อผิดพลาด"
-    }
+    },
+    "version": "เวอร์ชั่น"
   },
   "master": {
     "fgCode": "รหัสกลุ่มอาหาร",
@@ -62,7 +73,6 @@
     "fgCreate": "สร้างกลุ่มอาหารใหม่",
     "fgEdit": "แก้ไขกลุ่มอาหาร",
     "fgDetail": "รายละเอียดกลุ่มอาหาร",
-
     "ncNutrient": "หมวดหมู่สารอาหาร",
     "ncCode": "รหัสหมวดหมู่สารอาหาร",
     "ncName": "ชื่อหมวดหมู่สารอาหาร",
@@ -71,7 +81,6 @@
     "ncCreate": "สร้างหมวดหมู่สารอาหารใหม่",
     "ncEdit": "แก้ไขหมวดหมู่สารอาหาร",
     "ncDetail": "รายละเอียดหมวดหมู่สารอาหาร",
-
     "nCode": "รหัสสารอาหาร",
     "nName": "ชื่อสารอาหาร",
     "nDescription": "Description",
@@ -79,7 +88,6 @@
     "nCreate": "สร้างสารอาหารใหม่",
     "nEdit": "แก้ไขสารอาหาร",
     "nDetail": "รายละเอียดสารอาหาร",
-
     "unUnit": "หน่วย",
     "unCode": "รหัสหน่วย",
     "unName": "ชื่อหน่วย",
@@ -89,16 +97,36 @@
     "unEdit": "แก้ไขหน่วย",
     "unDetail": "รายละเอียดหน่วย",
     "unType": "Type",
-
     "rmCode": "รหัสวัตถุดิบ",
     "rmName": "ชื่อวัตถุดิบ",
     "rmDescription": "Description",
     "rmList": "รายการวัตถุดิบ",
     "rmCreate": "สร้างวัตถุดิบใหม่",
     "rmEdit": "แก้ไขวัตถุดิบ",
-    "rmDetail": "รายละเอียดวัตถุดิบ"
+    "rmDetail": "รายละเอียดวัตถุดิบ",
+    "rmFoodId": "รหัสวัตถุดิบ"
   },
   "nutrition": {
     "list": "รายการข้อมูลโภชนาการ"
+  },
+  "calculator": {
+    "code": "รหัสการคำนวณ",
+    "name": "ชื่อการคำนวณ",
+    "list": "รายการคำนวณ",
+    "create": "สร้างคำนวณใหม่",
+    "edit": "แก้ไขการคำนวณ",
+    "detail": "รายละเอียดการคำนวณ",
+    "hisList": "รายการประวัติการคำนวณ",
+    "new": "คำนวณใหม่",
+    "pageSubtitle": "จัดการสูตรอาหารและดูสรุปโภชนาการ",
+    "calculationNamePlaceholder": "เช่น สูตรไก่ผัดบรอกโคลี",
+    "ingredientListTitle": "รายการวัตถุดิบ",
+    "addIngredient": "เพิ่มวัตถุดิบ",
+    "noIngredients": "ยังไม่มีวัตถุดิบ",
+    "noIngredientsHint": "กด 'เพิ่มวัตถุดิบ' เพื่อเริ่มต้น",
+    "nutritionSummaryTitle": "สรุปคุณค่าทางโภชนาการ",
+    "calculating": "กำลังคำนวณ",
+    "noSummary": "ผลรวมสารอาหารจะแสดงที่นี่",
+    "selectIngredients": "เลือกวัถุดิบ"
   }
 }

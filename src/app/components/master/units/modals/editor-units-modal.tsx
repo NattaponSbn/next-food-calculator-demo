@@ -78,7 +78,7 @@ export function UnitsModal({
          // อัปเดตฟอร์มด้วยข้อมูลที่ได้จาก API
          reset({
            unitCode: data.code,
-           nameEng: data.name,
+           nameEng: data.nameEN,
            nameThai: data.name,
          });
        } else {
@@ -94,6 +94,7 @@ export function UnitsModal({
     const request: MasterUnitsRequestItemModel = new MasterUnitsRequestItemModel;
      request.code = data.unitCode;
      request.name = data.nameThai;
+     request.nameEN = data.nameEng;
      request.description = data.nameThai;
      let result: SuccessResponse;
      if (mode === 'create') {

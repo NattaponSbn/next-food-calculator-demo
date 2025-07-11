@@ -49,6 +49,26 @@ export const showErrorAlert = (
   });
 };
 
+/**
+ * ฟังก์ชันสำหรับแสดง Warning Alert
+ * @param {string} title - หัวข้อของ Alert (เช่น 'เกิดข้อผิดพลาด!')
+ * @param {string} text - ข้อความอธิบายข้อผิดพลาด
+ * @param {SweetAlertOptions} options - ตัวเลือกเพิ่มเติมสำหรับ override ค่า default ของ Swal.fire
+ * @returns {Promise<SweetAlertResult>}
+ */
+export const showWarningAlert = (
+  text: string = 'กรุณาลองใหม่อีกครั้ง',
+  options: SweetAlertOptions = {}
+): Promise<SweetAlertResult> => {
+  return MySwal.fire({
+    title: 'เตือน!',
+    text,
+    icon: 'warning',
+    confirmButtonText: 'ตกลง',
+    ...options,
+  });
+};
+
 
 /**
  * ฟังก์ชันสำหรับแสดง Info Alert

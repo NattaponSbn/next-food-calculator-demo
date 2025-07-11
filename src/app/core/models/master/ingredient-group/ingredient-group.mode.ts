@@ -32,6 +32,7 @@ export class MasterIngredientGroupItemsModel {
 
 export class MasterIngredientGroupRequestItemModel {
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 } 
@@ -39,6 +40,7 @@ export class MasterIngredientGroupRequestItemModel {
 export class MasterIngredientGroupResponseItemModel {
   id!: number;
   name!: string;
+  nameEN!: string;
   code!: string;
   description!: string;
 } 

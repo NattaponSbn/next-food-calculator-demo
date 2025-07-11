@@ -94,6 +94,9 @@ const MasterNutrientCategoriesList = () => {
           </div>
         ),
         size: 250,
+         cell: (info) => (
+            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+          ),
       },
       {
         accessorKey: 'name',
@@ -115,6 +118,9 @@ const MasterNutrientCategoriesList = () => {
           </div>
         ),
         size: 250,
+         cell: (info) => (
+            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+          ),
       },
       // จัดการ
       {
@@ -267,7 +273,7 @@ const MasterNutrientCategoriesList = () => {
                       {row.getVisibleCells().map((cell) => (
                         <td
                           key={cell.id}
-                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle"
+                          className="px-6 py-4 font-medium border text-gray-900 whitespace-nowrap dark:text-white align-middle text-center"
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
