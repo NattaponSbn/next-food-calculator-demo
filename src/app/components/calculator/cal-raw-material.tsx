@@ -98,7 +98,6 @@ const CalculatorRawMaterialPage = () => {
       if ((mode === ModeTypes.edit || mode === ModeTypes.view) && calculationId) {
         try {
           // 1. ดึงข้อมูล Recipe เก่าจาก API
-          console.log(`Fetching data for recipe ID: ${calculationId}`);
           const recipeData = await recipeService.getById(calculationId);
 
           // 2. อัปเดต State ชื่อและรายการวัตถุดิบ
@@ -110,15 +109,23 @@ const CalculatorRawMaterialPage = () => {
           // *** สำคัญ: ต้องแปลงข้อมูลที่ได้จาก API ให้เป็นรูปแบบ SelectedIngredient ***
           const initialIngredients: MasterRawSelectedIngredientModel[] = recipeData.ingredients.map(ing => ({
             id: ing.ingredientId, // สมมติว่า API คืนข้อมูลวัตถุดิบมาด้วย
-            data: recipeData,
+            data: {
+              kind: ing.kind,
+              id: ing.ingredientId,
+              name: ing.ingredientName,
+              dataPerUnit: ing.dataPerUnit,
+              perUnitId: ing.perUnitId,
+              perUnitName: ing.perUnitName,
+            },
             quantity: ing.dataPerUnit,
             unit: ing.perUnitName,
           }));
           setSelectedIngredients(initialIngredients);
+          setNutritionSummary(recipeData.groupNutrients)
 
           // 3. "เรียก" การคำนวณสารอาหารทันทีด้วยข้อมูลใหม่ที่เพิ่งได้มา
           //    และ await รอให้มันคำนวณเสร็จ
-          await calculateNutritionApi(initialIngredients);
+          // await calculateNutritionApi(initialIngredients);
 
         } catch (error) {
           console.error("Failed to load initial data", error);
@@ -127,14 +134,13 @@ const CalculatorRawMaterialPage = () => {
           // 4. ปิดสถานะ Loading ของ "ทั้งหน้า" เมื่อทุกอย่างเสร็จสิ้น
           setIsPageLoading(false);
         }
-      } else {
-        // ถ้าเป็นโหมด Create, ก็ถือว่าโหลดเสร็จเลย
-        setIsPageLoading(false);
       }
     };
 
-    loadInitialData();
-  }, [mode, calculationId]); // Dependency เหลือเท่าที่จำเป็นสำหรับการโหลดครั้งแรก
+    if (mode === 'edit' || mode === 'view') {
+        loadInitialData();
+    }
+  }, [mode, calculationId, reset]); // Dependency เหลือเท่าที่จำเป็นสำหรับการโหลดครั้งแรก
 
   // [แก้ไข] useEffect สำหรับการคำนวณ "หลังจาก" ผู้ใช้แก้ไข
   useEffect(() => {

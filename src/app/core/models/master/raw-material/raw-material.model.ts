@@ -1,4 +1,4 @@
-import { CalculatorResponseItemModel } from "../../calculator/calculator.mode";
+import { CalculatorIngredientModel, CalculatorResponseItemModel } from "../../calculator/calculator.mode";
 
 export class MasterRawMaterialRequestModel {
   materialId: string = "";
@@ -8,16 +8,16 @@ export class MasterRawMaterialRequestModel {
 }
 
 export class MasterRawMaterialItemsModel {
-  kind!: string;
+  kind?: string;
   id!: number
   name!: string;
-  nameEN!: string;
-  foodId!: string;
-  description!: string;
-  groupId!: number
+  nameEN?: string;
+  foodId?: string;
+  description?: string;
+  groupId?: number
   dataPerUnit!: number
   perUnitId!: number
-  nutritions!: MasterRawMaterialNutritionModel[]
+  nutritions?: MasterRawMaterialNutritionModel[]
   perUnitName!: string;
 }
 
@@ -46,7 +46,7 @@ export class MasterRawMaterialResponseItemModel {
 
 export class MasterRawSelectedIngredientModel {
   id!: number;
-  data!: MasterRawMaterialItemsModel | CalculatorResponseItemModel;
+  data!: MasterRawMaterialItemsModel;
   quantity!: number;
   unit!: string;
 }
