@@ -45,7 +45,7 @@ export const recipeService = {
   },
 
   calculate: async (createData: CalculationRequestModel): Promise<NutritionSummaryResponse> => {
-    const result = await apiClient.post<NutritionSummaryResponse>(`${RESOURCE_PATH}/calculate`, createData);
+    const result = await apiClient.post<NutritionSummaryResponse>(`${RESOURCE_PATH}/calculate`, createData, { showLoading: false });
     return result.data!;
   },
 

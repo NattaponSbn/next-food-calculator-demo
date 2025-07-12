@@ -20,8 +20,9 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async (config) => {
     // โค้ดที่ต้องทำทุกครั้งก่อนส่ง request
-    useUIStore.getState().showLoading(); // เปิด Loading
-
+   if (config.showLoading !== false) {
+      useUIStore.getState().showLoading();
+    }
     // (เสริม) อาจจะเปิด global loading state ที่นี่
     // store.dispatch(showLoading());
     const session = await getSession(); 
@@ -45,11 +46,15 @@ apiClient.interceptors.request.use(
 // 2. Response Interceptor: ทำงานหลังจากได้รับ response กลับมา
 apiClient.interceptors.response.use(
   (response) => {
-    useUIStore.getState().hideLoading(); // hideLoading จะจัดการนับ request เอง
+    if (response.config.showLoading !== false) {
+      useUIStore.getState().hideLoading();
+    }
     return response; 
   },
   (error) => {
-    useUIStore.getState().hideLoading();
+    if (error.config?.showLoading !== false) {
+      useUIStore.getState().hideLoading();
+    }
 
     let errorMessage = 'An unexpected error occurred.';
 

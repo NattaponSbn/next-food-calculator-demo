@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Button, Label, TextInput } from 'flowbite-react';
 import { Icon } from '@iconify/react';
 import { useModal } from '@/app/core/hooks/use-modal';
@@ -41,6 +41,7 @@ const CalculatorRawMaterialPage = () => {
   const [nutritionSummary, setNutritionSummary] = useState<NutritionSummaryResponse | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(mode !== 'create');
+  const hasUserInteracted = useRef(false);
 
   const showSelectModal = useModal<RawMaterialSelectProps, any>(RawMaterialSelectModal);
   const debouncedIngredients = useDebounce(selectedIngredients, 500);
@@ -93,6 +94,7 @@ const CalculatorRawMaterialPage = () => {
 
   // [แก้ไข] useEffect หลัก สำหรับโหลดและคำนวณครั้งแรก
   useEffect(() => {
+    hasUserInteracted.current = false; 
     const loadInitialData = async () => {
       // ทำงานเฉพาะโหมด edit/view และมี id เท่านั้น
       if ((mode === ModeTypes.edit || mode === ModeTypes.view) && calculationId) {
@@ -134,6 +136,8 @@ const CalculatorRawMaterialPage = () => {
           // 4. ปิดสถานะ Loading ของ "ทั้งหน้า" เมื่อทุกอย่างเสร็จสิ้น
           setIsPageLoading(false);
         }
+      } else {
+        setIsPageLoading(false);
       }
     };
 
@@ -144,12 +148,10 @@ const CalculatorRawMaterialPage = () => {
 
   // [แก้ไข] useEffect สำหรับการคำนวณ "หลังจาก" ผู้ใช้แก้ไข
   useEffect(() => {
-    // 1. เพิ่มเงื่อนไข: จะไม่ทำงานถ้าหน้ายังโหลดไม่เสร็จ
-    //    เพื่อป้องกันการยิง API ซ้ำซ้อนกับการโหลดครั้งแรก
-    if (!isPageLoading) {
-      // 2. เรียกใช้ฟังก์ชันคำนวณด้วยข้อมูลล่าสุดที่ถูก Debounce
-      calculateNutritionApi(debouncedIngredients);
+   if (isPageLoading || !hasUserInteracted.current) {
+      return;
     }
+     calculateNutritionApi(debouncedIngredients);
   }, [debouncedIngredients, isPageLoading, calculateNutritionApi]);
 
   const handleOpenModal = async () => {
@@ -164,6 +166,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleAddIngredients = (newItems: MasterRawMaterialItemsModel[]) => {
+     hasUserInteracted.current = true;
     setSelectedIngredients(prevItems => {
       const existingIds = new Set(prevItems.map(item => item.id));
       const itemsToAdd = newItems
@@ -181,6 +184,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleUpdateQuantity = (id: number, quantity: number) => {
+     hasUserInteracted.current = true;
     setSelectedIngredients(prevItems =>
       prevItems.map(item => {
         // 1. ตรวจสอบว่าใช่ item ที่ต้องการแก้ไขหรือไม่
@@ -196,6 +200,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleRemoveIngredient = (id: number) => {
+     hasUserInteracted.current = true;
     setSelectedIngredients(prevItems =>
       // ใช้ .filter() เพื่อสร้าง Array ใหม่
       // โดยจะเก็บไว้เฉพาะ item ที่มี id "ไม่ตรงกับ" id ที่ต้องการลบ
