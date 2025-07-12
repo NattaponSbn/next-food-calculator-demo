@@ -41,6 +41,7 @@ export const RawMaterialSelectModal = ({
         pageIndex: 0,
         pageSize: 10,
     });
+    const [persistedSelectedRows, setPersistedSelectedRows] = useState<Record<string, MasterRawMaterialItemsModel>>({});
 
     const handleOpenFilter = async (
         event: React.MouseEvent<HTMLButtonElement>,
@@ -166,18 +167,46 @@ export const RawMaterialSelectModal = ({
 
             enableRowSelection: true,
             enableMultiRowSelection: true,
+
+            getRowId: (row) => String(row.id),
         },
     });
 
     // --- Initial Data Load ---
      useEffect(() => {
             refetch();
-        }, [refetch, pagination, sorting, columnFilters]);
+        }, [refetch]);
 
+          // ✅ 2. ใช้ useEffect เพื่อ "สะสม" ข้อมูลเมื่อการเลือกในหน้าปัจจุบันเปลี่ยน
+  useEffect(() => {
+    // ดึงข้อมูลของแถวที่ถูก "เลือก" ในหน้าปัจจุบัน
+    const currentPageSelectedRows = table.getSelectedRowModel().flatRows.reduce((acc, row) => {
+      acc[row.id] = row.original;
+      return acc;
+    }, {} as Record<string, MasterRawMaterialItemsModel>);
+    
+    // ดึงข้อมูลของแถวที่ "ไม่ได้ถูกเลือก" ในหน้าปัจจุบัน
+    const currentPageUnselectedRowIds = table.getCoreRowModel().flatRows
+      .filter(row => !row.getIsSelected())
+      .map(row => row.id);
+
+    setPersistedSelectedRows(prev => {
+      const newPersisted = { ...prev };
+      
+      // ลบข้อมูลของแถวที่ถูก "uncheck" ในหน้าปัจจุบันออกจากที่สะสมไว้
+      currentPageUnselectedRowIds.forEach(id => {
+        delete newPersisted[id];
+      });
+      
+      // เพิ่ม/อัปเดตข้อมูลของแถวที่ถูก "check" ในหน้าปัจจุบันเข้าไป
+      return { ...newPersisted, ...currentPageSelectedRows };
+    });
+
+  }, [rowSelection, table.getCoreRowModel, table.getSelectedRowModel]);
 
     const handleConfirm = () => {
-        const selectedItems = table.getSelectedRowModel().flatRows.map(row => row.original);
-        onConfirm(selectedItems);
+         const allSelectedItems = Object.values(persistedSelectedRows);
+        onConfirm(allSelectedItems);
     };
 
     return (
