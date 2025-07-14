@@ -25,7 +25,7 @@
 
 /* 4. หัวตารางที่ลอยอยู่ด้านบน (Sticky Header) */
 .responsive-table-header {
-  @apply sticky top-0 z-10 text-center;
+  @apply sticky top-0 z-[8] text-center;
 }
 
 .table-border-collapse {
