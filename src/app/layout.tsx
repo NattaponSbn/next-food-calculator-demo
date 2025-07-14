@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
 
   return (
-    <html lang="en" className={niramit.variable}>
+    <html lang="en" className={niramit.variable} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <ThemeModeScript />

@@ -166,6 +166,14 @@ const customTheme = {
       base: "mt-4 space-y-2 border-t border-ld pt-4 first:mt-0 first:border-t-0 first:pt-0 sidebar-nav ",
     },
   },
+
+  pagination: {
+    pages: {
+      selector: {
+        active: "bg-indigo-100 !border-indigo",
+      },
+    },
+  },
 };
 
 export default customTheme;

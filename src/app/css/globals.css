@@ -11,32 +11,30 @@
 @import './custom/table.css';
 @import './custom/form.css';
 @import './custom/date-picker.css';
+@import './custom/profile.css';
+@import './custom/components.css';
 
 
 @layer components {
   .container {
-    @apply max-w-[1600px];
+    @apply w-full mx-auto px-4;
   }
 
   body {
-    @apply text-sm overflow-x-hidden;
+   @apply text-sm text-gray-700 dark:text-gray-300 overflow-x-hidden bg-gray-50 dark:bg-gray-900;
     font-family: Niramit, sans-serif !important;
   }
 
   .dropdown {
-    @apply shadow-md bg-white relative rounded-sm;
+     @apply shadow-md bg-white dark:bg-gray-800 dark:border dark:border-gray-700 relative rounded-sm;
   }
 
   .card-title {
-    @apply text-lg font-semibold text-dark
+    @apply text-lg font-semibold text-gray-800 dark:text-white;
   }
 
   .card-subtitle {
-    @apply text-sm font-medium text-darklink
-  }
-
-  body {
-    @apply text-darklink;
+     @apply text-sm font-medium text-gray-500 dark:text-gray-400;
   }
 
   /*heading text color*/
@@ -46,11 +44,11 @@
   h4,
   h5,
   h6 {
-    @apply text-dark font-semibold;
+     @apply text-gray-900 dark:text-white font-semibold;
   }
 
   .border-ld {
-    @apply border-border;
+    @apply border-gray-200 dark:border-gray-700;
   }
 
 
@@ -60,7 +58,7 @@
   }
 
   input::placeholder {
-    @apply text-darklink
+    @apply text-gray-400 dark:text-gray-500;
   }
 
   .select-option select {
@@ -80,7 +78,7 @@
   }
 
   .checkbox {
-    @apply h-[18px] w-[18px] border border-border bg-white focus:ring-0 focus:ring-offset-0
+     @apply h-[18px] w-[18px] border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-0 focus:ring-offset-0;
   }
 
 

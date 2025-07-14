@@ -32,7 +32,8 @@
     "update": "Update",
     "saveAndNext": "Save And Next",
     "edit": "Edit",
-    "back": "Back"
+    "back": "Back",
+    "logout": "Logout"
   },
   "require": {
     "pleaseInput": "Please Input Require"

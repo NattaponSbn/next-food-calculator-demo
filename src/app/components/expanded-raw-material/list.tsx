@@ -166,8 +166,8 @@ const ExpandedRawMaterialList = () => {
       </div>
 
       {/* Panel Body */}
-      <div className="panel-body">
-        <div className="responsive-table-container">
+      <div className="panel-body flex flex-col">
+        <div className="responsive-table-container flex-grow">
           <div className="responsive-table-scroll-wrapper">
             <Table className="responsive-table table-separated">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
@@ -179,7 +179,7 @@ const ExpandedRawMaterialList = () => {
                         key={header.id}
                         colSpan={header.colSpan} // colSpan จะถูกคำนวณให้โดยอัตโนมัติ
                         className="p-2 align-middle text-center border font-semibold"
-                        style={{ minWidth: header.getSize(), width: header.getSize() }} // ใช้ minWidth เพื่อความยืดหยุ่น
+                       style={{ minWidth: header.getSize() ?? 120 }} // ใช้ minWidth เพื่อความยืดหยุ่น
                       >
                         {header.isPlaceholder
                           ? null

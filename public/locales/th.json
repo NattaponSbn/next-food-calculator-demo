@@ -32,7 +32,8 @@
     "update": "อัปเดต",
     "saveAndNext": "บันทึกและเพิ่ม",
     "edit": "แก้ไข",
-    "back": "กลับ"
+    "back": "กลับ",
+    "logout": "ออกจากระบบ"
   },
   "require": {
     "pleaseInput": "กรุณากรอกข้อมูล"
