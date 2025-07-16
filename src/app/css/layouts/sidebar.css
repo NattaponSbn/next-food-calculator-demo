@@ -161,3 +161,42 @@
 
 
 }
+
+ /*
+    Class สำหรับ Sidebar หลัก
+  */
+
+  .app-sidebar {
+      @apply fixed pt-6 z-10 bg-white dark:bg-darkgray;
+      /* ใช้นิยามสีจาก config */
+  }
+
+  /*
+    Class สำหรับ Logo container
+  */
+  .sidebar-logo-container {
+      @apply mb-7 px-6;
+  }
+
+  /*
+    Class สำหรับ Scrollbar area
+  */
+  .sidebar-scrollbar {
+      @apply h-[calc(100vh_-_120px)];
+  }
+
+  /*
+    Class สำหรับ Heading ของกลุ่มเมนู
+  */
+  .sidebar-heading {
+      /* text-link ควรจะถูกนิยามใน :root และ .dark */
+      @apply text-link text-xs;
+  }
+
+  /*
+    Class สำหรับไอคอนคั่นกลุ่ม
+  */
+  .sidebar-separator-icon {
+      /* text-ld ควรจะถูกนิยามใน :root และ .dark */
+      @apply text-ld block mx-auto mt-6 leading-6 dark:text-opacity-60;
+  }

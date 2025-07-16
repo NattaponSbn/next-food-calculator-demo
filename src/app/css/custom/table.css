@@ -10,7 +10,7 @@
     - กำหนดความสูงสูงสุดเป็นค่า default ที่เหมาะสม
     - สามารถ override ได้ด้วย style attribute หรือ class อื่นๆ
   */
-  @apply overflow-auto;
+ @apply overflow-x-auto overflow-y-auto;
  max-height: var(--table-max-height, calc(100vh - 350px));
 }
 
@@ -20,12 +20,12 @@
     - กำหนดความกว้างขั้นต่ำเป็นค่า default
     - ทำให้ตารางขยายเต็มความกว้างของ scroll-wrapper
   */
-  @apply table-fixed min-w-[800px] w-full border-collapse;
+ @apply min-w-[800px] w-full border-collapse;
 }
 
 /* 4. หัวตารางที่ลอยอยู่ด้านบน (Sticky Header) */
 .responsive-table-header {
-  @apply sticky top-0 z-10 text-center;
+  @apply sticky top-0 z-[8] text-center;
 }
 
 .table-border-collapse {

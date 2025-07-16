@@ -1,13 +1,10 @@
 
 import { Button, Dropdown } from "flowbite-react";
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from 'react-hot-toast';
-import { delay } from "@/app/lib/utils";
 import { useCurrentUser } from "@/app/core/hooks/use-current-user";
 import { useTranslation } from "react-i18next";
 
@@ -60,14 +57,15 @@ const Profile = () => {
   };
 
   return (
-    <div className="relative group/menu">
+      <div className="relative group/menu">
       <Dropdown
         label=""
         className="rounded-sm w-44"
         dismissOnClick={false}
         renderTrigger={() => (
-          <span className="h-10 w-100 hover:text-primary flex justify-center items-center cursor-pointer group-hover/menu:text-primary">
-            <span className="hover:bg-lightprimary group-hover/menu:bg-lightprimary rounded-full">
+          // ✅ ใช้ Custom Class ที่สร้างขึ้น
+          <span className="profile-dropdown-trigger dark:text-gray-300 hover:text-primary group-hover/menu:text-primary">
+            <span className="profile-dropdown-avatar dark:hover:bg-gray-700 group-hover/menu:bg-lightprimary">
               <Image
                 src="/images/profile/user-1.jpg"
                 alt="logo"
@@ -76,39 +74,21 @@ const Profile = () => {
                 className="rounded-full"
               />
             </span>
-            <span className="ms-1">{ user?.name }</span>
+            <span>{ user?.name }</span>
           </span>
         )}
       >
-
-        {/* <Dropdown.Item
-          as={Link}
-          href="#"
-          className="px-3 py-3 flex items-center bg-hover group/link w-full gap-3 text-dark"
-        >
-          <Icon icon="solar:user-circle-outline" height={20} />
-          My Profile
-        </Dropdown.Item>
-        <Dropdown.Item
-          as={Link}
-          href="#"
-          className="px-3 py-3 flex items-center bg-hover group/link w-full gap-3 text-dark"
-        >
-          <Icon icon="solar:letter-linear" height={20} />
-          My Account
-        </Dropdown.Item>
-        <Dropdown.Item
-          as={Link}
-          href="#"
-          className="px-3 py-3 flex items-center bg-hover group/link w-full gap-3 text-dark"
-        >
-          <Icon icon="solar:checklist-linear" height={20} />
-          My Task
-        </Dropdown.Item> */}
-        <span className="px-3 py-3">{ user?.email }</span>
-        <hr className="mt-2"/>
+        <span className="px-4 py-3 text-sm text-gray-900 dark:text-white">{ user?.email }</span>
+        <hr className="my-2 border-ld"/> {/* ใช้ class ที่สร้างไว้แล้ว */}
         <div className="p-2 pt-0">
-          <Button size={'sm'} onClick={handleLogout} className="w-full py-0 mt-2 border border-primary text-primary bg-transparent hover:bg-lightprimary outline-none focus:outline-none">Logout</Button>
+          <Button 
+            size={'sm'} 
+            onClick={handleLogout} 
+            // ✅ ใช้ Custom Class สำหรับปุ่ม Logout
+            className="btn-logout hover:bg-lightprimary dark:text-primary-400 dark:border-primary-400 dark:hover:bg-primary-900/50 outline-none focus:outline-none focus:ring-0"
+          >
+            {t('button.logout')}
+          </Button>
         </div>
       </Dropdown>
     </div>

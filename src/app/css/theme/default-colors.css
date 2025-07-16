@@ -1,5 +1,14 @@
 :root {
     --color-primary: #635bff;
+    --color-primary-100: #e0dfff;
+    --color-primary-200: #c1bfff;
+    --color-primary-300: #a29fff;
+    --color-primary-400: #847fff;
+    --color-primary-500: #635bff; /* เฉดสีหลัก */
+    --color-primary-600: #5750e6;
+    --color-primary-700: #4a44c4;
+    --color-primary-800: #3d39a3;
+    --color-primary-900: #302d81;
     --color-secondary: #14E9E2;
     --color-primary-emphasis: #0091E5;
     --color-secondary-emphasis: #673ADE;
@@ -21,4 +30,23 @@
     --color-muted: #EFF4FA;
     --color-darklink: #7b8893;
     --color-lightgray: #f4f7fb;
+    --color-ld: var(--color-border); /* หรือ #e5e7eb */
+}
+
+.dark {
+  /* Override ค่า Variable สำหรับ Dark Mode */
+  /* อาจจะใช้เฉดสีที่สว่างขึ้นเพื่อให้ตัดกับพื้นหลังเข้ม */
+  --color-primary: #847fff; /* ทำให้สีหลักสว่างขึ้น */
+  
+  /* เฉดสีสำหรับ Dark Mode (อาจจะไม่จำเป็นต้องเปลี่ยนทั้งหมด) */
+  --color-primary-400: #a29fff; /* สี Text ควรจะสว่างมาก */
+  
+  --color-lightprimary: rgba(132, 127, 255, 0.15); /* ปรับ Alpha */
+  
+  --color-dark: #ffffff; /* สี "dark" ใน dark mode คือสีขาว */
+  --color-link: #9ca3af; /* สีเทาอ่อน */
+  --color-border: #374151; /* สีขอบที่เข้มขึ้น */
+  --color-ld: var(--color-border); /* หรือ #e5e7eb */
+  --color-background-dark: #1f2937; 
+  /* ... override สีอื่นๆ ตามต้องการ ... */
 }

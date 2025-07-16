@@ -26,3 +26,33 @@
 .notification {
     @apply !absolute !left-36 !top-0 !mt-2 !w-80 !bg-white !border !border-gray-200 !rounded-md !shadow-lg;
 }
+
+  /*
+    Class สำหรับ Header หลักของแอปพลิเคชัน
+  */
+  .app-header {
+      @apply sticky top-0 z-20 w-full transition-all duration-300;
+  }
+
+  /*
+    Class สำหรับสถานะเมื่อ Header ถูกเลื่อน (Sticky)
+    จะเพิ่มเงาและเปลี่ยนสีพื้นหลัง
+  */
+  .app-header-sticky {
+      @apply  backdrop-blur-sm shadow-md;
+  }
+
+  /*
+    Class สำหรับปุ่ม Toggle Sidebar บนมือถือ
+  */
+  .mobile-toggle-btn {
+      @apply h-10 w-10 flex items-center justify-center rounded-full cursor-pointer text-gray-600 dark:text-gray-400 hover:bg-lightprimary hover:text-primary dark:hover:bg-gray-700 xl:hidden;
+      /* ซ่อนบนจอ xl ขึ้นไป */
+  }
+
+  /*
+    Class สำหรับข้อความเวอร์ชัน
+  */
+  .version-text {
+      @apply px-4 py-2 text-xs text-gray-500 dark:text-gray-400;
+  }

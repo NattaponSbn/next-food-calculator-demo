@@ -1,0 +1,17 @@
+.profile-dropdown-trigger {
+    @apply h-10 w-auto flex items-center justify-center gap-2 cursor-pointer text-gray-700 ;
+}
+
+/*
+        Class สำหรับรูป Profile Avatar ที่มีพื้นหลัง hover
+    */
+.profile-dropdown-avatar {
+    @apply p-1 rounded-full hover:bg-lightprimary ;
+}
+
+/*
+        Class สำหรับปุ่ม Logout ที่มีสไตล์เฉพาะตัว
+    */
+.btn-logout {
+    @apply w-full py-1.5 mt-2 text-sm border border-primary text-primary bg-transparent;
+}

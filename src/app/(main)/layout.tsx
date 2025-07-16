@@ -13,13 +13,13 @@ export default function Layout({
       <div className="page-wrapper flex w-full">
         {/* Header/sidebar */}
         <Sidebar />
-        <div className="body-wrapper w-full bg-white dark:bg-dark">
+        <div className="body-wrapper w-full bg-white dark:bg-darkgray">
           <Header />
           {/* Body Content  */}
          
-          <div className="bg-lightgray mr-3 rounded-page min-h-[90vh]">
+          <div className="bg-lightgray mr-3 rounded-page min-h-[90vh] dark:bg-gray-900">
             <div
-              className={`container mx-auto  py-30`}
+              className={`container mx-auto py-30`}
             >
               {children}
             </div>

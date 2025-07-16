@@ -28,9 +28,25 @@ const config: Config = {
         tw: "12px",
         page: "20px",
       },
+       screens: {
+        xs: '375px',
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1200px',
+        '2xl': '1536px',
+        '3xl': '1920px',
+        '4xl': '2560px',
+      },
       container: {
         center: true,
-        padding: "30px",
+        padding: {
+          DEFAULT: '1rem',    // (16px) Padding สำหรับมือถือ (sm)
+          md: '2rem',     // (32px) Padding สำหรับ Tablet (md)
+          lg: '4rem',     // (64px) Padding สำหรับ Desktop (lg)
+          xl: '5rem',     // (80px) Padding สำหรับจอใหญ่ (xl)
+          '2xl': '6rem',    // (96px) Padding สำหรับจอใหญ่มาก (2xl)
+        }
       },
       gap: {
         "30": "30px",
@@ -48,7 +64,18 @@ const config: Config = {
           "600": "var(--color-primary)",
           "700": "var(--color-primary)",
         },
-        primary: "var(--color-primary)",
+        primary: {
+          '100': 'var(--color-primary-100)',
+          '200': 'var(--color-primary-200)',
+          '300': 'var(--color-primary-300)',
+          '400': 'var(--color-primary-400)',
+          '500': 'var(--color-primary-500)',
+          '600': 'var(--color-primary-600)',
+          '700': 'var(--color-primary-700)',
+          '800': 'var(--color-primary-800)',
+          '900': 'var(--color-primary-900)',
+          DEFAULT: 'var(--color-primary)',
+        },
         secondary: "var(--color-secondary)",
         info: "var(--color-info)",
         success: "var(--color-success)",
@@ -67,6 +94,8 @@ const config: Config = {
         dark: "var(--color-dark)",
         link: "var(--color-link)",
         darklink: "var(--color-darklink)",
+        ld: "var(--color-ld)",
+        darkgray: 'var(--color-background-dark)',
       },
     },
   },
