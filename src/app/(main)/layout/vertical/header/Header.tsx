@@ -73,7 +73,7 @@ const Header = () => {
 
       {/* --- Mobile Sidebar (Drawer) --- */}
       <Drawer open={isOpen} onClose={handleClose} className="w-72">
-        <Drawer.Header title="MENU" titleIcon={() => <></>} />
+        <Drawer.Header title="" titleIcon={() => <></>} />
         <Drawer.Items>
           {/* ควรจะ import MobileSidebar Component มาใช้ที่นี่ */}
           <MobileSidebar />

@@ -14,7 +14,7 @@ const FullLogo = () => {
         {/* Light Logo  */}
         <Image src={Logowhite} alt="logo" className="hidden dark:block rtl:scale-x-[-1] w-9" />
         </div>
-        <h1 className="text-xl">Food Cal</h1>
+        <h1 className="text-xl">NutriTachy</h1>
       </div>
     </Link>
   );
