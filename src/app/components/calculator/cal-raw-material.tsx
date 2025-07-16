@@ -141,9 +141,7 @@ const CalculatorRawMaterialPage = () => {
       }
     };
 
-    if (mode === 'edit' || mode === 'view') {
-        loadInitialData();
-    }
+    loadInitialData();
   }, [mode, calculationId, reset]); // Dependency เหลือเท่าที่จำเป็นสำหรับการโหลดครั้งแรก
 
   // [แก้ไข] useEffect สำหรับการคำนวณ "หลังจาก" ผู้ใช้แก้ไข
