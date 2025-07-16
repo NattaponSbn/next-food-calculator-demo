@@ -1,6 +1,6 @@
 {
-  "name": "food-calculator",
-  "version": "1.0.37",
+  "name": "nutritachy",
+  "version": "1.0.38",
   "private": true,
   "scripts": {
     "dev": "next dev",
