@@ -45,7 +45,7 @@ const AuthLogin = () => {
       loading: 'กำลังตรวจสอบข้อมูล...',
       success: (result) => {
         if (result?.ok) {
-          router.push("/");
+          router.push("/ui/expanded-raw-material");
           router.refresh();
           return 'เข้าสู่ระบบสำเร็จ!';
         } else {

@@ -13,5 +13,5 @@
         Class สำหรับปุ่ม Logout ที่มีสไตล์เฉพาะตัว
     */
 .btn-logout {
-    @apply w-full py-1.5 mt-2 text-sm border border-primary text-primary bg-transparent;
+    @apply w-full py-1.5 mt-2 text-sm border border-primary !text-primary bg-transparent;
 }
