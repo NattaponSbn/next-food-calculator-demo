@@ -94,7 +94,7 @@ const CalculatorRawMaterialPage = () => {
 
   // [แก้ไข] useEffect หลัก สำหรับโหลดและคำนวณครั้งแรก
   useEffect(() => {
-    hasUserInteracted.current = false; 
+    hasUserInteracted.current = false;
     const loadInitialData = async () => {
       // ทำงานเฉพาะโหมด edit/view และมี id เท่านั้น
       if ((mode === ModeTypes.edit || mode === ModeTypes.view) && calculationId) {
@@ -146,10 +146,10 @@ const CalculatorRawMaterialPage = () => {
 
   // [แก้ไข] useEffect สำหรับการคำนวณ "หลังจาก" ผู้ใช้แก้ไข
   useEffect(() => {
-   if (isPageLoading || !hasUserInteracted.current) {
+    if (isPageLoading || !hasUserInteracted.current) {
       return;
     }
-     calculateNutritionApi(debouncedIngredients);
+    calculateNutritionApi(debouncedIngredients);
   }, [debouncedIngredients, isPageLoading, calculateNutritionApi]);
 
   const handleOpenModal = async () => {
@@ -164,7 +164,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleAddIngredients = (newItems: MasterRawMaterialItemsModel[]) => {
-     hasUserInteracted.current = true;
+    hasUserInteracted.current = true;
     setSelectedIngredients(prevItems => {
       const existingIds = new Set(prevItems.map(item => item.id));
       const itemsToAdd = newItems
@@ -182,7 +182,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleUpdateQuantity = (id: number, quantity: number) => {
-     hasUserInteracted.current = true;
+    hasUserInteracted.current = true;
     setSelectedIngredients(prevItems =>
       prevItems.map(item => {
         // 1. ตรวจสอบว่าใช่ item ที่ต้องการแก้ไขหรือไม่
@@ -198,7 +198,7 @@ const CalculatorRawMaterialPage = () => {
   };
 
   const handleRemoveIngredient = (id: number) => {
-     hasUserInteracted.current = true;
+    hasUserInteracted.current = true;
     setSelectedIngredients(prevItems =>
       // ใช้ .filter() เพื่อสร้าง Array ใหม่
       // โดยจะเก็บไว้เฉพาะ item ที่มี id "ไม่ตรงกับ" id ที่ต้องการลบ
@@ -232,19 +232,21 @@ const CalculatorRawMaterialPage = () => {
     };
 
     let savedData; // ตัวแปรสำหรับเก็บข้อมูลที่บันทึก/อัปเดตแล้ว
-
-    if(isSaveNext) {
+    
+    if (mode === 'create' || mode === '') {
       savedData = await recipeService.create(requestBody);
-    } else {
-      if (mode === 'create') {
+    } else if (mode === 'edit' && calculationId) {
+      if (isSaveNext) {
         savedData = await recipeService.create(requestBody);
-
-      } else if (mode === 'edit' && calculationId) {
+      } else {
         savedData = await recipeService.update(calculationId, requestBody);
       }
     }
-    
 
+    if (!savedData) {
+      showWarningAlert('ไม่สามารถบันทึกข้อมูลได้');
+      return;
+    }
     showSuccessAlert();
 
     // --- Logic การตัดสินใจหลังบันทึก ---
@@ -326,7 +328,7 @@ const CalculatorRawMaterialPage = () => {
               {/* ปุ่ม Save and Continue Editing (จะแสดงเฉพาะโหมด Edit) */}
               {mode === 'edit' && (
                 <Button color="light" onClick={handleSubmit(onSaveAndContinue)} disabled={isCalculating}>
-                   {t('button.saveAndNext')}
+                  {t('button.saveAndNext')}
                 </Button>
               )}
             </>
@@ -356,7 +358,7 @@ const CalculatorRawMaterialPage = () => {
             {!isViewMode && (
               <Button onClick={handleOpenModal} color="blue" size="sm">
                 <Icon icon="mdi:plus" className="mr-2 h-5 w-5" />
-                 {t('calculator.addIngredient')}
+                {t('calculator.addIngredient')}
               </Button>
             )}
 
