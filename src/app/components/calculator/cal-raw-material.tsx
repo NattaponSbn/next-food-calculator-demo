@@ -352,7 +352,7 @@ const CalculatorRawMaterialPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* ฝั่งซ้าย: รายการวัตถุดิบ */}
-        <div className="panel flex flex-col max-h-[60vh]">
+        <div className="panel flex flex-col max-h-[50vh]">
           <div className="panel-header flex-shrink-0">
             <h2 className="panel-title">{t('calculator.ingredientListTitle')}</h2>
             {!isViewMode && (
