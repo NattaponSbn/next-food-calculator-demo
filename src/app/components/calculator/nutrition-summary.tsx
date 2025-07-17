@@ -141,7 +141,7 @@ export const NutritionSummary = ({ summary, isLoading }: NutritionSummaryProps) 
       </div>
       
       {/* ✅ 3. Panel Body จะยืดและ scroll ได้ */}
-      <div className="panel-body flex-grow overflow-y-auto max-h-[50vh]">
+      <div className="panel-body flex-grow overflow-y-auto max-h-[40vh]">
         {summary.map(group => (
           <NutrientGroup 
           key={group.groupId} 
