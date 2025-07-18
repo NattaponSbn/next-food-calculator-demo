@@ -30,6 +30,10 @@ export class MasterNutrientRequestItemModel {
   nameEN!: string;
   code!: string;
   description!: string;
+  groupId!: number;
+  primaryUnitId!: number;
+  isRequire!: boolean;
+  priority!: number;
 }
 
 export class MasterNutrientResponseItemModel {
@@ -38,4 +42,8 @@ export class MasterNutrientResponseItemModel {
   nameEN!: string;
   code!: string;
   description!: string;
-} 
+  groupId!: number;
+  primaryUnitId!: number;
+  unitName!: string;
+  isRequire!: boolean;
+}

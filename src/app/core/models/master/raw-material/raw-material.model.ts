@@ -22,7 +22,7 @@ export class MasterRawMaterialItemsModel {
 }
 
 export class MasterRawMaterialNutritionModel {
-  kind!: string;
+  kind?: string;
   nutritionId!: number;
   value!: string;
   nutritionName!: string;
@@ -30,19 +30,29 @@ export class MasterRawMaterialNutritionModel {
 }
 
 export class MasterRawMaterialRequestItemModel {
-  name!: string;
-  nameEN!: string;
-  code!: string;
-  description!: string;
+  name: string = "";
+  nameEN: string = "";
+  foodId: string = "";
+  description: string = "";
+  groupId!: number;
+  dataPerUnit!: number;
+  perUnitId!: number;
+  nutritions: MasterRawMaterialNutritionModel[] = [];
 }
 
 export class MasterRawMaterialResponseItemModel {
+  kind: string = "";
   id!: number;
-  name!: string;
-  nameEN!: string;
-  code!: string;
-  description!: string;
-} 
+  name: string = "";
+  nameEN: string = "";
+  foodId: string = "";
+  description: string = "";
+  groupId!: number;
+  dataPerUnit!: number;
+  perUnitId!: number;
+  nutritions: MasterRawMaterialNutritionModel[] = [];
+  perUnitName: string = "";
+}
 
 export class MasterRawSelectedIngredientModel {
   id!: number;

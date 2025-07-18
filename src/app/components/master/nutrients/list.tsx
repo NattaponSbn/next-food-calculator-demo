@@ -245,7 +245,7 @@ const MasterNutrientList = () => {
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
-      const newGroup = await showNutrientModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
+      const newGroup = await showNutrientModal({ mode: 'create', size: '5xl' });
       refetch();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
@@ -258,7 +258,7 @@ const MasterNutrientList = () => {
       const updatedGroup = await showNutrientModal({
         mode: 'edit',
         id: item.id,
-        size: 'lg:max-w-3xl lg:min-w-[700px]'
+        size: '5xl'
       });
       refetch();
     } catch (error) {
@@ -268,7 +268,7 @@ const MasterNutrientList = () => {
 
   const handleView = (item: MasterNutrientItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showNutrientModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showNutrientModal({ mode: 'view', id: item.id, size: '5xl' });
   };
 
 

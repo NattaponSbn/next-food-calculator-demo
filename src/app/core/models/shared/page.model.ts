@@ -30,3 +30,7 @@ export interface ApiSearchRequest {
   criteria: FilterCriteria;
   sort?: SortCriteria;
 }
+
+export class ItemsResponse<T> {
+  items!: T;
+}
