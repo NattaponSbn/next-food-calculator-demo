@@ -55,41 +55,41 @@ const SidebarContent: MenuItem[] = [
   },
   
   // --- กลุ่มข้อมูลหลัก (Master Data) ---
-  // {
-  //   headingKey: "menu.headings.master",
-  //   children: [
-  //     {
-  //       nameKey: "menu.items.food_groups",
-  //       icon: "solar:widget-5-bold-duotone", // ไอคอนกลุ่ม, category
-  //       id: uniqueId(),
-  //       url: "/master/food-groups",
-  //     },
-  //     {
-  //       nameKey: "menu.items.nutrient_categories",
-  //       icon: "solar:checklist-minimalistic-bold-duotone", // ไอคอนหมวดหมู่, checklist
-  //       id: uniqueId(),
-  //       url: "/master/nutrient-categories",
-  //     },
-  //     {
-  //       nameKey: "menu.items.nutrients",
-  //       icon: "solar:dna-bold-duotone", // ไอคอน DNA, เหมาะกับสารอาหาร
-  //       id: uniqueId(),
-  //       url: "/master/nutrients",
-  //     },
-  //     {
-  //       nameKey: "menu.items.units",
-  //       icon: "solar:ruler-pen-bold-duotone", // ไอคอนไม้บรรทัด, การวัด
-  //       id: uniqueId(),
-  //       url: "/master/units",
-  //     },
-  //     {
-  //       nameKey: "menu.items.raw_material",
-  //       icon: "solar:box-minimalistic-bold-duotone", // ไอคอนกล่อง, วัตถุดิบ
-  //       id: uniqueId(),
-  //       url: "/master/raw-material",
-  //     },
-  //   ],
-  // },
+  {
+    headingKey: "menu.headings.master",
+    children: [
+      {
+        nameKey: "menu.items.food_groups",
+        icon: "solar:widget-5-bold-duotone", // ไอคอนกลุ่ม, category
+        id: uniqueId(),
+        url: "/master/food-groups",
+      },
+      {
+        nameKey: "menu.items.nutrient_categories",
+        icon: "solar:checklist-minimalistic-bold-duotone", // ไอคอนหมวดหมู่, checklist
+        id: uniqueId(),
+        url: "/master/nutrient-categories",
+      },
+      {
+        nameKey: "menu.items.nutrients",
+        icon: "solar:dna-bold-duotone", // ไอคอน DNA, เหมาะกับสารอาหาร
+        id: uniqueId(),
+        url: "/master/nutrients",
+      },
+      {
+        nameKey: "menu.items.units",
+        icon: "solar:ruler-pen-bold-duotone", // ไอคอนไม้บรรทัด, การวัด
+        id: uniqueId(),
+        url: "/master/units",
+      },
+      {
+        nameKey: "menu.items.raw_material",
+        icon: "solar:box-minimalistic-bold-duotone", // ไอคอนกล่อง, วัตถุดิบ
+        id: uniqueId(),
+        url: "/master/raw-material",
+      },
+    ],
+  },
 ];
 
 export default SidebarContent;
