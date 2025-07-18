@@ -1,8 +1,8 @@
 // src/app/core/services/food-group.service.ts
 
 import { MasterNutrientItemsModel, MasterNutrientRequestItemModel, MasterNutrientResponseItemModel } from "../../models/master/nutrients/nutrient.model";
-import { SuccessResponse } from "../../models/shared/common.model";
-import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
+import { CommonModel, NutritionCommonModel, SuccessResponse } from "../../models/shared/common.model";
+import { ApiSearchRequest, ItemsResponse, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
 
 // --- กำหนด Path หลักของ Resource นี้ ---
@@ -43,6 +43,12 @@ export const nutritionService = {
 
   delete: async (id: number): Promise<SuccessResponse> => {
     const result = await apiClient.delete<SuccessResponse>(`${RESOURCE_PATH}/${id}`);
+    return result.data!;
+  },
+
+  getAll: async (): Promise<ItemsResponse<NutritionCommonModel[]>> => {
+    // Interceptor ของเราแกะ .data มาแล้ว
+    const result = await apiClient.get<ItemsResponse<NutritionCommonModel[]>>(`${RESOURCE_PATH}/all`);
     return result.data!;
   },
 };

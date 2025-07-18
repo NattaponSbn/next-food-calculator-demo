@@ -11,7 +11,7 @@
     - สามารถ override ได้ด้วย style attribute หรือ class อื่นๆ
   */
  @apply overflow-x-auto overflow-y-auto;
- max-height: var(--table-max-height, calc(100vh - 450px));
+ max-height: var(--table-max-height, calc(100vh - 420px));
 }
 
 /* 3. ตัวตาราง Table Element */

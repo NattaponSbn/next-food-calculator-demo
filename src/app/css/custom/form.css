@@ -7,21 +7,23 @@
   .form-control input,
   .form-control select,
   .form-control textarea {
-      @apply border border-border bg-white w-full text-sm;
+      @apply border border-border !bg-white w-full text-sm;
   }
 
   /* Default Size (MD) */
   .form-control-md input,
   .form-control-md select,
   .form-control input,
-  .form-control select {
+  .form-control select,
+  .form-control textarea {
       /* ตั้งให้ .form-control เป็นขนาดกลาง (md) โดยปริยาย */
       @apply text-sm px-4 py-2;
   }
 
   /* Small Size (SM) */
   .form-control-sm input,
-  .form-control-sm select {
+  .form-control-sm select,
+  .form-control-sm textarea {
       @apply text-xs px-3 py-1.5;
   }
 

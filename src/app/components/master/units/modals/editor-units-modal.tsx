@@ -19,10 +19,7 @@ const unitSchemaDefinition = (t: (key: string) => string) => z.object({
   unitCode: z.string().min(1, { message: t('require.pleaseInput') }),
   nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
   nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
-  unitType: z.enum(['Weight', 'Energy', 'Volume', 'Other'], {
-    errorMap: () => ({ message: t('require.pleaseSelect') })
-  }),
-  description: z.string().optional(),
+  description: z.string(),
   status: z.boolean(),
 });
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
@@ -63,7 +60,6 @@ export function UnitsModal({
       unitCode: '',
       nameEng: '',
       nameThai: '',
-      unitType: 'Weight',
       description: '',
       status: true,
     },
@@ -80,6 +76,7 @@ export function UnitsModal({
            unitCode: data.code,
            nameEng: data.nameEN,
            nameThai: data.name,
+           description: data.description,
          });
        } else {
          setIsLoadingData(false);
@@ -95,7 +92,7 @@ export function UnitsModal({
      request.code = data.unitCode;
      request.name = data.nameThai;
      request.nameEN = data.nameEng;
-     request.description = data.nameThai;
+     request.description = data.description;
      let result: SuccessResponse;
      if (mode === 'create') {
        // เรียกใช้ service เพื่อสร้างข้อมูล
@@ -143,27 +140,13 @@ export function UnitsModal({
         </>
       }
     >
-      <form id="unit-form" className="grid grid-cols-1 md:grid-cols-2 gap-4" noValidate>
+      <form id="unit-form" className="grid grid-cols-3 md:grid-cols-3 gap-4" noValidate>
         {/* Unit Code */}
         <div>
           <Label htmlFor="unitCode" value="รหัสหน่วย" color={errors.unitCode && 'failure'} />
           <TextInput id="unitCode" {...register("unitCode")}  className={`form-control form-rounded-xl ${errors.unitCode && 'has-error'}`} disabled={isSubmitting || isViewMode} color={errors.unitCode ? 'failure' : 'gray'} />
           {errors.unitCode && <HelperText color="failure">{errors.unitCode.message}</HelperText>}
         </div>
-
-        {/* Unit Type */}
-        <Controller name="unitType" control={control} render={({ field }) => (
-          <div>
-            <Label htmlFor="unitType" value="ประเภทหน่วย" color={errors.unitType && 'failure'} />
-            <Select id="unitType" {...field} sizing="md" className={`form-control form-rounded-xl ${errors.unitType && 'has-error'}`} disabled={isSubmitting || isViewMode} color={errors.unitType ? 'failure' : 'gray'}>
-              <option value="Weight">Weight</option>
-              <option value="Energy">Energy</option>
-              <option value="Volume">Volume</option>
-              <option value="Other">Other</option>
-            </Select>
-            {errors.unitType && <HelperText color="failure">{errors.unitType.message}</HelperText>}
-          </div>
-        )} />
 
         {/* Name (EN) */}
         <div>
@@ -186,7 +169,7 @@ export function UnitsModal({
         </div>
 
         {/* Status */}
-        <div className="md:col-span-2">
+        {/* <div className="md:col-span-2">
           <Controller name="status" control={control} render={({ field }) => (
             <ToggleSwitch
               label="สถานะ"
@@ -195,7 +178,7 @@ export function UnitsModal({
               disabled={isSubmitting || isViewMode}
             />
           )} />
-        </div>
+        </div> */}
 
       </form>
     </ModalFrame>

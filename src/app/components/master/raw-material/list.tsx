@@ -14,7 +14,6 @@ import { ApiSearchRequest } from '@/app/core/models/shared/page.model';
 import { createMockFetchFn } from '@/app/core/services/mock-api-helpers';
 import { FilterControl } from '../../shared/filterable-header';
 import { SortableHeader } from '../../shared/sortable-header';
-import { nutritionGroupService } from '@/app/core/services/master/nutrition-group.service';
 import { MasterRawMaterialItemsModel, MasterRawMaterialRequestModel } from '@/app/core/models/master/raw-material/raw-material.model';
 import { RawMaterialModal, RawMaterialModalProps } from './modals/editor-raw-material-modal';
 import { MASTER_RAW_MATERIAL_MOCKS } from '@/app/core/models/_mock/raw-material-data.mock';
@@ -174,7 +173,7 @@ const MasterRawMaterialList = () => {
   const handleCreate = async () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
-      const newGroup = await showRawMaterModal({ mode: 'create', size: 'lg:max-w-3xl lg:min-w-[700px]' });
+      const newGroup = await showRawMaterModal({ mode: 'create', size: '5xl' });
       refetch();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
@@ -187,7 +186,7 @@ const MasterRawMaterialList = () => {
       const updatedGroup = await showRawMaterModal({
         mode: 'edit',
         id: item.id,
-        size: 'lg:max-w-3xl lg:min-w-[700px]'
+        size: '5xl'
       });
       refetch();
     } catch (error) {
@@ -197,7 +196,7 @@ const MasterRawMaterialList = () => {
 
   const handleView = (item: MasterRawMaterialItemsModel) => {
     // โหมด View ไม่จำเป็นต้อง await เพราะเรามักจะไม่สนใจผลลัพธ์
-    showRawMaterModal({ mode: 'view', id: item.id, size: 'lg:max-w-3xl lg:min-w-[700px]' });
+    showRawMaterModal({ mode: 'view', id: item.id, size: '5xl' });
   };
 
 
@@ -210,7 +209,7 @@ const MasterRawMaterialList = () => {
       // 3. ตรวจสอบผลลัพธ์ที่ได้กลับมา
       // `result.isConfirmed` จะเป็น true ถ้าผู้ใช้กดปุ่ม "ยืนยัน" (ใช่, ลบเลย)
       if (result.isConfirmed) {
-        const result = await nutritionGroupService.delete(item.id!);
+        const result = await ingredientService.delete(item.id!);
         if (!result) return;
         // เมื่อลบสำเร็จ อาจจะแสดง Alert อีกอัน
         showSuccessAlert('ลบสำเร็จ!', `${item.name} ถูกลบแล้ว`);

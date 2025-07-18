@@ -1,6 +1,6 @@
-import { SuccessResponse } from "../../models/shared/common.model";
+import { CommonModel, SuccessResponse } from "../../models/shared/common.model";
 import { MasterIngredientGroupItemsModel, MasterIngredientGroupResponseItemModel, MasterIngredientGroupRequestItemModel } from "../../models/master/ingredient-group/ingredient-group.mode";
-import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
+import { ApiSearchRequest, ItemsResponse, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
 
 // --- กำหนด Path หลักของ Resource นี้ ---
@@ -41,6 +41,12 @@ export const ingredientGroupService = {
 
   delete: async (id: number): Promise<SuccessResponse> => {
     const result = await apiClient.delete<SuccessResponse>(`${RESOURCE_PATH}/${id}`);
+    return result.data!;
+  },
+
+  getAll: async (): Promise<ItemsResponse<CommonModel[]>> => {
+    // Interceptor ของเราแกะ .data มาแล้ว
+    const result = await apiClient.get<ItemsResponse<CommonModel[]>>(`${RESOURCE_PATH}/all`);
     return result.data!;
   },
 

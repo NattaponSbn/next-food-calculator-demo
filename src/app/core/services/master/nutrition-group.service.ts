@@ -1,7 +1,7 @@
 // src/app/core/services/food-group.service.ts
 
-import { SuccessResponse } from "../../models/shared/common.model";
-import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
+import { NutritionGroupCommonModel, SuccessResponse } from "../../models/shared/common.model";
+import { ApiSearchRequest, ItemsResponse, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
 import { MasterNutrientCategoriesItemsModel, MasterNutrientCategoriesRequestItemModel, MasterNutrientCategoriesResponseItemModel } from "../../models/master/nutrient-categories/nutrient-categories.model";
 
@@ -43,6 +43,12 @@ export const nutritionGroupService = {
 
   delete: async (id: number): Promise<SuccessResponse> => {
     const result = await apiClient.delete<SuccessResponse>(`${RESOURCE_PATH}/${id}`);
+    return result.data!;
+  },
+
+  getAll: async (): Promise<ItemsResponse<NutritionGroupCommonModel[]>> => {
+    // Interceptor ของเราแกะ .data มาแล้ว
+    const result = await apiClient.get<ItemsResponse<NutritionGroupCommonModel[]>>(`${RESOURCE_PATH}/all`);
     return result.data!;
   },
 };

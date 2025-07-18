@@ -18,7 +18,7 @@ export default function Layout({
           <Header />
           {/* Body Content  */}
           <main className="flex-grow">
-            <div className="bg-lightgray mr-3 rounded-page min-h-[70vh] dark:bg-gray-900">
+            <div className="bg-lightgray mr-3 rounded-page min-h-[82vh] dark:bg-gray-900">
               <div
                 className={`container mx-auto py-30`}
               >
