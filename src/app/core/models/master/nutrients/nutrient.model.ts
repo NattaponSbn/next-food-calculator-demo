@@ -23,6 +23,7 @@ export class MasterNutrientItemsModel {
   nameEN!: string;
   description!: string;
   id!: number;
+  unitName!: string; 
 }
 
 export class MasterNutrientRequestItemModel {

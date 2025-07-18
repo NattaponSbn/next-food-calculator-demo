@@ -165,7 +165,7 @@ const MasterNutrientList = () => {
           ),
       },
       {
-        accessorKey: 'defaultUnit',
+        accessorKey: 'unitName',
         header: ({ column }) => (
           <FilterControl
             column={column}
