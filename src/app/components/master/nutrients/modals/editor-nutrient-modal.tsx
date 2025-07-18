@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, HelperText, Label, Select, TextInput, ToggleSwitch } from 'flowbite-react';
+import { Button, HelperText, Label, Select, Textarea, TextInput, ToggleSwitch } from 'flowbite-react';
 import { InjectedModalProps } from '@/app/core/hooks/use-modal';
 import { ModalFrame, ModalSize } from '@/app/components/shared/modals/modal-frame';
 import { useEffect, useMemo, useState } from 'react';
@@ -20,6 +20,7 @@ const nutrientSchemaDefinition = (t: (key: string) => string) => z.object({
   code: z.string().min(1, { message: t('require.pleaseInput') }),
   nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
   nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
+  description: z.string(),
   ncId: z.coerce.number({ required_error: t('require.pleaseSelect') })
     .min(1, { message: t('require.pleaseSelect') }),
   unitId: z.coerce.number({ required_error: t('require.pleaseSelect') })
@@ -59,7 +60,7 @@ export function NutrientModal({
   } = useForm<NutrientFormValues>({
     resolver: zodResolver(nutrientSchema),
     // ค่าเริ่มต้นให้เป็นค่าว่างไปก่อน แล้วเราจะใช้ useEffect + reset มาใส่ทีหลัง
-    defaultValues: { code: '', nameEng: '', nameThai: '', ncId: 0, unitId: 0, isRequire: false },
+    defaultValues: { code: '', nameEng: '', nameThai: '', description: '', ncId: 0, unitId: 0, isRequire: false },
   });
 
   useEffect(() => {
@@ -85,6 +86,8 @@ export function NutrientModal({
             code: data.code,
             nameEng: data.nameEN,
             nameThai: data.name,
+            description: data.description,
+
             ncId: data.groupId || 0,
             unitId: data.primaryUnitId || 0,
             isRequire: data.isRequire,
@@ -111,6 +114,7 @@ export function NutrientModal({
        request.code = data.code;
        request.name = data.nameThai;
        request.nameEN = data.nameEng;
+       request.description = data.description;
        request.groupId = data.ncId;
        request.primaryUnitId = data.unitId;
        request.isRequire = data.isRequire;
