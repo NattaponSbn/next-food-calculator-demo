@@ -26,8 +26,7 @@ const nutritionEntrySchema = z.object({
   unitId: z.coerce.number({ required_error: 'กรุณาเลือกหน่วย' })
     .min(1, { message: 'กรุณาเลือกหน่วย' }),
 
-  value: z.coerce.number({ invalid_type_error: 'กรุณากรอกตัวเลข' })
-    .min(0, { message: 'ค่าต้องไม่ติดลบ' }),
+  value: z.string().min(1, { message: 'กรุณากรอก' }),
 });
 
 // Schema หลักของฟอร์มวัตถุดิบ
@@ -87,7 +86,7 @@ export function RawMaterialModal({
         {
           nutritionId: 0, // หรือ ID เริ่มต้นถ้ามี
           unitId: 0,      // หรือ ID เริ่มต้นถ้ามี
-          value: 0,
+          value: '',
         }
       ],
     },
@@ -117,11 +116,11 @@ export function RawMaterialModal({
       // และจะคืนค่าเป็น Array ว่างกลับไป
       //
 
-      const valueAsNumber = parseFloat(nutrient.value);
+      const valueAsNumber = nutrient.value;
 
       return {
         nutritionId: nutrient.nutritionId,
-        value: isNaN(valueAsNumber) ? 0 : valueAsNumber,
+        value: valueAsNumber,
         unitId: nutrient.unitId,
       };
     }),
@@ -202,7 +201,7 @@ export function RawMaterialModal({
     const newFields = nutrientsToAdd.map(nutrient => ({
       nutritionId: nutrient.id,
       unitId: nutrient.primaryUnitId, // ใช้ unit เริ่มต้น
-      value: 0,
+      value: '',
     }));
 
     // 5. ใช้ `append` เพื่อเพิ่มข้อมูลทั้งหมดเข้าไปในครั้งเดียว
@@ -216,7 +215,7 @@ export function RawMaterialModal({
     append({
       nutritionId: 0, // ID จากสารอาหารที่เลือก
       unitId: 0,      // ID ของหน่วย
-      value: 0,
+      value: '',
     });
   };
 
@@ -259,7 +258,7 @@ export function RawMaterialModal({
       // 3. Mapping Array ของ nutritions
       nutritions: data.nutritions.map(nutrient => ({
         nutritionId: Number(nutrient.nutritionId),
-        value: String(nutrient.value), // แปลงเป็น string ตามที่ API ต้องการ
+        value: String(nutrient.value || '-'), // แปลงเป็น string ตามที่ API ต้องการ
         unitId: Number(nutrient.unitId),
         // API ต้องการ nutritionName ด้วย แต่ในฟอร์มเรามีแค่ ID
         // เราอาจจะต้องหาชื่อจาก state ที่เก็บข้อมูล dropdown

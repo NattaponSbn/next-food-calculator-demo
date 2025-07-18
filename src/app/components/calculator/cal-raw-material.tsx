@@ -69,6 +69,8 @@ const CalculatorRawMaterialPage = () => {
 
     setIsCalculating(true);
     try {
+      console.log(ingredients,'ingredients');
+      
       const dataRequest: CalculationRequestItem[] = ingredients.map(item => ({
         ingredientId: item.id,
         dataPerUnit: item.quantity, // API ของคุณต้องการ dataPerUnit

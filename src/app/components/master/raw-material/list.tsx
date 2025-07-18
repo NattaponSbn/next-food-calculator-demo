@@ -166,6 +166,13 @@ const MasterRawMaterialList = () => {
     initialCriteria: initialCriteria,
   });
 
+  const resetTable = () => {
+    table.resetColumnFilters();
+    table.resetSorting();
+    table.setPageIndex(0);
+  }
+    
+
   useEffect(() => {
     refetch();
   }, [refetch]); // ใช้ refetch เป็น dependency
@@ -174,7 +181,7 @@ const MasterRawMaterialList = () => {
     try {
       // เรียกใช้โหมด 'create' และปรับขนาดเป็น 'lg'
       const newGroup = await showRawMaterModal({ mode: 'create', size: '5xl' });
-      refetch();
+      resetTable();
     } catch (error) {
       console.info('การสร้างถูกยกเลิก');
     }
@@ -188,7 +195,7 @@ const MasterRawMaterialList = () => {
         id: item.id,
         size: '5xl'
       });
-      refetch();
+      resetTable();
     } catch (error) {
       console.info('การแก้ไขถูกยกเลิก');
     }
