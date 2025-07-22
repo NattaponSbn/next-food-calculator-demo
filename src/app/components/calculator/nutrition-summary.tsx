@@ -141,7 +141,7 @@ export const NutritionSummary = ({ summary, enegyPercents, isLoading }: Nutritio
       
       <div className="panel-header flex flex-col md:flex-row md:items-center p-4 gap-2 border-b"> {/* 2. Header ไม่ยืด/หด */}
         <h2 className="panel-title">{t('calculator.nutritionSummaryTitle')}</h2>
-        { hasSummaryData && (<MacroDistributionBar energyPercents={enegyPercents} className="md:flex-grow md:w-auto" />) }
+        { hasSummaryData && (<MacroDistributionBar energyPercents={enegyPercents} className="md:flex-grow md:w-auto md:items-end" />) }
       </div>
 
       
