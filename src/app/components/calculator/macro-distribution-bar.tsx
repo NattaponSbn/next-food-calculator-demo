@@ -59,10 +59,9 @@ const MacroDistributionBar: React.FC<MacroDistributionBarProps> = ({ energyPerce
                         className={`
                             flex-1
                             flex flex-col items-center justify-center 
-                            h-24 md:h-26
-                            p-1
+                            h-14 md:h-14
+                            px-3 py-2
                             rounded-lg text-white
-                            shadow-lg dark:shadow-none 
                             dark:border dark:border-gray-700/50
                             transition-all duration-300
                             ${lightColor} ${darkColor}
@@ -71,7 +70,7 @@ const MacroDistributionBar: React.FC<MacroDistributionBarProps> = ({ energyPerce
                     >
                         {/* ✅ 4. ปรับขนาด Font และการแสดงผลทศนิยม */}
                         <span className="text-xs md:text-sm font-medium opacity-90 text-center">{macro.name}</span>
-                        <span className="text-xl md:text-2xl lg:text-3xl font-bold">
+                        <span className="text-sm md:text-sm lg:text-sm font-bold">
                             {numericValue.toFixed(1)}%
                         </span>
                     </div>
