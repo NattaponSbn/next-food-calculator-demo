@@ -5,37 +5,38 @@ import { Icon } from '@iconify/react';
 import { MasterRawSelectedIngredientModel } from '@/app/core/models/master/raw-material/raw-material.model';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '@/app/core/hooks/use-debounce';
+import { isEmpty } from 'lodash';
 
 interface IngredientRowProps {
   ingredient: MasterRawSelectedIngredientModel;
   isViewMode: boolean;
-  onUpdateQuantity: (id: number, quantity: number) => void;
+  onUpdateQuantity: (id: number, quantity: string) => void;
   onRemove: (id: number) => void;
 }
 
 export const IngredientRow = ({ ingredient, isViewMode, onUpdateQuantity, onRemove }: IngredientRowProps) => {
-  const [displayValue, setDisplayValue] = useState<string>(String(ingredient.quantity));
+  const [displayValue, setDisplayValue] = useState<string>(ingredient.quantity);
   const debouncedDisplayValue = useDebounce(displayValue, 800); // หน่วงเวลา 800ms
 
    useEffect(() => {
     // อัปเดตเฉพาะเมื่อค่าไม่ตรงกัน เพื่อป้องกันการเขียนทับขณะผู้ใช้กำลังพิมพ์
-    if (parseFloat(displayValue) !== ingredient.quantity) {
-      setDisplayValue(String(ingredient.quantity));
+    if (displayValue !== ingredient.quantity) {
+      setDisplayValue(ingredient.quantity);
     }
   }, [ingredient.quantity]);
 
   // 4. useEffect ตัวที่สอง: สำหรับ "ส่งค่ากลับ" เมื่อผู้ใช้หยุดพิมพ์
   useEffect(() => {
     // แปลงค่าที่ debounce แล้วเป็นตัวเลข
-    const numericValue = parseFloat(debouncedDisplayValue);
+    const strValue = debouncedDisplayValue;
 
     // ทำงานก็ต่อเมื่อ:
     // a. ค่าที่ debounce แล้วไม่ใช่ค่าว่าง
     // b. และสามารถแปลงเป็นตัวเลขได้
     // c. และค่าตัวเลขนั้นไม่เท่ากับค่าเดิมใน state หลัก
-    if (debouncedDisplayValue !== '' && !isNaN(numericValue) && numericValue !== ingredient.quantity) {
-      console.log(`Debounced: Calling onUpdateQuantity for item ${ingredient.id} with value ${numericValue}`);
-      onUpdateQuantity(ingredient.id, numericValue);
+    if (debouncedDisplayValue !== '' && !isEmpty(strValue) && strValue !== ingredient.quantity) {
+      console.log(`Debounced: Calling onUpdateQuantity for item ${ingredient.id} with value ${strValue}`);
+      onUpdateQuantity(ingredient.id, strValue);
     }
   }, [debouncedDisplayValue]); // <-- Dependency คือค่าที่ถูก debounce แล้ว
 

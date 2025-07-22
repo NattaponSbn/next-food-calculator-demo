@@ -15,7 +15,7 @@ export class MasterRawMaterialItemsModel {
   foodId?: string;
   description?: string;
   groupId?: number
-  dataPerUnit!: number
+  dataPerUnit!: string
   perUnitId!: number
   nutritions?: MasterRawMaterialNutritionModel[]
   perUnitName!: string;
@@ -57,7 +57,7 @@ export class MasterRawMaterialResponseItemModel {
 export class MasterRawSelectedIngredientModel {
   id!: number;
   data!: MasterRawMaterialItemsModel;
-  quantity!: number;
+  quantity!: string;
   unit!: string;
 }
 export class MasterRawNutritionSummaryModel {

@@ -22,7 +22,7 @@ export class CalculatorIngredientModel {
   kind!: string;
   ingredientId!: number;
   ingredientName!: string;
-  dataPerUnit!: number;
+  dataPerUnit!: string;
   perUnitId!: number;
   perUnitName!: string;
 }
@@ -70,7 +70,7 @@ export class CalculatorResponseItemModel {
 
 export class CalculationRequestItem {
   ingredientId!: number;
-  dataPerUnit!: number; // ปริมาณที่ผู้ใช้กรอก
+  dataPerUnit!: string; // ปริมาณที่ผู้ใช้กรอก
   perUnitId!: number;   // ID ของหน่วยที่ใช้
 }
 
