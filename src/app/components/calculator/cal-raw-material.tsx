@@ -186,7 +186,7 @@ const CalculatorRawMaterialPage = () => {
     });
   };
 
-  const handleUpdateQuantity = (id: number, quantity: number) => {
+  const handleUpdateQuantity = (id: number, quantity: string) => {
     hasUserInteracted.current = true;
     setSelectedIngredients(prevItems =>
       prevItems.map(item => {
