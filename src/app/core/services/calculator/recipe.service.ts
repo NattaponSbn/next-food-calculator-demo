@@ -1,7 +1,7 @@
 import { SuccessResponse } from "../../models/shared/common.model";
 import { ApiSearchRequest, PageResult } from "../../models/shared/page.model";
 import apiClient from "../api-client";
-import { CalculatorItemsModel, CalculatorResponseItemModel, CalculatorRequestItemModel, CalculatedNutrientGroupModel, CalculationRequestItem, NutritionSummaryResponse, CalculationRequestModel } from "../../models/calculator/calculator.mode";
+import { CalculatorItemsModel, CalculatorResponseItemModel, CalculatorRequestItemModel, NutritionSummaryResponse, CalculationRequestModel } from "../../models/calculator/calculator.mode";
 
 // --- กำหนด Path หลักของ Resource นี้ ---
 const RESOURCE_PATH = '/recipe';

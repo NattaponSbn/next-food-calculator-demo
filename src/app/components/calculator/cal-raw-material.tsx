@@ -38,7 +38,7 @@ const CalculatorRawMaterialPage = () => {
 
   const [calculationName, setCalculationName] = useState('');
   const [selectedIngredients, setSelectedIngredients] = useState<MasterRawSelectedIngredientModel[]>([]);
-  const [nutritionSummary, setNutritionSummary] = useState<NutritionSummaryResponse | null>(null);
+  // const [nutritionSummary, setNutritionSummary] = useState<NutritionSummaryResponse | null>(null);
   const [groupNutrients, setGroupNutrients] = useState<CalculatorGroupNutrientModel[] | null>(null);
   const [enegyPercents, setEnegyPercents] = useState<CalculatedEnegyPercentModel[] | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
@@ -65,7 +65,8 @@ const CalculatorRawMaterialPage = () => {
   const calculateNutritionApi = useCallback(async (ingredients: MasterRawSelectedIngredientModel[]) => {
     // 1. ตรวจสอบจาก parameter ที่รับเข้ามา
     if (ingredients.length === 0) {
-      setNutritionSummary(null);
+       setGroupNutrients(null);
+      setEnegyPercents(null);
       return null; // คืนค่า null เพื่อให้รู้ว่าไม่ได้คำนวณ
     }
 
@@ -75,7 +76,7 @@ const CalculatorRawMaterialPage = () => {
       
       const dataRequest: CalculationRequestItem[] = ingredients.map(item => ({
         ingredientId: item.id,
-        dataPerUnit: item.quantity, // API ของคุณต้องการ dataPerUnit
+        dataPerUnit: String(item.quantity), // API ของคุณต้องการ dataPerUnit
         perUnitId: item.data.perUnitId,
       }));
       const requestBody = {
@@ -84,12 +85,14 @@ const CalculatorRawMaterialPage = () => {
 
       console.log('Calling calculation API with:', requestBody);
       const summary = await recipeService.calculate(requestBody);
-      setNutritionSummary(summary);
+      setGroupNutrients(summary.groupNutrients);
+      setEnegyPercents(summary.enegyPercents);
       return summary; // 2. คืนค่าผลลัพธ์ที่ได้จากการคำนวณ
 
     } catch (error) {
       console.error("Calculation failed:", error);
-      setNutritionSummary(null);
+      setGroupNutrients(null);
+      setEnegyPercents(null);
       return null; // คืนค่า null เมื่อเกิดข้อผิดพลาด
     } finally {
       setIsCalculating(false);

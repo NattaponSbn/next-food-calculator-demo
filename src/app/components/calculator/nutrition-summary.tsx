@@ -1,6 +1,6 @@
 'use client';
 
-import { CalculatedEnegyPercentModel, CalculatedNutrientGroupModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
+import { CalculatedEnegyPercentModel, CalculatorGroupNutrientModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
 import { formatNumberWithCommas } from '@/app/lib/number-helpers';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Spinner } from 'flowbite-react';
@@ -10,7 +10,7 @@ import MacroDistributionBar from './macro-distribution-bar';
 // Import Type ของ Response เข้ามา
 
 interface NutritionSummaryProps {
-  summary: CalculatedNutrientGroupModel[] | null;
+  summary: CalculatorGroupNutrientModel[] | null;
   enegyPercents: CalculatedEnegyPercentModel[] | null;
   isLoading: boolean;
 }
@@ -28,7 +28,7 @@ const NutrientItem = ({ name, value, unit }: { name: string, value: string, unit
 );
 
 interface NutrientGroupProps {
-  group: CalculatedNutrientGroupModel;
+  group: CalculatorGroupNutrientModel;
   isOpen: boolean;
   onToggle: () => void;
 }
@@ -147,7 +147,7 @@ export const NutritionSummary = ({ summary, enegyPercents, isLoading }: Nutritio
       
       
       {/* ✅ 3. Panel Body จะยืดและ scroll ได้ */}
-      <div className="panel-body flex-grow overflow-y-auto max-h-[35vh]">
+      <div className="panel-body flex-grow overflow-y-auto max-h-[40vh] !pt-0">
         {summary.map(group => (
           <NutrientGroup 
           key={group.groupId} 

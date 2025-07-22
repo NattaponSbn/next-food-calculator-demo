@@ -79,14 +79,8 @@ export class CalculationRequestModel {
 }
 
 export class CalculatedNutrientSummaryModel {
-  groupNutrients!: CalculatedNutrientGroupModel[];
+  groupNutrients!: CalculatorGroupNutrientModel[];
   enegyPercents!: CalculatedEnegyPercentModel[];
-}
-
-export class CalculatedNutrientGroupModel {
-  groupId!: number;
-  groupName!: string; // 'Main Nutrients', 'Vitamins', etc.
-  nutrients!: CalculatorNutrientModel[];
 }
 
 export class CalculatedEnegyPercentModel {
