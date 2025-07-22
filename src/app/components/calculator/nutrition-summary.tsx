@@ -1,15 +1,17 @@
 'use client';
 
-import { CalculatedNutrientGroupModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
+import { CalculatedEnegyPercentModel, CalculatedNutrientGroupModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
 import { formatNumberWithCommas } from '@/app/lib/number-helpers';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Spinner } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import MacroDistributionBar from './macro-distribution-bar';
 // Import Type ของ Response เข้ามา
 
 interface NutritionSummaryProps {
-  summary: NutritionSummaryResponse | null;
+  summary: CalculatedNutrientGroupModel[] | null;
+  enegyPercents: CalculatedEnegyPercentModel[] | null;
   isLoading: boolean;
 }
 
@@ -93,9 +95,10 @@ const NutrientGroup = ({ group, isOpen, onToggle }: NutrientGroupProps) => {
   );
 };
 
-export const NutritionSummary = ({ summary, isLoading }: NutritionSummaryProps) => {
+export const NutritionSummary = ({ summary, enegyPercents, isLoading }: NutritionSummaryProps) => {
   const { t } = useTranslation();
   const [openGroups, setOpenGroups] = useState<Record<number, boolean>>({});
+  const hasSummaryData = enegyPercents && enegyPercents.length > 0;
 
   // --- [เพิ่ม] Handler สำหรับสลับการเปิด/ปิด ---
   const toggleGroup = (groupId: number) => {
@@ -136,12 +139,15 @@ export const NutritionSummary = ({ summary, isLoading }: NutritionSummaryProps) 
   return (
     <div className="panel flex flex-col h-full"> 
       
-      <div className="panel-header flex-shrink-0"> {/* 2. Header ไม่ยืด/หด */}
+      <div className="panel-header flex flex-col md:flex-row md:items-center p-4 gap-2 border-b"> {/* 2. Header ไม่ยืด/หด */}
         <h2 className="panel-title">{t('calculator.nutritionSummaryTitle')}</h2>
+        { hasSummaryData && (<MacroDistributionBar energyPercents={enegyPercents} className="md:flex-grow md:w-auto" />) }
       </div>
+
+      
       
       {/* ✅ 3. Panel Body จะยืดและ scroll ได้ */}
-      <div className="panel-body flex-grow overflow-y-auto max-h-[40vh]">
+      <div className="panel-body flex-grow overflow-y-auto max-h-[35vh]">
         {summary.map(group => (
           <NutrientGroup 
           key={group.groupId} 

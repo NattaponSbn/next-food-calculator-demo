@@ -20,7 +20,6 @@ const unitSchemaDefinition = (t: (key: string) => string) => z.object({
   nameEng: z.string().min(1, { message: t('require.pleaseInput') }),
   nameThai: z.string().min(1, { message: t('require.pleaseInput') }),
   description: z.string(),
-  status: z.boolean(),
 });
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
 
@@ -61,7 +60,6 @@ export function UnitsModal({
       nameEng: '',
       nameThai: '',
       description: '',
-      status: true,
     },
   });
 
