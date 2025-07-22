@@ -14,7 +14,7 @@ import { ModeTypes } from '@/app/core/models/const/type.const';
 import { showConfirmation, showSuccessAlert, showWarningAlert } from '@/app/lib/swal';
 import { useTranslation } from 'react-i18next';
 import { recipeService } from '@/app/core/services/calculator/recipe.service';
-import { CalculationRequestItem, CalculatorGroupNutrientModel, CalculatorRequestItemModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
+import { CalculatedEnegyPercentModel, CalculationRequestItem, CalculatorGroupNutrientModel, CalculatorRequestItemModel, NutritionSummaryResponse } from '@/app/core/models/calculator/calculator.mode';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -39,6 +39,8 @@ const CalculatorRawMaterialPage = () => {
   const [calculationName, setCalculationName] = useState('');
   const [selectedIngredients, setSelectedIngredients] = useState<MasterRawSelectedIngredientModel[]>([]);
   const [nutritionSummary, setNutritionSummary] = useState<NutritionSummaryResponse | null>(null);
+  const [groupNutrients, setGroupNutrients] = useState<CalculatorGroupNutrientModel[] | null>(null);
+  const [enegyPercents, setEnegyPercents] = useState<CalculatedEnegyPercentModel[] | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(mode !== 'create');
   const hasUserInteracted = useRef(false);
@@ -125,7 +127,8 @@ const CalculatorRawMaterialPage = () => {
             unit: ing.perUnitName,
           }));
           setSelectedIngredients(initialIngredients);
-          setNutritionSummary(recipeData.groupNutrients)
+          setGroupNutrients(recipeData.groupNutrients);
+          setEnegyPercents(recipeData.enegyPercents);
 
           // 3. "เรียก" การคำนวณสารอาหารทันทีด้วยข้อมูลใหม่ที่เพิ่งได้มา
           //    และ await รอให้มันคำนวณเสร็จ
@@ -382,7 +385,8 @@ const CalculatorRawMaterialPage = () => {
 
         {/* ฝั่งขวา: สรุปสารอาหาร */}
         <NutritionSummary
-          summary={nutritionSummary}
+          summary={groupNutrients}
+          enegyPercents={enegyPercents}
           isLoading={isCalculating}
         />
 

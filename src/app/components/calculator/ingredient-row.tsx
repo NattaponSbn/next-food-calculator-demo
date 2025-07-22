@@ -55,7 +55,7 @@ export const IngredientRow = ({ ingredient, isViewMode, onUpdateQuantity, onRemo
     <div className="flex items-center gap-3 p-2 border rounded-lg bg-white dark:bg-gray-800 shadow-sm">
       <span className="flex-grow font-medium text-gray-900 dark:text-white">{ingredient.data.name}</span>
       <div className="w-24 flex-shrink-0">
-        <TextInput type="text" inputMode="decimal" className="form-control form-rounded-xl" value={displayValue}  onChange={handleChange} onBlur={handleBlur} sizing="sm" min="0" disabled={isViewMode} />
+        <TextInput type="text" className="form-control form-rounded-xl" value={displayValue}  onChange={handleChange} onBlur={handleBlur} sizing="sm" min="0" disabled={isViewMode} />
       </div>
       <span className="w-10 text-gray-600 dark:text-gray-400 flex-shrink-0">{ingredient.unit}</span>
       { !isViewMode && (

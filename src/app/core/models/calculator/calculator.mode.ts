@@ -65,6 +65,7 @@ export class CalculatorResponseItemModel {
   perUnitId!: number
   ingredients!: CalculatorIngredientModel[];
   groupNutrients!: CalculatorGroupNutrientModel[];
+  enegyPercents!: CalculatedEnegyPercentModel[];
 }
 
 export class CalculationRequestItem {
@@ -77,11 +78,23 @@ export class CalculationRequestModel {
   ingredients!: CalculationRequestItem[];
 }
 
+export class CalculatedNutrientSummaryModel {
+  groupNutrients!: CalculatedNutrientGroupModel[];
+  enegyPercents!: CalculatedEnegyPercentModel[];
+}
+
 export class CalculatedNutrientGroupModel {
   groupId!: number;
   groupName!: string; // 'Main Nutrients', 'Vitamins', etc.
   nutrients!: CalculatorNutrientModel[];
 }
 
+export class CalculatedEnegyPercentModel {
+  id!: number;
+  name!: string;
+  value: string = "";
+}
+
+
 // Type ของ state `nutritionSummary` จะเป็น Array นี้
-export type NutritionSummaryResponse = CalculatedNutrientGroupModel[];
+export type NutritionSummaryResponse = CalculatedNutrientSummaryModel;
