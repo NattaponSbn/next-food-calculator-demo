@@ -15,9 +15,11 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { ingredientGroupService } from '@/app/core/services/master/ingredient-group.service';
 import { unitsService } from '@/app/core/services/master/units.service';
 import { ingredientService } from '@/app/core/services/master/ingredient.service';
+import { UnitsEnum } from '@/app/core/models/const/unit.const';
 
 // 2. Types
 export type Mode = typeof ModeTypes[keyof typeof ModeTypes];
+const unitEnum = UnitsEnum;
 
 // Schema สำหรับสารอาหารแต่ละแถว
 const nutritionEntrySchema = z.object({
@@ -37,7 +39,9 @@ const rawMaterialSchemaDefinition = (t: (key: string) => string) => z.object({
   foodId: z.string().min(1, { message: t('require.pleaseInput') }),
   groupId: z.coerce.number({ required_error: t('require.pleaseSelect') })
     .min(1, { message: t('require.pleaseSelect') }), // ป้องกันค่า "" ที่อาจจะแปลงเป็น 0
-
+  unitId: z.coerce.number({ required_error: t('require.pleaseSelect') })
+    .min(1, { message: t('require.pleaseSelect') }),
+  dataUnit: z.number().min(1, { message: t('require.pleaseInput') }),
   // --- ส่วนของโภชนาการ (เป็น Array) ---
   nutritions: z.array(nutritionEntrySchema),
 });
@@ -73,6 +77,7 @@ export function RawMaterialModal({
     handleSubmit,
     reset, // <-- เพิ่ม 'reset' เพื่ออัปเดตค่าในฟอร์ม
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RawMaterialFormValues>({
     resolver: zodResolver(rawMaterialSchema),
@@ -82,6 +87,8 @@ export function RawMaterialModal({
       nameEng: '',
       foodId: '',
       groupId: undefined,
+      unitId: unitEnum.g,
+      dataUnit: 100,
       nutritions: [
         {
           nutritionId: 0, // หรือ ID เริ่มต้นถ้ามี
@@ -97,6 +104,8 @@ export function RawMaterialModal({
     name: "nutritions", // ชื่อ field ที่เป็น array ใน Zod Schema
   });
 
+  const formUnitId = Number(watch('unitId'));
+
   const transformApiDataToFormValues = (apiData: MasterRawMaterialResponseItemModel): RawMaterialFormValues => {
     return {
       // 1. Mapping ข้อมูลทั่วไป
@@ -104,6 +113,8 @@ export function RawMaterialModal({
       nameEng: apiData.nameEN,
       foodId: apiData.foodId,
       groupId: apiData.groupId,
+      unitId: apiData.perUnitId,
+      dataUnit: apiData.dataPerUnit,
 
       // 2. Mapping Array ของ nutritions
      nutritions: (apiData.nutritions ?? []).map(nutrient => {
@@ -252,8 +263,8 @@ export function RawMaterialModal({
       // 2. Mapping ข้อมูลโภชนาการ
       // API ของคุณต้องการ dataPerUnit และ perUnitId ที่ระดับบนสุด
       // คุณต้องตัดสินใจว่าจะเอาค่านี้มาจากไหน (อาจจะเป็น input แยก)
-      dataPerUnit: 100, // <<-- ตัวอย่าง, ต้องหาค่าที่ถูกต้องมาใส่
-      perUnitId: 2,   // <<-- ตัวอย่าง, ต้องหาค่าที่ถูกต้องมาใส่
+      dataPerUnit: Number(data.dataUnit), // <<-- ตัวอย่าง, ต้องหาค่าที่ถูกต้องมาใส่
+      perUnitId: Number(data.unitId),   // <<-- ตัวอย่าง, ต้องหาค่าที่ถูกต้องมาใส่
 
       // 3. Mapping Array ของ nutritions
       nutritions: data.nutritions.map(nutrient => ({
@@ -386,13 +397,53 @@ export function RawMaterialModal({
                 </div>
               )}
             />
+
+            <div className='grid grid-cols-4 md:grid-cols-2 gap-2'>
+             <div className='col-span-1'>
+               <Controller
+                name="unitId"
+                control={control}
+                render={({ field: controllerField }) => (
+                  <div>
+                    <div className="mb-2 block">
+                      <Label htmlFor="unitId" value="หน่วย" color={errors.unitId && 'failure'} />
+                    </div>
+                    <Select id="unitId" {...controllerField} sizing="md" className={`form-control form-rounded-xl ${errors.unitId && 'has-error'}`} disabled={isViewMode}>
+                      <option value="">-- เลือกหน่วย --</option>
+                      {unitItems.length > 0 && unitItems.map((row) => (
+                        <option key={row.id} value={row.id}>{row.name}</option>
+                      ))}
+                    </Select>
+                    {errors.unitId && <HelperText color="failure" className="text-end">{errors.unitId.message}</HelperText>}
+                  </div>
+                )}
+              />
+             </div>
+              <div className='col-span-1'>
+               <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="dataUnit" value="ต่อหน่วย" color={errors.dataUnit && 'failure'} />
+                  </div>
+                  <TextInput
+                    id="dataUnit"
+                    inputMode='decimal'
+                    {...register("dataUnit")}
+                    sizing="md"
+                    className={`form-control form-rounded-xl ${errors.dataUnit && 'has-error'}`}
+                    disabled={isSubmitting || isViewMode}
+                  />
+                  {errors.dataUnit && <HelperText color="failure" className="text-end">{errors.dataUnit.message}</HelperText>}
+                 </div>
+              </div>
+            </div>
+            
           </div>
         </div>
 
         {/* --- Section 2: โภชนาการ --- */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">โภชนาการ (ต่อ 100 กรัม/มล.)</h3>
+            <h3 className="text-lg font-semibold">โภชนาการ</h3>
             {!isViewMode && (
               <div className="flex gap-2">
                 {/* --- ปุ่มเพิ่มทั้งหมด (ปุ่มใหม่) --- */}
