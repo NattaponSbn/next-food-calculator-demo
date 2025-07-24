@@ -217,7 +217,7 @@ const CalculatorRawMaterialPage = () => {
   const handleSaveOrUpdate = async (data: CalculatorRawMaterialFormValues, isSaveNext: boolean, redirectAfterSave: boolean = true) => {
     const ingredientsPayload: CalculationRequestItem[] = selectedIngredients.map(item => ({
       ingredientId: item.id,
-      dataPerUnit: item.quantity,
+      dataPerUnit: String(item.quantity),
       perUnitId: item.data.perUnitId, // ดึง perUnitId จาก data ที่เก็บไว้
     }));
 
