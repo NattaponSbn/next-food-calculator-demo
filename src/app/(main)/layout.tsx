@@ -20,7 +20,7 @@ export default function Layout({
           <main className="flex-grow">
             <div className="bg-lightgray mr-3 rounded-page min-h-[82vh] dark:bg-gray-900">
               <div
-                className={`container mx-auto py-30`}
+                className={`container mx-auto pt-5 pb-5`}
               >
                 {children}
               </div>

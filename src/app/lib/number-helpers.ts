@@ -1,22 +1,24 @@
 /**
- * จัดรูปแบบตัวเลขโดยการใส่จุลภาค (comma) และกำหนดจำนวนทศนิยม
+ * จัดรูปแบบตัวเลขโดยการใส่จุลภาค (comma) และกำหนดลักษณะของทศนิยม
  *
- * @param value - ค่าที่ต้องการจัดรูปแบบ (สามารถเป็น string หรือ number)
+ * @param value - ค่าที่ต้องการจัดรูปแบบ (สามารถเป็น string, number, null, หรือ undefined)
  * @param options - (Optional) ตัวเลือกเพิ่มเติมสำหรับการจัดรูปแบบ
- * @param options.minimumFractionDigits - จำนวนทศนิยมขั้นต่ำ (default: 2)
- * @param options.maximumFractionDigits - จำนวนทศนิยมสูงสุด (default: 2)
- * @returns {string} - ตัวเลขที่จัดรูปแบบแล้ว หรือค่าเดิมถ้าไม่สามารถแปลงเป็นตัวเลขได้
+ * @param options.decimalPlaces - กำหนดการแสดงผลทศนิยม
+ *        - 'auto' (default): ไม่แสดงทศนิยมถ้าเป็นจำนวนเต็ม (เช่น 1,234), แสดงตามจริงถ้ามี (เช่น 1,234.56)
+ *        - number: กำหนดจำนวนทศนิยมคงที่ (เช่น 2 จะได้ 1,234.00)
+ * @param options.maximumFractionDigits - (ใช้เมื่อ decimalPlaces ไม่ใช่ 'auto') จำนวนทศนิยมสูงสุด
+ * @returns {string} - ตัวเลขที่จัดรูปแบบแล้ว หรือ '-' ถ้าไม่มีค่า
  */
 export const formatNumberWithCommas = (
   value: string | number | null | undefined,
   options?: {
-    minimumFractionDigits?: number;
+    decimalPlaces?: 'auto' | number;
     maximumFractionDigits?: number;
   }
 ): string => {
-  // 1. คืนค่าเป็น string ว่าง หรือ '-' ถ้าค่าเริ่มต้นไม่มี
+  // 1. จัดการค่า null/undefined
   if (value === null || value === undefined) {
-    return '-'; // หรือ '' ตามที่คุณต้องการ
+    return '-';
   }
 
   // 2. แปลงค่าเป็นตัวเลข
@@ -24,20 +26,47 @@ export const formatNumberWithCommas = (
 
   // 3. ตรวจสอบว่าเป็นตัวเลขที่ถูกต้องหรือไม่
   if (isNaN(num)) {
-    return String(value); // ถ้าไม่ใช่ตัวเลข (เช่น 'tr') ให้คืนค่าเดิม
+    // ถ้าเป็น string ที่ไม่ใช่ตัวเลข เช่น 'N/A' ให้คืนค่าเดิม
+    return String(value);
   }
 
-  // 4. ใช้ toLocaleString() ซึ่งเป็นวิธีมาตรฐานในการจัดรูปแบบ
-   return num.toLocaleString('en-US', {
-    minimumFractionDigits: options?.minimumFractionDigits ?? 2,
-    maximumFractionDigits: options?.maximumFractionDigits ?? 2,
-    // ...options // การใส่ ...options ตรงนี้อาจจะไม่จำเป็นถ้าคุณไม่ได้ต้องการส่ง options อื่นๆ ของ toLocaleString
-  });
+  // 4. สร้าง object สำหรับ options ของ toLocaleString
+  const localeOptions: Intl.NumberFormatOptions = {};
+
+  const decimalPlaces = options?.decimalPlaces ?? 'auto'; // Default to 'auto'
+
+  if (decimalPlaces === 'auto') {
+    // กรณี 'auto': ไม่แสดง .00 ถ้าเป็นจำนวนเต็ม
+    // toLocaleString ทำแบบนี้เป็น default อยู่แล้ว เราจึงไม่ต้องกำหนด minimum/maximum fraction digits
+    // แต่เราอาจจะอยากจำกัดจำนวนทศนิยมสูงสุดถ้ามันยาวเกินไป
+    if (options?.maximumFractionDigits !== undefined) {
+      localeOptions.maximumFractionDigits = options.maximumFractionDigits;
+    }
+  } else {
+    // กรณีที่ decimalPlaces เป็นตัวเลข: กำหนดทศนิยมคงที่
+    localeOptions.minimumFractionDigits = decimalPlaces;
+    localeOptions.maximumFractionDigits = options?.maximumFractionDigits ?? decimalPlaces;
+  }
+
+  // 5. จัดรูปแบบและคืนค่า
+  return num.toLocaleString('en-US', localeOptions);
 };
 
-/**
- * ตัวอย่างฟังก์ชันอื่นๆ ที่อาจจะมีในอนาคต
- */
-export const formatAsCurrency = (value: number): string => {
-  return value.toLocaleString('th-TH', { style: 'currency', currency: 'THB' });
-};
+// --- กรณีที่ 1: เอาแค่คอมม่า ไม่เอา .00 (ค่า default ใหม่) ---
+// console.log(formatNumberWithCommasDecimal(1234));         // ผลลัพธ์: "1,234"
+// console.log(formatNumberWithCommasDecimal(1234.567));      // ผลลัพธ์: "1,234.567"
+// console.log(formatNumberWithCommasDecimal(1234.5, { decimalPlaces: 'auto' })); // ผลลัพธ์: "1,234.5"
+
+// --- กรณีที่ 2: จำกัดทศนิยมสูงสุดในโหมด 'auto' ---
+// console.log(formatNumberWithCommasDecimal(1234.567, { decimalPlaces: 'auto', maximumFractionDigits: 2 })); // ผลลัพธ์: "1,234.57"
+
+// --- กรณีที่ 3: ต้องการทศนิยม 2 ตำแหน่งเสมอ (เหมือนฟังก์ชันเดิม) ---
+// console.log(formatNumberWithCommasDecimal(1234, { decimalPlaces: 2 })); // ผลลัพธ์: "1,234.00"
+// console.log(formatNumberWithCommasDecimal(1234.5, { decimalPlaces: 2 })); // ผลลัพธ์: "1,234.50"
+
+// --- กรณีที่ 4: ต้องการทศนิยม 0 ตำแหน่ง (ปัดเศษ) ---
+// console.log(formatNumberWithCommasDecimal(1234.56, { decimalPlaces: 0 })); // ผลลัพธ์: "1,235"
+
+// --- กรณีที่ 5: ค่าที่ไม่ถูกต้อง ---
+// console.log(formatNumberWithCommasDecimal(null));       // ผลลัพธ์: "-"
+// console.log(formatNumberWithCommasDecimal('abc'));      // ผลลัพธ์: "abc"

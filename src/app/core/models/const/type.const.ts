@@ -11,3 +11,8 @@ export const ModeTypes = {
     edit: 'edit',
     view: 'view'
 }
+
+export const GenderType = {
+   male: 1,
+   female: 2,
+}

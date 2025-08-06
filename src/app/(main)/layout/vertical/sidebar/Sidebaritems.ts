@@ -53,6 +53,25 @@ const SidebarContent: MenuItem[] = [
       },
     ],
   },
+
+  // --- กลุ่มคำนวณBMR ---
+  {
+    headingKey: "menu.headings.bmr_calculation",
+    children: [
+      {
+        nameKey: "menu.items.calculator_formula_bmr",
+        icon: "solar:calculator-bold-duotone", // ไอคอนเครื่องคิดเลขตรงตัว
+        id: uniqueId(),
+        url: "/ui/calculator-bmr",
+      },
+      {
+        nameKey: "menu.items.calculator_history_bmr",
+        icon: "solar:history-bold-duotone", // ไอคอนประวัติศาสตร์, นาฬิกาย้อนกลับ
+        id: uniqueId(),
+        url: "/ui/calculator-history-bmr",
+      },
+    ],
+  },
   
   // --- กลุ่มข้อมูลหลัก (Master Data) ---
   {

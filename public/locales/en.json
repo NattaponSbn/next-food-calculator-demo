@@ -7,7 +7,8 @@
     "headings": {
       "diet_calculation": "Diet Calculation",
       "master": "Master Data",
-      "raw_material_nutrition_facts": "Raw Material Nutrition Facts"
+      "raw_material_nutrition_facts": "Raw Material Nutrition Facts",
+      "bmr_calculation": "Calculation BMR"
     },
     "items": {
       "calculator_formula": "Calculator",
@@ -18,7 +19,9 @@
       "raw_material": "Raw Materials",
       "formula": "Formulas",
       "nutrition_data_table": "Nutrition Data Table",
-      "calculator_history": "History"
+      "calculator_history": "History",
+      "calculator_formula_bmr": "Calculator BMR",
+      "calculator_history_bmr": "History BMR"
     }
   },
   "button": {
@@ -33,7 +36,8 @@
     "saveAndNext": "Save And Next",
     "edit": "Edit",
     "back": "Back",
-    "logout": "Logout"
+    "logout": "Logout",
+    "calculator": "Calculator"
   },
   "require": {
     "pleaseInput": "Please Input Require"
@@ -64,7 +68,17 @@
     "error": {
       "title": "เกิดข้อผิดพลาด"
     },
-    "version": "Version"
+    "version": "Version",
+    "name": "Name",
+    "gender": "Gender",
+    "age": "Age",
+    "height": "Height",
+    "weight": "Weight",
+    "activity": "Activity",
+    "calculator_formula": "Calculator Formula",
+    "unit_cm": "cm",
+    "unit_kg": "kg",
+    "select_activity": "Select Activity"
   },
   "master": {
     "fgCode": "Food Group Code",
@@ -129,5 +143,18 @@
     "calculating": "กำลังคำนวณ...",
     "noSummary": "ผลรวมสารอาหารจะแสดงที่นี่",
     "selectIngredients": "เลือกวัถุดิบ"
+  },
+  "calculator_bmr": {
+    "code": "Code",
+    "name": "Name",
+    "list": "Calculator BMR List",
+    "create": "Create Calculator BMR",
+    "edit": "Edit Calculator BMR",
+    "detail": "Detail Calculator BMR",
+    "hisList": "Calculator BMR History List",
+    "new": "Calculator BMR New",
+    "pageSubtitle": "จัดการ BMRและดูสรุป BMR",
+    "preson": "ข้อมูลส่วนตัว",
+    "personal_information": "ข้อมูลส่วนตัว"
   }
 }
