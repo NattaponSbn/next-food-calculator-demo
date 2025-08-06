@@ -49,3 +49,11 @@ export class NutritionGroupCommonModel {
   priority!: number;
 }
 
+export class ActivityCommonModel {
+  kind!: string;
+  id!: number;
+  name!: string;
+  code!: string;
+  factorUp!: number;
+}
+

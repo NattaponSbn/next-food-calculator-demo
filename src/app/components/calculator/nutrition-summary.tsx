@@ -22,7 +22,7 @@ const NutrientItem = ({ name, value, unit }: { name: string, value: string, unit
   <div className="flex justify-between items-baseline">
     <span className="text-gray-600 dark:text-gray-400">{name}:</span>
     <span className="font-medium text-gray-900 dark:text-gray-200">
-       {formatNumberWithCommas(value)} <span className="text-xs text-gray-500">{unit}</span>
+       {formatNumberWithCommas(value, { decimalPlaces: 2 })} <span className="text-xs text-gray-500">{unit}</span>
     </span>
   </div>
 );

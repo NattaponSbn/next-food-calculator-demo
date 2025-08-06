@@ -329,19 +329,19 @@ const CalculatorRawMaterialPage = () => {
           ) : (
             <>
               {/* ปุ่ม Save/Update (แล้วกลับหน้ารายการ) */}
-              <Button color="success" onClick={handleSubmit(onSaveAndExit)} disabled={isCalculating}>
-                <Icon icon="mdi:content-save-all" className="mr-2 h-5 w-5" />
+              <Button color="success" onClick={handleSubmit(onSaveAndExit)} disabled={isCalculating} className='btn'>
+                <Icon icon="mdi:content-save-all" className="mr-2" />
                 {(mode === 'edit' && '') ? t('button.update') : t('button.save')}
               </Button>
               {/* ปุ่ม Save and Continue Editing (จะแสดงเฉพาะโหมด Edit) */}
               {mode === 'edit' && (
-                <Button color="light" onClick={handleSubmit(onSaveAndContinue)} disabled={isCalculating}>
+                <Button color="light" onClick={handleSubmit(onSaveAndContinue)} disabled={isCalculating} className='btn'>
                   {t('button.saveAndNext')}
                 </Button>
               )}
             </>
           )}
-          <Button color="gray" onClick={onBack}>
+          <Button color="gray" onClick={onBack} className='btn btn-gray'>
             {isViewMode ? t('button.back') : t('button.cancel')}
           </Button>
         </div>
@@ -364,7 +364,7 @@ const CalculatorRawMaterialPage = () => {
           <div className="panel-header flex-shrink-0">
             <h2 className="panel-title">{t('calculator.ingredientListTitle')}</h2>
             {!isViewMode && (
-              <Button onClick={handleOpenModal} color="blue" size="sm">
+              <Button onClick={handleOpenModal} color="blue" size="sm" className='btn'>
                 <Icon icon="mdi:plus" className="mr-2 h-5 w-5" />
                 {t('calculator.addIngredient')}
               </Button>
