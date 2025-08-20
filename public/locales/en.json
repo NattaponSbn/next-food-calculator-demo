@@ -21,7 +21,8 @@
       "nutrition_data_table": "Nutrition Data Table",
       "calculator_history": "History",
       "calculator_formula_bmr": "Calculator BMR",
-      "calculator_history_bmr": "History BMR"
+      "calculator_history_bmr": "History BMR",
+      "activity": "Activity"
     }
   },
   "button": {
@@ -119,7 +120,15 @@
     "rmCreate": "Create Ram Material",
     "rmEdit": "Edit Ram Material",
     "rmDetail": "Detail Ram Material",
-    "rmFoodId": "Food Id"
+    "rmFoodId": "Food Id",
+    "atvyUnit": "Activity",
+    "atvyCode": "Activity Code",
+    "atvyName": "Activity Name",
+    "atvyDescription": "Description",
+    "atvyList": "Activity List",
+    "atvyCreate": "Create Activity",
+    "atvyEdit": "Edit Activity",
+    "atvyDetail": "Detail Activity"
   },
   "nutrition": {
     "list": "Nutrition Data List"

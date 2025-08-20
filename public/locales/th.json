@@ -21,7 +21,8 @@
       "nutrition_data_table": "ตารางข้อมูลโภชนาการ",
       "calculator_history": "ประวัติการคำนวณ",
       "calculator_formula_bmr": "เครื่องคำนวณ BMR",
-      "calculator_history_bmr": "ประวัติการคำนวณ BMR"
+      "calculator_history_bmr": "ประวัติการคำนวณ BMR",
+      "activity": "กิจกรรม"
     }
   },
   "button": {
@@ -119,7 +120,15 @@
     "rmCreate": "สร้างวัตถุดิบใหม่",
     "rmEdit": "แก้ไขวัตถุดิบ",
     "rmDetail": "รายละเอียดวัตถุดิบ",
-    "rmFoodId": "รหัสวัตถุดิบ"
+    "rmFoodId": "รหัสวัตถุดิบ",
+    "atvyUnit": "กิจกรรม",
+    "atvyCode": "รหัสกิจกรรม",
+    "atvyName": "ชื่อกิจกรรม",
+    "atvyDescription": "Description",
+    "atvyList": "รายการกิจกรรม",
+    "atvyCreate": "สร้างกิจกรรมใหม่",
+    "atvyEdit": "แก้ไขกิจกรรม",
+    "atvyDetail": "รายละเอียดกิจกรรม"
   },
   "nutrition": {
     "list": "รายการข้อมูลโภชนาการ"

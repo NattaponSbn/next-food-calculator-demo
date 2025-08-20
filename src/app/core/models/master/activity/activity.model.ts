@@ -1,41 +1,27 @@
 export class MasterActivityRequestModel {
-    materialId: string = "";
-    nameThai: string = "";
-    nameEng: string = "";
-    categoryId!: number;
+  unitCode: string = '';
+  nameEng: string = '';
+  nameThai: string = '';
+  unitType: 'Weight' | 'Energy' | 'Volume' | 'Other' = 'Weight';
+  description: string = '';
+  status: string[] = [];
 }
 
 export class MasterActivityItemsModel {
-    rawMaterialObjectId!: string;
-    materialId!: string;
-    nameThai!: string;
-    nameEng!: string;
-    categoryName!: string;
-    baseUnit!: string;
-    baseQuantity!: number;
-
-    // สารอาหารหลัก
-    energyKcal!: number;
-    proteinG!: number;
-    carbohydrateG!: number;
-    fatTotalG!: number;
-    status!: string;
-    updatedAt!: string;
-    updatedBy!: string;
-
-    code!: string;
-    name!: string;
-    nameEN!: string;
-    description!: string;
-    id!: number;
-} 
+  id!: number;
+  name!: string;
+  nameEN!: string;
+  code!: string;
+  description!: string;
+}
 
 export class MasterActivityRequestItemModel {
   name!: string;
   nameEN!: string;
   code!: string;
   description!: string;
-} 
+  factorUp!: number;
+}
 
 export class MasterActivityResponseItemModel {
   id!: number;
@@ -43,4 +29,5 @@ export class MasterActivityResponseItemModel {
   nameEN!: string;
   code!: string;
   description!: string;
+  factorUp!: number;
 } 

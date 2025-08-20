@@ -107,6 +107,12 @@ const SidebarContent: MenuItem[] = [
         id: uniqueId(),
         url: "/master/raw-material",
       },
+       {
+        nameKey: "menu.items.activity",
+        icon: "solar:heart-pulse-bold-duotone", // ไอคอนกล่อง, วัตถุดิบ
+        id: uniqueId(),
+        url: "/master/activity",
+      },
     ],
   },
 ];
