@@ -72,7 +72,7 @@ const MasterNutrientCategoriesList = () => {
             onFilterIconClick={handleOpenFilter}
           />
         ),
-        size: 120,
+        size: 70,
       },
       {
         accessorKey: 'nameEN',
@@ -94,9 +94,9 @@ const MasterNutrientCategoriesList = () => {
           </div>
         ),
         size: 250,
-         cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
+        cell: (info) => (
+          <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+        ),
       },
       {
         accessorKey: 'name',
@@ -118,9 +118,9 @@ const MasterNutrientCategoriesList = () => {
           </div>
         ),
         size: 250,
-         cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
+        cell: (info) => (
+          <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+        ),
       },
       // จัดการ
       {
@@ -257,7 +257,7 @@ const MasterNutrientCategoriesList = () => {
                         className="w-auto p-4 align-top border whitespace-nowrap"
                         style={{ width: header.getSize() }}
                       >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                       </th>
                     ))}
                   </tr>

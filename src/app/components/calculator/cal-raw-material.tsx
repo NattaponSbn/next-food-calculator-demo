@@ -65,15 +65,15 @@ const CalculatorRawMaterialPage = () => {
   const calculateNutritionApi = useCallback(async (ingredients: MasterRawSelectedIngredientModel[]) => {
     // 1. ตรวจสอบจาก parameter ที่รับเข้ามา
     if (ingredients.length === 0) {
-       setGroupNutrients(null);
+      setGroupNutrients(null);
       setEnegyPercents(null);
       return null; // คืนค่า null เพื่อให้รู้ว่าไม่ได้คำนวณ
     }
 
     setIsCalculating(true);
     try {
-      console.log(ingredients,'ingredients');
-      
+      console.log(ingredients, 'ingredients');
+
       const dataRequest: CalculationRequestItem[] = ingredients.map(item => ({
         ingredientId: item.id,
         dataPerUnit: String(item.quantity), // API ของคุณต้องการ dataPerUnit
@@ -240,7 +240,7 @@ const CalculatorRawMaterialPage = () => {
     };
 
     let savedData; // ตัวแปรสำหรับเก็บข้อมูลที่บันทึก/อัปเดตแล้ว
-    
+
     if (mode === 'create' || mode === '') {
       savedData = await recipeService.create(requestBody);
     } else if (mode === 'edit' && calculationId) {
@@ -335,7 +335,7 @@ const CalculatorRawMaterialPage = () => {
               </Button>
               {/* ปุ่ม Save and Continue Editing (จะแสดงเฉพาะโหมด Edit) */}
               {mode === 'edit' && (
-                <Button color="light" onClick={handleSubmit(onSaveAndContinue)} disabled={isCalculating} className='btn'>
+                <Button color="warning" onClick={handleSubmit(onSaveAndContinue)} disabled={isCalculating} className='btn'>
                   {t('button.saveAndNext')}
                 </Button>
               )}

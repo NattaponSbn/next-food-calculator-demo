@@ -14,7 +14,7 @@ export default function Layout({
       <div className="page-wrapper flex w-full">
         {/* Header/sidebar */}
         <Sidebar />
-        <div className="body-wrapper w-full bg-white dark:bg-darkgray">
+        <div className="body-wrapper flex-1 min-w-0 bg-white dark:bg-darkgray">
           <Header />
           {/* Body Content  */}
           <main className="flex-grow">

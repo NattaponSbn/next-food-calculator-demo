@@ -112,7 +112,7 @@ const MasterActivitysList = () => {
             onFilterIconClick={handleOpenFilter}
           />
         ),
-        size: 200,
+        size: 70,
       },
       {
         accessorKey: 'nameEN',
@@ -135,9 +135,9 @@ const MasterActivitysList = () => {
           </div>
         ),
         size: 200,
-         cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
+        cell: (info) => (
+          <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+        ),
       },
       {
         accessorKey: 'name',
@@ -159,11 +159,11 @@ const MasterActivitysList = () => {
           </div>
         ),
         size: 200,
-         cell: (info) => (
-            <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
-          ),
+        cell: (info) => (
+          <span className='text-start block text-wrap'>{info.getValue<string>() ?? '-'}</span>
+        ),
       },
-     
+
       // จัดการ
       {
         id: 'actions',

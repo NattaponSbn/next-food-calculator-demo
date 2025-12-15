@@ -57,7 +57,7 @@ const ExpandedRawMaterialList = () => {
             ),
             size: 280,
             cell: (info) => (
-             <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
+              <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
             ),
           },
           {
@@ -72,8 +72,8 @@ const ExpandedRawMaterialList = () => {
               />
             ),
             size: 280,
-             cell: (info) => (
-             <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
+            cell: (info) => (
+              <span className='text-start block text-wrap'>{info.getValue<string>()}</span>
             ),
           },
         ],
@@ -81,9 +81,10 @@ const ExpandedRawMaterialList = () => {
     ];
 
     const dynamicColumns = apiGroups.map(group => ({
+      id: `group_${group.id}`,
       header: group.name,
       columns: group.nutritions.map(nutrition => ({
-        id: nutrition.code,
+        id: `G${group.id}_N${nutrition.id}`, // Ensure unique ID by combining Group ID and Nutrition (Numeric) ID
         header: () => (
           <>
             <div className='text-center mb-1'>
@@ -179,7 +180,7 @@ const ExpandedRawMaterialList = () => {
                         key={header.id}
                         colSpan={header.colSpan} // colSpan จะถูกคำนวณให้โดยอัตโนมัติ
                         className="p-2 align-middle text-center border font-semibold"
-                       style={{ minWidth: header.getSize() ?? 120 }} // ใช้ minWidth เพื่อความยืดหยุ่น
+                        style={{ minWidth: header.getSize() ?? 120 }} // ใช้ minWidth เพื่อความยืดหยุ่น
                       >
                         {header.isPlaceholder
                           ? null

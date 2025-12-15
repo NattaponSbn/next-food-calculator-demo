@@ -1,8 +1,10 @@
 // components/BmrInputForm.tsx
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, HelperText, Label, Radio, Select, TextInput } from 'flowbite-react';
+import { Button, HelperText, Label, Radio, TextInput } from 'flowbite-react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react';
+import { Icon } from '@iconify/react';
 import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 import { activityService } from '@/app/core/services/master/activity.service';
@@ -192,12 +194,67 @@ export const BmrInputForm = ({ onCalculate, initialData, isViewMode }: BmrInputF
               <div className="mb-2 block">
                 <Label htmlFor="activityLevelId" value={t('system.activity')} color={errors.activityLevelId && 'failure'} />
               </div>
-              <Select id="activityLevelId" {...controllerField} sizing="md" className={`form-control form-rounded-xl ${errors.activityLevelId && 'has-error'}`} disabled={isViewMode}>
-                <option value="">-- {t('system.select_activity')} --</option>
-                {activityItems.length > 0 && activityItems.map((row) => (
-                  <option key={row.id} value={row.id}>{row.name}</option>
-                ))}
-              </Select>
+              <Listbox value={controllerField.value} onChange={controllerField.onChange} disabled={isViewMode}>
+                <div className="relative mt-1">
+                  <ListboxButton className={`relative w-full cursor-pointer rounded-xl bg-white py-2.5 pl-4 pr-10 text-left border border-gray-200 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm ${errors.activityLevelId ? 'border-red-500 text-red-900' : ''} dark:bg-gray-700 dark:border-gray-600 dark:text-white`}>
+                    <span className="block truncate">
+                      {activityItems.find((item) => item.id === Number(controllerField.value))?.name || `-- ${t('system.select_activity')} --`}
+                    </span>
+                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <Icon icon="heroicons:chevron-up-down-20-solid" className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    </span>
+                  </ListboxButton>
+                  <Transition
+                    as={React.Fragment}
+                    leave="transition ease-in duration-100"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                    <ListboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm z-50 dark:bg-gray-700">
+                      <ListboxOption
+                        key="default"
+                        className={({ active }: { active: boolean }) =>
+                          `relative cursor-pointer select-none py-2 pl-4 pr-4 ${active ? 'bg-amber-100 text-amber-900' : 'text-gray-900 dark:text-gray-300'
+                          }`
+                        }
+                        value=""
+                      >
+                        {({ selected }: { selected: boolean }) => (
+                          <span className={`block truncate ${selected ? 'font-medium' : 'font-normal'}`}>
+                            -- {t('system.select_activity')} --
+                          </span>
+                        )}
+                      </ListboxOption>
+                      {activityItems.map((item) => (
+                        <ListboxOption
+                          key={item.id}
+                          className={({ active }: { active: boolean }) =>
+                            `relative cursor-pointer select-none py-2 pl-10 pr-4 ${active ? 'bg-primary-100 text-primary-900 dark:bg-primary-900 dark:text-primary-100' : 'text-gray-900 dark:text-gray-100'
+                            }`
+                          }
+                          value={item.id}
+                        >
+                          {({ selected }: { selected: boolean }) => (
+                            <>
+                              <span
+                                className={`block truncate ${selected ? 'font-medium' : 'font-normal'
+                                  }`}
+                              >
+                                {item.name}
+                              </span>
+                              {selected ? (
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary-600 dark:text-primary-400">
+                                  <Icon icon="heroicons:check-20-solid" className="h-5 w-5" aria-hidden="true" />
+                                </span>
+                              ) : null}
+                            </>
+                          )}
+                        </ListboxOption>
+                      ))}
+                    </ListboxOptions>
+                  </Transition>
+                </div>
+              </Listbox>
               {errors.activityLevelId && <HelperText color="failure" className="text-end">{errors.activityLevelId.message}</HelperText>}
             </div>
           )}
