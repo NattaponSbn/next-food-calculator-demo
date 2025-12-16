@@ -1,5 +1,9 @@
 .panel {
     @apply bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden;
+    /* Responsive max-width */
+    max-width: 100%;
+    /* Use percentage-based width for better compatibility */
+    /* Mobile: full width minus small margin */
 
     /* ใส่ & เพื่ออ้างอิงถึงตัว parent (.panel) */
     /* .panel-header ที่เป็นลูกของ .panel */
@@ -17,9 +21,16 @@
     & .panel-body {
         @apply p-6;
     }
-    
+
     /* .panel-footer ที่เป็นลูกของ .panel */
     & .panel-footer {
         @apply p-4 border-t border-gray-200 dark:border-gray-700;
+    }
+}
+
+/* Desktop with sidebar: use larger breakpoint to avoid affecting tablets */
+@media (min-width: 1025px) {
+    .panel {
+        max-width: calc(100vw - 19rem);
     }
 }
