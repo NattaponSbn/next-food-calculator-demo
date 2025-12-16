@@ -167,8 +167,8 @@ const ExpandedRawMaterialList = () => {
       </div>
 
       {/* Panel Body */}
-      <div className="panel-body flex flex-col">
-        <div className="responsive-table-container flex-grow">
+      <div className="panel-body">
+        <div className="responsive-table-container">
           <div className="responsive-table-scroll-wrapper">
             <Table className="responsive-table table-separated">
               <thead className="responsive-table-header bg-indigo-100 dark:bg-indigo-700 dark:text-gray-400">
